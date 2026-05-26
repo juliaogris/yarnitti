@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<!-- Laser-cut variant of apricity.svg: 6-unit quiet zone, red rounded outer
-     cut line, 12 red stitching holes (diameter 1.5 units) around the border. -->
-<svg width="23.2848cm" height="23.2848cm" viewBox="0 0 33 33" version="1.1" xmlns="http://www.w3.org/2000/svg">
-	<g id="QRcode-laser">
+<!-- 2 cols x 3 rows of apricity-laser patches in a 19.6 x 29.4 cm sheet.
+     Each patch is 33x33 units = 9.8 x 9.8 cm. 1 unit = 2.97 mm.
+     Hole diameter = 0.9 unit = 2.67 mm. -->
+<svg width="19.6cm" height="29.4cm" viewBox="0 0 66 99" version="1.1" xmlns="http://www.w3.org/2000/svg">
+	<defs>
+	<g id="patch">
 		<rect x="0" y="0" width="33" height="33" fill="#ffffff"/>
 		<rect x="0.05" y="0.05" width="32.9" height="32.9" rx="0.5" ry="0.5" fill="none" stroke="#ff0000" stroke-width="0.05"/>
 		<g id="Pattern" transform="translate(6,6)">
@@ -268,4 +270,11 @@
 			<circle cx="31.5" cy="26.5" r="0.45"/>
 		</g>
 	</g>
+	</defs>
+	<use href="#patch" x="0" y="0"/>
+	<use href="#patch" x="33" y="0"/>
+	<use href="#patch" x="0" y="33"/>
+	<use href="#patch" x="33" y="33"/>
+	<use href="#patch" x="0" y="66"/>
+	<use href="#patch" x="33" y="66"/>
 </svg>
