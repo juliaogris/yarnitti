@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<!-- 2 cols x 3 rows of apricity-laser patches in a 19.6 x 29.4 cm sheet.
+<!-- 3 cols x 2 rows of apricity-laser patches in a 29.4 x 19.6 cm sheet.
      Each patch is 33x33 units = 9.8 x 9.8 cm. 1 unit = 2.97 mm.
      Hole diameter = 0.9 unit = 2.67 mm. -->
-<svg width="19.6cm" height="29.4cm" viewBox="0 0 66 99" version="1.1" xmlns="http://www.w3.org/2000/svg">
+<svg width="29.4cm" height="19.6cm" viewBox="0 0 99 66" version="1.1" xmlns="http://www.w3.org/2000/svg">
 	<defs>
 	<g id="patch">
 		<rect x="0" y="0" width="33" height="33" fill="#ffffff"/>
@@ -273,8 +273,8 @@
 	</defs>
 	<use href="#patch" x="0" y="0"/>
 	<use href="#patch" x="33" y="0"/>
+	<use href="#patch" x="66" y="0"/>
 	<use href="#patch" x="0" y="33"/>
 	<use href="#patch" x="33" y="33"/>
-	<use href="#patch" x="0" y="66"/>
-	<use href="#patch" x="33" y="66"/>
+	<use href="#patch" x="66" y="33"/>
 </svg>
