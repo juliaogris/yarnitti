@@ -54,9 +54,13 @@ body {
   color: var(--ink);
   cursor: pointer;
   opacity: 0.75;
-  transition: opacity 0.2s ease;
+  transform-origin: center;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
-.hamburger:hover { opacity: 1; }
+.hamburger:hover { opacity: 1; transform: scale(1.18); }
+/* One welcoming nudge once the intro spin settles (set by JS), matching
+   the wool ball. */
+.hamburger.nudge { animation: yarnNudge 1s ease-in-out; }
 .hamburger__icon { display: block; }
 /* Hand-drawn wavy lines (paths, not bars). They still slice into an X: the
    middle scales out, the outer two converge on the centre and rotate. */
@@ -122,9 +126,9 @@ body {
   color: var(--ink);
   text-decoration: none;
   opacity: 0.82;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
-.menu__link:hover { opacity: 1; }
+.menu__link:hover { opacity: 1; transform: translateX(6px); }
 .menu__ico {
   width: 1.3rem;
   height: 1.3rem;
@@ -149,14 +153,15 @@ body {
   line-height: 1;
   cursor: pointer;
   opacity: 0.7;
-  transition: opacity 0.2s ease;
+  transform-origin: center;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 .menu__icon svg { width: 1.45rem; height: 1.45rem; }
-.menu__icon:hover { opacity: 1; }
+.menu__icon:hover { opacity: 1; transform: scale(1.22); }
 /* Hand-drawn wobble on the small icons (wool ball, theme, github, speaker). */
 .defs { position: absolute; }
 .yarn-ball,
-.menu__icon { filter: url(#wonky); }
+.menu__icon svg { filter: url(#wonky); }
 .menu-backdrop {
   position: fixed;
   inset: 0;
@@ -207,6 +212,9 @@ body::before {
   display: block;
   pointer-events: auto;   /* clicking/dragging the mountains drives the motion */
   touch-action: pan-y;    /* keep vertical scroll; horizontal drags are ours */
+  -webkit-tap-highlight-color: transparent; /* no blue flash when tapping */
+  user-select: none;
+  outline: none;
 }
 
 /* Wordmark sits in the dark opening under the arch. */
@@ -265,23 +273,24 @@ body::before {
   margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
 }
 .yarn-ball {
-  width: 1.8rem;
+  width: 2.3rem;
   height: auto;
   cursor: pointer;
-  transform-origin: center;
   transition: stroke-width 0.18s ease;
 }
 /* A single nudge: start at normal size, swell a little, then settle back.
    The fast rise and slower return read as a friendly bounce. Added by JS
    after the intro spin settles, and again on each hover (the class clears
-   itself on animationend so it can replay). */
-.yarn-ball.nudge { animation: yarnNudge 0.8s ease-in-out; }
+   itself on animationend so it can replay). The animation rides the divider,
+   not the ball, because iOS Safari skips transform animations on an element
+   that also carries an SVG filter (the ball has #wonky). */
+.yarn-divider.nudge { animation: yarnNudge 1s ease-in-out; }
 /* While hovered, draw the wound-yarn lines a little heavier. JS sets this
    because the full-screen canvas hides the ball from native :hover. */
 .yarn-ball.hovering { stroke-width: 3.4; }
 @keyframes yarnNudge {
   0% { transform: scale(1); }
-  40% { transform: scale(1.14); }
+  40% { transform: scale(1.28); }
   100% { transform: scale(1); }
 }
 
@@ -339,7 +348,7 @@ body::before {
   .hero__mark { padding: 0 0.5rem; }
   .hero__title { font-size: clamp(3.4rem, 17vw, 5.6rem); }
   .hero__tag { font-size: clamp(0.9rem, 3.6vw, 1.05rem); }
-  .yarn-ball { width: 1.2rem; }
+  .yarn-ball { width: 1.6rem; }
 }
 
 /* ---- lead line (opening of the letter, body-text format, above photo) ---- */
@@ -440,5 +449,5 @@ body::before {
      menu, hamburger, and fades stop sliding too. */
   body, .menu, .menu-backdrop, .hamburger__line,
   .menu__link, .menu__icon { transition: none; }
-  .hero__chev, .yarn-ball { animation: none; }
+  .hero__chev, .yarn-ball, .yarn-divider, .hamburger { animation: none; }
 }

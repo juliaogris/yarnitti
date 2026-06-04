@@ -39,7 +39,7 @@ const CFG = {
 };
 
 const canvas = document.getElementById("waves");
-const ctx = canvas.getContext("2d", { alpha: true });
+const ctx = canvas.getContext("2d", { alpha: true, willReadFrequently: true });
 const hero = document.getElementById("hero");
 
 // Foot line of the arc, as a fraction of hero height. Drives where the
@@ -354,22 +354,37 @@ let braking = false;      // a stop request: decelerate quickly to a halt
 let lastFrame = null;
 let animRAF = null;
 
-// The wool ball gives one welcoming nudge, but only after the load spin has
-// coasted to a halt, so the two motions do not compete for attention. The
-// class clears itself on animationend so a later hover can replay the same
-// nudge (re-adding an identical, still-present animation never restarts it).
+// The wool ball and the hamburger each give one welcoming nudge once the load
+// spin has coasted to a halt, so the motions do not compete for attention.
+// The ball also waits until it is actually on screen, since on a short mobile
+// viewport it starts below the fold. The nudge rides .yarn-divider, not the
+// filtered ball, because iOS Safari skips transform animations on an element
+// that carries an SVG filter. The class clears itself on animationend so a
+// later hover or tap can replay the same nudge (re-adding a still-present
+// animation never restarts it).
 const yarnBall = document.querySelector(".yarn-ball");
-let ballNudged = false;
-yarnBall?.addEventListener("animationend", () =>
-  yarnBall.classList.remove("nudge"));
+const yarnDivider = yarnBall?.closest(".yarn-divider");
+const hamburger = document.querySelector(".hamburger");
+[yarnDivider, hamburger].forEach((el) =>
+  el?.addEventListener("animationend", () => el.classList.remove("nudge")));
 function nudgeBall() {
-  if (!yarnBall || reduceMotion) return;
-  yarnBall.classList.add("nudge");
+  if (!yarnDivider || reduceMotion) return;
+  yarnDivider.classList.add("nudge");
 }
-function nudgeBallOnce() {
-  if (ballNudged) return;
-  ballNudged = true;
-  nudgeBall();
+let introSettled = false;
+let ballVisible = false;
+let ballIntroNudged = false;
+let hamburgerNudged = false;
+function maybeIntroNudge() {
+  if (reduceMotion || !introSettled) return;
+  if (!hamburgerNudged) {
+    hamburgerNudged = true;
+    hamburger?.classList.add("nudge");
+  }
+  if (ballVisible && !ballIntroNudged) {
+    ballIntroNudged = true;
+    nudgeBall();
+  }
 }
 function animate(now) {
   if (lastFrame === null) lastFrame = now;
@@ -392,7 +407,8 @@ function animate(now) {
     braking = false;
     lastFrame = null;
     animRAF = null;
-    nudgeBallOnce(); // the ridges have settled; greet with the ball nudge
+    introSettled = true; // the ridges have settled; greet with the nudges
+    maybeIntroNudge();
   }
 }
 // Each click adds to the target speed, so more (and faster) clicks build up
@@ -465,6 +481,7 @@ document.addEventListener("pointerdown", (e) => {
   pressing = true;
   didDrag = false;
   pressOnBall = isOnBall(e);
+  if (pressOnBall) nudgeBall(); // immediate feedback, even on a touch that scrolls
   canScrub = !pressOnBall && isOnLine(e); // a scrub may only begin on a line
   pressOnUI = !!e.target.closest(".menu, .menu-backdrop, .hamburger, .levers");
   dragLastX = e.clientX;
@@ -519,28 +536,48 @@ document.addEventListener("pointercancel", () => endPress(false));
 // Desktop hover, hit-tested by hand because the canvas sits over everything:
 // over the ball, thicken its strokes, nudge it once on entry, and show a
 // pointer cursor; over a ridge line, show a grab cursor; otherwise default.
-// mousemove only fires for a real pointer, so touch never triggers this.
+// Gated to real hover devices so a touch (which some browsers answer with a
+// synthetic mousemove) never leaves the ball stuck in its thickened state.
+const canHover = window.matchMedia("(hover: hover)").matches;
 let ballHovering = false;
 let lastMove = null;
 let cursorRAF = null;
-document.addEventListener("mousemove", (e) => {
-  const overBall = isOnBall(e); // cheap rect test, run every move for snappy hover
-  if (overBall !== ballHovering) {
-    ballHovering = overBall;
-    yarnBall?.classList.toggle("hovering", overBall);
-    if (overBall) nudgeBall();
-  }
-  // isOnLine reads pixels back from the GPU, so coalesce it to one test per
-  // frame to keep the spin smooth.
-  lastMove = e;
-  if (cursorRAF === null) {
-    cursorRAF = requestAnimationFrame(() => {
-      cursorRAF = null;
-      canvas.style.cursor = isOnBall(lastMove) ? "pointer"
-        : isOnLine(lastMove) ? "grab" : "default";
-    });
-  }
-});
+if (canHover) {
+  document.addEventListener("mousemove", (e) => {
+    const overBall = isOnBall(e); // cheap rect test, run every move for snappy hover
+    if (overBall !== ballHovering) {
+      ballHovering = overBall;
+      yarnBall?.classList.toggle("hovering", overBall);
+      if (overBall) nudgeBall();
+    }
+    // isOnLine reads pixels back from the GPU, so coalesce it to one test per
+    // frame to keep the spin smooth.
+    lastMove = e;
+    if (cursorRAF === null) {
+      cursorRAF = requestAnimationFrame(() => {
+        cursorRAF = null;
+        canvas.style.cursor = isOnBall(lastMove) ? "pointer"
+          : isOnLine(lastMove) ? "grab" : "default";
+      });
+    }
+  });
+}
+
+// Nudge the ball on first scroll-into-view (it can start below the fold on a
+// short mobile viewport); maybeIntroNudge only fires once the spin has settled.
+if (yarnBall && "IntersectionObserver" in window) {
+  const io = new IntersectionObserver((entries) => {
+    for (const en of entries) {
+      if (en.isIntersecting) {
+        ballVisible = true;
+        maybeIntroNudge();
+      }
+    }
+  }, { threshold: 0.6 });
+  io.observe(yarnBall);
+} else {
+  ballVisible = true;
+}
 
 window.addEventListener("resize", resize);
 resize();
