@@ -697,6 +697,7 @@ function setExperiment(on) {
   strandScale = on ? 0.45 : 1; // shorter dangling strands while playing
   setSlide(on ? SPIN_SLIDE : 0); // drop the arch down within the canvas
   if (on) {
+    setCollapsed(false);    // always open the panel expanded
     nudgeBall();
     PARAMS.speed.set(-1.2); // start with a slow drift to the left
     braking = false;
@@ -811,6 +812,16 @@ rangeEls.forEach((el) => {
 document.getElementById("exp-stop")?.addEventListener("click", stopSpin);
 document.getElementById("exp-reset")?.addEventListener("click", resetShape);
 document.getElementById("exp-done")?.addEventListener("click", exitSpin);
+// Collapse arrow: slide the control panel down to just the chevron, and back.
+const scrubPick = document.querySelector(".scrub-pick");
+const scrubCollapse = document.getElementById("scrub-collapse");
+function setCollapsed(collapsed) {
+  scrubPick?.classList.toggle("is-collapsed", collapsed);
+  scrubCollapse?.setAttribute("aria-expanded", String(!collapsed));
+  scrubCollapse?.setAttribute("aria-label", collapsed ? "Show controls" : "Hide controls");
+}
+scrubCollapse?.addEventListener("click", () =>
+  setCollapsed(!scrubPick.classList.contains("is-collapsed")));
 syncSliders();
 
 // ---- single-page-app router ------------------------------------------------

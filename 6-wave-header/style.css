@@ -640,6 +640,31 @@ body.experiment .scrub-pick {
   display: flex;
   transform: translateY(0);
 }
+/* Collapse arrow: a hand-drawn chevron at the top of the panel. Clicking slides
+   the controls down, leaving just the arrow (now pointing up) to bring them
+   back. The slide rides the panel's existing transform transition. */
+.scrub-pick__collapse {
+  align-self: stretch;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: -0.4rem 0 -0.1rem;
+  padding: 0.3rem 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+}
+.scrub-pick__chev {
+  opacity: 0.5;
+  transition: transform 0.3s ease, opacity 0.2s ease;
+}
+.scrub-pick__collapse:hover .scrub-pick__chev { opacity: 0.85; }
+body.experiment .scrub-pick.is-collapsed {
+  transform: translateY(calc(100% - 2.6rem)); /* leave the arrow peeking */
+}
+.scrub-pick.is-collapsed .scrub-pick__chev { transform: rotate(180deg); }
 .scrub-pick__row {
   display: flex;
   flex-wrap: wrap;
@@ -754,17 +779,18 @@ body.experiment .scrub-pick {
   }
   .slider-unit span { width: auto; }
   .exp-range { padding: 0.3rem 0; } /* a little taller touch target */
-  /* Stop, Reset and Done on one row: equal width, a little space between and
-     above, with a slightly heavier outline. */
+  /* Speed is the main control, so float it to the top row on mobile. */
+  .slider-unit:has(.exp-range--speed) { order: -1; }
+  /* Stop, Reset and Done on one row, a touch wider with a bit more space
+     between and a slightly heavier outline. */
   .scrub-pick__transport {
     flex-wrap: nowrap;
-    gap: 1rem;
-    margin-top: 0.3rem;
+    gap: 1.3rem;
+    margin-top: 0.4rem;
   }
   .scrub-pick__transport .scrub-pick__opt {
-    min-width: 0;
-    flex: 1 1 0;
-    padding: 0.35rem 0.5rem;
+    flex: 0 0 auto;
+    padding: 0.4rem 1rem;
     font-size: 0.85rem;
     border-width: 1.8px;
     border-color: var(--muted);
