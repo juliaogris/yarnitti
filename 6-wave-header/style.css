@@ -20,7 +20,7 @@
 
 :root {
   --display-font: "Over the Rainbow", cursive; /* wordmark only */
-  --body-font: "Mali", Georgia, serif; /* body font picker */
+  --body-font: "Hanken Grotesk", system-ui, sans-serif; /* body font picker */
   --tag-font: "Hanken Grotesk", system-ui, sans-serif;
   --body-scale: 1;     /* body size lever */
   --hero-h: 70vh;        /* fold lever (fixed arch layer height) */
@@ -148,11 +148,9 @@ body::before {
   align-items: center;
   justify-content: center;
   height: var(--body-gap);
-  color: #fff;
+  color: var(--muted); /* a touch grey, and follows the theme */
   opacity: 1;
 }
-/* Keep it dark on the light theme, where pure white would vanish. */
-:root[data-theme="light"] .yarn-divider { color: var(--ink); }
 .yarn-ball {
   width: 1.8rem;
   height: auto;

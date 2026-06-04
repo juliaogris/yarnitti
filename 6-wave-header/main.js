@@ -418,7 +418,7 @@ const BODY_FONTS = [
   { name: "Andika", css: '"Andika", system-ui, sans-serif' },
 ];
 const bodyOut = document.getElementById("out-bodyfont");
-let bodyIdx = 12; // Mali (the chosen body font)
+let bodyIdx = 9; // Hanken Grotesk (the chosen body font)
 function applyBodyFont() {
   const f = BODY_FONTS[bodyIdx];
   root.style.setProperty("--body-font", f.css);
