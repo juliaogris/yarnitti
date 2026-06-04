@@ -723,7 +723,8 @@ function routeFromPath() {
   let r = decodeURIComponent(location.pathname);
   if (r.startsWith(BASE)) r = r.slice(BASE.length);
   r = r.replace(/^\/+|\/+$/g, "");
-  return ROUTES.includes(r) ? r : "";
+  if (r === "" || ROUTES.includes(r)) return r;
+  return "404"; // unknown path: show the not-found subpage
 }
 function showRoute(route) {
   setMenu(false);

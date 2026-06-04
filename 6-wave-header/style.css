@@ -367,6 +367,13 @@ body::before {
 body[data-route=""] .hero__mark { display: block; }
 /* A little gap above the Spin item so it reads as an action, not a page. */
 .menu__sep { margin-top: 0.6rem; padding-top: 0.9rem; border-top: 1px solid var(--hair); }
+/* Inline text link inside body copy. */
+.textlink {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.textlink:hover { opacity: 0.75; }
 
 /* ---- mobile: less side margin, wider + lower arch handled in JS ---- */
 @media (max-width: 640px) {
