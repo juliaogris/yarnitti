@@ -269,16 +269,16 @@ body::before {
   height: auto;
   cursor: pointer;
   transform-origin: center;
+  transition: stroke-width 0.18s ease;
 }
-/* A single nudge when the ball scrolls into view: start at normal size,
-   swell a little, then settle back. The fast rise and slower return read
-   as a friendly bounce rather than a grow-in. */
-.yarn-ball.is-in { animation: yarnNudge 0.8s ease-in-out; }
-/* The same nudge on hover, desktop only. Each hover restarts it, so it
-   reads as a small prompt to interact rather than a continuous loop. */
-@media (hover: hover) {
-  .yarn-ball:hover { animation: yarnNudge 0.8s ease-in-out; }
-}
+/* A single nudge: start at normal size, swell a little, then settle back.
+   The fast rise and slower return read as a friendly bounce. Added by JS
+   after the intro spin settles, and again on each hover (the class clears
+   itself on animationend so it can replay). */
+.yarn-ball.nudge { animation: yarnNudge 0.8s ease-in-out; }
+/* While hovered, draw the wound-yarn lines a little heavier. JS sets this
+   because the full-screen canvas hides the ball from native :hover. */
+.yarn-ball.hovering { stroke-width: 3.4; }
 @keyframes yarnNudge {
   0% { transform: scale(1); }
   40% { transform: scale(1.14); }

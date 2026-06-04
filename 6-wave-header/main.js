@@ -355,13 +355,21 @@ let lastFrame = null;
 let animRAF = null;
 
 // The wool ball gives one welcoming nudge, but only after the load spin has
-// coasted to a halt, so the two motions do not compete for attention.
+// coasted to a halt, so the two motions do not compete for attention. The
+// class clears itself on animationend so a later hover can replay the same
+// nudge (re-adding an identical, still-present animation never restarts it).
 const yarnBall = document.querySelector(".yarn-ball");
 let ballNudged = false;
+yarnBall?.addEventListener("animationend", () =>
+  yarnBall.classList.remove("nudge"));
+function nudgeBall() {
+  if (!yarnBall || reduceMotion) return;
+  yarnBall.classList.add("nudge");
+}
 function nudgeBallOnce() {
-  if (ballNudged || !yarnBall || reduceMotion) return;
+  if (ballNudged) return;
   ballNudged = true;
-  yarnBall.classList.add("is-in");
+  nudgeBall();
 }
 function animate(now) {
   if (lastFrame === null) lastFrame = now;
@@ -413,6 +421,16 @@ let dragLastX = 0;
 let dragLastT = 0;
 let dragVel = 0;
 let dragPrevVel = 0; // spin at the moment a drag takes over (for additive flicks)
+let pressOnBall = false; // the press started on the wool ball, so it toggles spin
+
+// Is the pointer over the wool ball? The ball is HTML behind the full-screen
+// canvas, so it never receives events itself; hit-test its box by hand.
+function isOnBall(e) {
+  if (!yarnBall) return false;
+  const r = yarnBall.getBoundingClientRect();
+  return e.clientX >= r.left && e.clientX <= r.right &&
+         e.clientY >= r.top && e.clientY <= r.bottom;
+}
 
 // Is a click roughly on a drawn line? Sample the canvas alpha in a small box
 // around the point. (The wordmark and tagline are HTML, not on the canvas.)
@@ -446,8 +464,9 @@ document.addEventListener("pointerdown", (e) => {
   if (reduceMotion) return;
   pressing = true;
   didDrag = false;
-  canScrub = isOnLine(e); // a scrub may only begin on a line
-  pressOnUI = !!e.target.closest(".menu, .menu-backdrop, .hamburger, .levers, .yarn-ball");
+  pressOnBall = isOnBall(e);
+  canScrub = !pressOnBall && isOnLine(e); // a scrub may only begin on a line
+  pressOnUI = !!e.target.closest(".menu, .menu-backdrop, .hamburger, .levers");
   dragLastX = e.clientX;
   dragLastT = e.timeStamp;
 });
@@ -480,19 +499,47 @@ function endPress(deliberate) {
   if (!pressing) return;
   pressing = false;
   if (pressOnUI || didDrag) return; // scrub keeps coasting; UI is not ours
-  if (deliberate) stopMotion();     // a tap brakes to a stop
+  if (pressOnBall) {                // a full tap on the ball toggles the spin
+    if (deliberate) toggleSpin();   // (a cancelled press, e.g. a scroll, does not)
+    return;
+  }
+  if (deliberate) stopMotion();     // a tap elsewhere brakes to a stop
+}
+// Start the ridges from a near standstill, or stop them if already moving.
+function toggleSpin() {
+  if (reduceMotion) return;
+  nudgeBall(); // a little visual acknowledgement of the tap
+  const speed = Math.max(Math.abs(vel), Math.abs(targetVel));
+  if (speed > 0.3) stopMotion();
+  else startAnim(LOAD_BOOST);
 }
 document.addEventListener("pointerup", () => endPress(true));
 document.addEventListener("pointercancel", () => endPress(false));
 
-// A full tap on the ball (a click, so a mobile scroll that cancels the press
-// never counts) toggles the ridge motion: start it from a near standstill,
-// stop it when it is already spinning.
-yarnBall?.addEventListener("click", () => {
-  if (reduceMotion) return;
-  const speed = Math.max(Math.abs(vel), Math.abs(targetVel));
-  if (speed > 0.3) stopMotion();
-  else startAnim(LOAD_BOOST);
+// Desktop hover, hit-tested by hand because the canvas sits over everything:
+// over the ball, thicken its strokes, nudge it once on entry, and show a
+// pointer cursor; over a ridge line, show a grab cursor; otherwise default.
+// mousemove only fires for a real pointer, so touch never triggers this.
+let ballHovering = false;
+let lastMove = null;
+let cursorRAF = null;
+document.addEventListener("mousemove", (e) => {
+  const overBall = isOnBall(e); // cheap rect test, run every move for snappy hover
+  if (overBall !== ballHovering) {
+    ballHovering = overBall;
+    yarnBall?.classList.toggle("hovering", overBall);
+    if (overBall) nudgeBall();
+  }
+  // isOnLine reads pixels back from the GPU, so coalesce it to one test per
+  // frame to keep the spin smooth.
+  lastMove = e;
+  if (cursorRAF === null) {
+    cursorRAF = requestAnimationFrame(() => {
+      cursorRAF = null;
+      canvas.style.cursor = isOnBall(lastMove) ? "pointer"
+        : isOnLine(lastMove) ? "grab" : "default";
+    });
+  }
 });
 
 window.addEventListener("resize", resize);
