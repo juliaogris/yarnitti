@@ -270,17 +270,19 @@ body::before {
   cursor: pointer;
   transform-origin: center;
 }
-/* Soft pop when the ball scrolls into view (slight overshoot, then settle). */
-.yarn-ball.is-in { animation: yarnPop 0.85s cubic-bezier(0.34, 1.56, 0.64, 1); }
-/* Gentle breathing while hovered. */
-.yarn-ball:hover { animation: yarnBreathe 2.6s ease-in-out infinite; }
-@keyframes yarnPop {
-  from { transform: scale(0.45); }
-  to { transform: scale(1); }
+/* A single nudge when the ball scrolls into view: start at normal size,
+   swell a little, then settle back. The fast rise and slower return read
+   as a friendly bounce rather than a grow-in. */
+.yarn-ball.is-in { animation: yarnNudge 0.8s ease-in-out; }
+/* The same nudge on hover, desktop only. Each hover restarts it, so it
+   reads as a small prompt to interact rather than a continuous loop. */
+@media (hover: hover) {
+  .yarn-ball:hover { animation: yarnNudge 0.8s ease-in-out; }
 }
-@keyframes yarnBreathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.12); }
+@keyframes yarnNudge {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.14); }
+  100% { transform: scale(1); }
 }
 
 .shot {
