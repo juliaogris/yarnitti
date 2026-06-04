@@ -353,6 +353,16 @@ let targetVel = 0;        // speed it is easing toward (clicks raise it, frictio
 let braking = false;      // a stop request: decelerate quickly to a halt
 let lastFrame = null;
 let animRAF = null;
+
+// The wool ball gives one welcoming nudge, but only after the load spin has
+// coasted to a halt, so the two motions do not compete for attention.
+const yarnBall = document.querySelector(".yarn-ball");
+let ballNudged = false;
+function nudgeBallOnce() {
+  if (ballNudged || !yarnBall || reduceMotion) return;
+  ballNudged = true;
+  yarnBall.classList.add("is-in");
+}
 function animate(now) {
   if (lastFrame === null) lastFrame = now;
   const dt = Math.min(0.05, (now - lastFrame) / 1000); // clamp big tab-switch gaps
@@ -374,6 +384,7 @@ function animate(now) {
     braking = false;
     lastFrame = null;
     animRAF = null;
+    nudgeBallOnce(); // the ridges have settled; greet with the ball nudge
   }
 }
 // Each click adds to the target speed, so more (and faster) clicks build up
@@ -436,7 +447,7 @@ document.addEventListener("pointerdown", (e) => {
   pressing = true;
   didDrag = false;
   canScrub = isOnLine(e); // a scrub may only begin on a line
-  pressOnUI = !!e.target.closest(".menu, .menu-backdrop, .hamburger, .levers");
+  pressOnUI = !!e.target.closest(".menu, .menu-backdrop, .hamburger, .levers, .yarn-ball");
   dragLastX = e.clientX;
   dragLastT = e.timeStamp;
 });
@@ -474,19 +485,15 @@ function endPress(deliberate) {
 document.addEventListener("pointerup", () => endPress(true));
 document.addEventListener("pointercancel", () => endPress(false));
 
-// Pop the wool ball when it first scrolls into view.
-const yarnBall = document.querySelector(".yarn-ball");
-if (yarnBall && !reduceMotion && "IntersectionObserver" in window) {
-  const io = new IntersectionObserver((entries, obs) => {
-    for (const en of entries) {
-      if (en.isIntersecting) {
-        yarnBall.classList.add("is-in");
-        obs.unobserve(yarnBall);
-      }
-    }
-  }, { threshold: 0.6 });
-  io.observe(yarnBall);
-}
+// A full tap on the ball (a click, so a mobile scroll that cancels the press
+// never counts) toggles the ridge motion: start it from a near standstill,
+// stop it when it is already spinning.
+yarnBall?.addEventListener("click", () => {
+  if (reduceMotion) return;
+  const speed = Math.max(Math.abs(vel), Math.abs(targetVel));
+  if (speed > 0.3) stopMotion();
+  else startAnim(LOAD_BOOST);
+});
 
 window.addEventListener("resize", resize);
 resize();
