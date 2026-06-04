@@ -19,7 +19,7 @@ const CFG = {
   footL: 0.10,        // left foot x, fraction of width
   footR: 0.90,        // right foot x
 
-  arch: 0.37,         // overall arch height (back bow), fraction H (arch lever)
+  arch: 0.26,         // overall arch height (back bow), fraction H (arch lever)
   bowRatio: 0.62,     // front bow as a fraction of the back bow: higher ->
                       // the bottom line curves into a horseshoe, not flat
   bowEase: 1.1,       // >1 crowds strands toward the low bows
@@ -41,6 +41,16 @@ const CFG = {
 const canvas = document.getElementById("waves");
 const ctx = canvas.getContext("2d", { alpha: true });
 const hero = document.getElementById("hero");
+
+// The horizon: a single fraction of hero height that the foot line, the
+// content fade, and the debug guide all share. Every mountain ridge sits above
+// it (ridges are footY - bow), and the scrolling content fades out into it.
+let GUIDE_Y = 0.33; // around the bottom of the top third (arc-y lever)
+
+// Debug-only horizon guide (remove before launch). Pink so it reads as
+// scaffolding. Toggle off with ?guide=0.
+const SHOW_GUIDE = new URLSearchParams(location.search).get("guide") !== "0";
+const GUIDE_COLOR = "#ff2d8e";
 
 // ---- seeded value noise ---------------------------------------------------
 
@@ -90,6 +100,7 @@ function fbm(x, y) {
 let W = 0, H = 0, dpr = 1;
 let strands = CFG.strands, steps = CFG.steps;
 let footLfrac = CFG.footL, footRfrac = CFG.footR, footYfrac = CFG.footY;
+let lineScale = 1; // thins every stroke on narrow screens (set in resize)
 
 // Read the live theme colours so the canvas inverts with the page.
 function themeColors() {
@@ -136,7 +147,7 @@ function render() {
     const archH = H * CFG.arch;
     const bow = lerp(archH * CFG.bowRatio, archH, Math.pow(q, CFG.bowEase));
     // Front ridges (low q) drawn thicker; back ridges thinner.
-    ctx.lineWidth = lerp(CFG.lineWidth, CFG.lineWidthBack, q);
+    ctx.lineWidth = lerp(CFG.lineWidth, CFG.lineWidthBack, q) * lineScale;
     // Front ridges roll in few long swells; back ridges break into more
     // ripples, like waves stacking out to sea.
     const wf = lerp(CFG.wobFreqFront, CFG.wobFreqBack, q);
@@ -183,6 +194,21 @@ function render() {
   // short on the right.
   drawStrand(xL, footY, 0.4, ink, 0.46, 0.024);
   drawStrand(xR, footY, 2.1, ink, 0.13, 0.008);
+
+  // Debug-only horizon guide (remove before launch). Draws on top so it is
+  // always visible; sits exactly on the foot line.
+  if (SHOW_GUIDE) {
+    ctx.save();
+    ctx.setLineDash([6, 6]);
+    ctx.strokeStyle = GUIDE_COLOR;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, footY);
+    ctx.lineTo(W, footY);
+    ctx.stroke();
+    ctx.restore();
+  }
 }
 
 // A loose strand dropping from a foot, tapering and fading as it falls.
@@ -197,7 +223,7 @@ function drawStrand(footX, footY, sway, ink, lenFrac, waveAmt) {
     const t = s / seg;
     const y = footY + len * t;
     const x = footX + Math.sin(t * Math.PI * 2.2 + sway) * H * waveAmt * t * (1 - 0.25 * t);
-    ctx.lineWidth = lerp(2.6, 0.15, t);            // thins out toward the end
+    ctx.lineWidth = lerp(2.6, 0.15, t) * lineScale; // thins out toward the end
     ctx.globalAlpha = t < 0.6 ? 1 : Math.max(0, 1 - (t - 0.6) / 0.4); // fades
     ctx.beginPath();
     ctx.moveTo(px, py);
@@ -219,12 +245,17 @@ function resize() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   const small = W < 640;
-  // On mobile, spread the feet near the edges and drop the arch lower.
+  // On mobile, spread the feet near the edges. The foot height tracks the
+  // shared horizon so mountains stay above the guide on every width.
   footLfrac = small ? 0.04 : CFG.footL;
   footRfrac = small ? 0.96 : CFG.footR;
-  footYfrac = small ? 0.46 : CFG.footY;
+  footYfrac = GUIDE_Y;
+  lineScale = small ? 0.72 : 1; // a little thinner on mobile, unchanged on desktop
   strands = small ? Math.round(CFG.strands * 0.9) : CFG.strands;
   steps = Math.max(200, Math.round((small ? 0.6 : 0.85) * W));
+
+  // Land the content fade exactly on the horizon so text dissolves into it.
+  root.style.setProperty("--foot-pct", (footYfrac * 100).toFixed(1) + "%");
   render();
 }
 
@@ -287,6 +318,14 @@ function wireLever(id, outId, fn, fmt) {
     if (out) out.textContent = fmt ? fmt(el.value) : el.value;
   });
 }
+
+// arc y: move the whole horizon (foot line, guide, and fade) up or down.
+wireLever("lever-arcy", "out-arcy", (v) => {
+  GUIDE_Y = parseFloat(v);
+  footYfrac = GUIDE_Y;
+  root.style.setProperty("--foot-pct", (GUIDE_Y * 100).toFixed(1) + "%");
+  render();
+}, (v) => parseFloat(v).toFixed(2));
 
 // fold: hero height (vh); resize so the canvas refits.
 wireLever("lever-fold", "out-fold", (v) => {

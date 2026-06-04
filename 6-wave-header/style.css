@@ -85,8 +85,8 @@ body::before {
   background: linear-gradient(
     to bottom,
     var(--bg) 0%,
-    var(--bg) 20%,
-    transparent 40%
+    var(--bg) calc(var(--foot-pct, 33%) - 14%),
+    transparent var(--foot-pct, 33%)
   );
 }
 .hero canvas {
