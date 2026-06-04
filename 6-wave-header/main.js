@@ -44,13 +44,15 @@ const hero = document.getElementById("hero");
 
 // Foot line of the arc, as a fraction of hero height. Drives where the
 // mountains sit and where the content fade lands. The arc-y lever moves it.
-let ARC_Y = 0.33; // around the bottom of the top third
+let ARC_Y = 0.38; // around the bottom of the top third
 
-// Debug guide, an independent reference line at its own fraction of hero
-// height (the line lever moves it, separately from the arc). Remove before
-// launch. Pink so it reads as scaffolding. Toggle off with ?guide=0.
-let GUIDE_Y = 0.33;
-const SHOW_GUIDE = new URLSearchParams(location.search).get("guide") !== "0";
+// Two debug guides framing the content fade (remove before launch). The lower
+// guide is where body content starts fading; the upper guide is where it is
+// completely gone. Each has its own lever; both hide with one toggle (or
+// ?guide=0). Pink so they read as scaffolding.
+let GUIDE_Y = 0.33;  // lower line: fade starts here
+let GUIDE2_Y = 0.26; // upper line: content fully gone above here
+let SHOW_GUIDE = new URLSearchParams(location.search).get("guide") !== "0";
 const GUIDE_COLOR = "#ff2d8e";
 
 // ---- seeded value noise ---------------------------------------------------
@@ -196,19 +198,21 @@ function render() {
   drawStrand(xL, footY, 0.4, ink, 0.46, 0.024);
   drawStrand(xR, footY, 2.1, ink, 0.13, 0.008);
 
-  // Debug-only guide (remove before launch). Draws on top so it is always
-  // visible; sits at its own height, independent of the arc.
+  // Debug-only guides (remove before launch). Draw on top so they are always
+  // visible; each sits at its own height, independent of the arc.
   if (SHOW_GUIDE) {
-    const guideY = H * GUIDE_Y;
     ctx.save();
     ctx.setLineDash([6, 6]);
     ctx.strokeStyle = GUIDE_COLOR;
     ctx.lineWidth = 1;
     ctx.globalAlpha = 1;
-    ctx.beginPath();
-    ctx.moveTo(0, guideY);
-    ctx.lineTo(W, guideY);
-    ctx.stroke();
+    for (const frac of [GUIDE_Y, GUIDE2_Y]) {
+      const y = H * frac;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(W, y);
+      ctx.stroke();
+    }
     ctx.restore();
   }
 }
@@ -256,8 +260,10 @@ function resize() {
   strands = small ? Math.round(CFG.strands * 0.9) : CFG.strands;
   steps = Math.max(200, Math.round((small ? 0.6 : 0.85) * W));
 
-  // Land the content fade exactly on the pink guide so text dissolves into it.
+  // Frame the content fade with the two pink guides: it starts at the lower
+  // line and is fully gone at the upper one.
   root.style.setProperty("--foot-pct", (GUIDE_Y * 100).toFixed(1) + "%");
+  root.style.setProperty("--gone-pct", (GUIDE2_Y * 100).toFixed(1) + "%");
   render();
 }
 
@@ -328,10 +334,24 @@ wireLever("lever-arcy", "out-arcy", (v) => {
   render();
 }, (v) => parseFloat(v).toFixed(2));
 
-// line: move the pink guide, which also sets where body content fades out.
+// line: move both pink guides together, keeping the fade margin between them.
+const line2El = document.getElementById("lever-line2");
+const out2El = document.getElementById("out-line2");
 wireLever("lever-line", "out-line", (v) => {
+  const gap = GUIDE_Y - GUIDE2_Y; // preserve the current fade margin
   GUIDE_Y = parseFloat(v);
+  GUIDE2_Y = GUIDE_Y - gap;
   root.style.setProperty("--foot-pct", (GUIDE_Y * 100).toFixed(1) + "%");
+  root.style.setProperty("--gone-pct", (GUIDE2_Y * 100).toFixed(1) + "%");
+  if (line2El) line2El.value = GUIDE2_Y.toFixed(2);
+  if (out2El) out2El.textContent = GUIDE2_Y.toFixed(2);
+  render();
+}, (v) => parseFloat(v).toFixed(2));
+
+// line 2: upper pink guide alone, which sets the fade margin (the gap to line).
+wireLever("lever-line2", "out-line2", (v) => {
+  GUIDE2_Y = parseFloat(v);
+  root.style.setProperty("--gone-pct", (GUIDE2_Y * 100).toFixed(1) + "%");
   render();
 }, (v) => parseFloat(v).toFixed(2));
 
@@ -348,6 +368,44 @@ wireLever("lever-space", "out-space", (v) => {
 wireLever("lever-body", "out-body", (v) => {
   root.style.setProperty("--body-scale", v);
 }, (v) => parseFloat(v).toFixed(2));
+
+// guide toggle: show or hide the pink debug line.
+const guideBtn = document.getElementById("lever-guide");
+if (guideBtn) {
+  const syncGuideBtn = () => {
+    guideBtn.textContent = SHOW_GUIDE ? "hide line" : "show line";
+    guideBtn.setAttribute("aria-pressed", String(SHOW_GUIDE));
+  };
+  syncGuideBtn();
+  guideBtn.addEventListener("click", () => {
+    SHOW_GUIDE = !SHOW_GUIDE;
+    syncGuideBtn();
+    render();
+  });
+}
+
+// reset: restore every lever to its default and replay its handler.
+const LEVER_DEFAULTS = {
+  "lever-heading": "30",
+  "lever-arch": "0.26",
+  "lever-arcy": "0.38",
+  "lever-line": "0.33",
+  "lever-line2": "0.26",
+  "lever-fold": "70",
+  "lever-space": "2.5",
+  "lever-body": "1",
+};
+const resetBtn = document.getElementById("lever-reset");
+if (resetBtn) {
+  resetBtn.addEventListener("click", () => {
+    for (const [id, value] of Object.entries(LEVER_DEFAULTS)) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      el.value = value;
+      el.dispatchEvent(new Event("input"));
+    }
+  });
+}
 
 window.addEventListener("resize", resize);
 resize();

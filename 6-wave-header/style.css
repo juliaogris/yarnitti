@@ -85,7 +85,7 @@ body::before {
   background: linear-gradient(
     to bottom,
     var(--bg) 0%,
-    var(--bg) calc(var(--foot-pct, 33%) - 14%),
+    var(--bg) var(--gone-pct, 26%),
     transparent var(--foot-pct, 33%)
   );
 }
@@ -253,6 +253,19 @@ body::before {
   gap: 0.5rem;
 }
 .levers input[type="range"] { accent-color: var(--ink); width: 9rem; }
+.levers__reset {
+  border: 1px solid var(--hair);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  padding: 0.3rem 0.7rem;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  opacity: 0.8;
+}
+.levers__reset:hover { opacity: 1; border-color: var(--ink); }
 
 @media (prefers-reduced-motion: reduce) {
   body, .theme-toggle { transition: none; }

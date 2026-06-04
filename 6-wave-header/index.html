@@ -57,12 +57,16 @@
     <output id="out-arch">0.26</output>
   </label>
   <label>arc&nbsp;y
-    <input type="range" id="lever-arcy" min="0.15" max="0.70" step="0.01" value="0.33">
-    <output id="out-arcy">0.33</output>
+    <input type="range" id="lever-arcy" min="0.15" max="0.70" step="0.01" value="0.38">
+    <output id="out-arcy">0.38</output>
   </label>
   <label>line
     <input type="range" id="lever-line" min="0.05" max="0.95" step="0.01" value="0.33">
     <output id="out-line">0.33</output>
+  </label>
+  <label>line&nbsp;2
+    <input type="range" id="lever-line2" min="0.05" max="0.95" step="0.01" value="0.26">
+    <output id="out-line2">0.26</output>
   </label>
   <label>fold
     <input type="range" id="lever-fold" min="55" max="92" step="1" value="70">
@@ -76,6 +80,8 @@
     <input type="range" id="lever-body" min="0.7" max="1.5" step="0.05" value="1">
     <output id="out-body">1.00</output>
   </label>
+  <button type="button" id="lever-guide" class="levers__reset" aria-pressed="true">hide line</button>
+  <button type="button" id="lever-reset" class="levers__reset">reset</button>
 </aside>
 
 <script src="main.js"></script>
