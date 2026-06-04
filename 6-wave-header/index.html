@@ -178,30 +178,19 @@
   </section>
 </main>
 
-<!-- Floating wool ball that closes the experiment (shown only while open). -->
-<button type="button" id="exp-exit" class="exp-exit" aria-label="Close spin mode">
-  <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
-    <circle cx="20" cy="20" r="16"/>
-    <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(30 20 20)"/>
-    <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(90 20 20)"/>
-    <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(150 20 20)"/>
-  </svg>
-</button>
-
 <!-- Play-mode control panel: shown only while the "Spin" experiment is open. -->
 <footer class="scrub-pick" aria-label="Spin controls">
   <div class="scrub-pick__sliders">
-    <label class="slider-unit">Height<input class="exp-range" data-param="height" type="range"></label>
-    <label class="slider-unit">Jaggedness<input class="exp-range" data-param="jagged" type="range"></label>
-    <label class="slider-unit">Lines<input class="exp-range" data-param="lines" type="range"></label>
-    <label class="slider-unit">Ripple<input class="exp-range" data-param="wobble" type="range"></label>
-    <label class="slider-unit">Thickness<input class="exp-range" data-param="thickness" type="range"></label>
-    <label class="slider-unit">Speed<input class="exp-range" data-param="speed" type="range"></label>
+    <label class="slider-unit"><span>Height</span><input class="exp-range" data-param="height" type="range"></label>
+    <label class="slider-unit"><span>Jaggedness</span><input class="exp-range" data-param="jagged" type="range"></label>
+    <label class="slider-unit"><span>Lines</span><input class="exp-range" data-param="lines" type="range"></label>
+    <label class="slider-unit"><span>Ripple</span><input class="exp-range" data-param="wobble" type="range"></label>
+    <label class="slider-unit"><span>Thickness</span><input class="exp-range" data-param="thickness" type="range"></label>
+    <label class="slider-unit"><span>Speed</span><input class="exp-range" data-param="speed" type="range"></label>
   </div>
   <div class="scrub-pick__row scrub-pick__transport">
-    <button type="button" id="exp-playpause" class="scrub-pick__opt">▶ Play</button>
-    <button type="button" id="exp-dir" class="scrub-pick__opt" aria-label="Reverse direction" title="Direction">→</button>
-    <button type="button" id="exp-reset" class="scrub-pick__opt">Reset</button>
+    <button type="button" id="exp-stop" class="scrub-pick__opt">■ Stop</button>
+    <button type="button" id="exp-reset" class="scrub-pick__opt">↺ Reset</button>
     <button type="button" id="exp-done" class="scrub-pick__opt scrub-pick__done">✓ Done</button>
   </div>
 </footer>

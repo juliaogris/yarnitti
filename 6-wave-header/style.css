@@ -540,31 +540,39 @@ body.experiment .scrub-pick {
   color: var(--bg);
   border-color: var(--ink);
 }
+/* Transport buttons share one width so the row reads as a set. */
 .scrub-pick__transport { gap: 0.6rem 0.8rem; }
-/* One labelled slider per parameter. */
+.scrub-pick__transport .scrub-pick__opt {
+  min-width: 7rem;
+  text-align: center;
+}
+/* One labelled slider per parameter, in two rows of three on desktop, with
+   the labels all the same width so the sliders line up. */
 .scrub-pick__sliders {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem 1.1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem 1.6rem;
+  width: 100%;
+  max-width: 760px;
 }
 .slider-unit {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
   color: var(--muted);
 }
+.slider-unit span {
+  flex: none;
+  width: 5.5rem;
+}
 .exp-range {
   accent-color: var(--ink);
-  width: clamp(6rem, 14vw, 9rem);
+  flex: 1;
+  min-width: 0;
 }
-/* The direction toggle is a single glyph, so keep it square-ish. */
-#exp-dir { min-width: 2.4rem; text-align: center; }
 
-/* On narrow screens, lay the sliders out in two clean columns, each with its
-   label stacked above the slider so the columns can never overflow. */
+/* On narrow screens, drop to two columns. */
 @media (max-width: 640px) {
   .scrub-pick {
     padding-left: 0.8rem;
@@ -573,18 +581,10 @@ body.experiment .scrub-pick {
     max-width: 100vw;
   }
   .scrub-pick__sliders {
-    display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 0.6rem 1rem;
-    width: 100%;
   }
-  .slider-unit {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.25rem;
-    min-width: 0;
-  }
-  .exp-range { width: 100%; flex: none; min-width: 0; }
+  .slider-unit span { width: 4.5rem; }
 }
 
 /* While the experiment is open: lock the page to the mountains, fade the
@@ -593,12 +593,8 @@ body.experiment .scrub-pick {
   transition: opacity 0.4s ease;
 }
 body.experiment { overflow: hidden; }
-/* Slide the whole arch down to clear room for the controls while playing;
-   the landing page keeps its original higher position. The transition is only
-   enabled after first paint (body.anim), so a direct load of /spin shows the
-   mountains already down with no slide; navigating into spin animates it. */
-body.anim .hero { transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.3, 1); }
-body.experiment .hero { transform: translateY(22vh); }
+/* The arch's downward slide in spin mode is done in JS (lowering the feet
+   within the canvas) so a tall peak is never clipped at the canvas top. */
 body.experiment .hero__mark,
 body.experiment .lead,
 body.experiment .shot,
@@ -609,25 +605,6 @@ body.experiment .yarn-divider {
   pointer-events: none;
 }
 body.experiment .hero canvas { touch-action: none; }
-
-/* A dedicated floating wool ball, top-right, that closes the experiment. It
-   sits above the canvas so it takes native clicks (the in-page ball can't,
-   being hidden behind the canvas). Shown only while the experiment is open. */
-.exp-exit {
-  position: fixed;
-  top: 0.9rem;
-  right: 1rem;
-  z-index: 34;
-  display: none;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: var(--yarn);
-  cursor: pointer;
-  filter: url(#wonky);
-}
-.exp-exit svg { display: block; width: 2.3rem; height: auto; }
-body.experiment .exp-exit { display: block; }
 
 @media (prefers-reduced-motion: reduce) {
   /* No motion anywhere: the mountain intro is already skipped in JS; here the

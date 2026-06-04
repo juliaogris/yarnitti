@@ -109,6 +109,7 @@ let archScale = 1;        // flattens the arch on narrow screens (set in resize)
 let wobScale = 1;         // more ridge ripples on narrow screens (set in resize)
 let strandScale = 1;      // shortens the dangling foot strands in spin mode
 let lineWidthMul = 1;     // scales every ridge stroke (the Thickness slider)
+let slideFrac = 0;        // how far the whole arch is dropped within the canvas
 let fbmOctaves = CFG.octaves; // more jagged detail on narrow screens
 
 // Live, scrub-adjustable copies of the ridge parameters. Vertical drags over
@@ -139,7 +140,7 @@ function render() {
   ctx.lineCap = "round";
   ctx.globalAlpha = 1;
 
-  const footY = H * footYfrac;
+  const footY = H * (footYfrac + slideFrac); // dropped within the canvas in spin
   const xL = W * footLfrac;
   const xR = W * footRfrac;
   const cx = (xL + xR) / 2;
@@ -162,8 +163,11 @@ function render() {
   // it rises above every nearer ridge, so front hills occlude the ones behind.
   for (let i = 0; i < strands; i++) {
     const q = strands > 1 ? i / (strands - 1) : 1;
-    const archH = H * liveArch * archScale;
-    const bow = lerp(archH * CFG.bowRatio, archH, Math.pow(q, CFG.bowEase));
+    // Height raises the back (top) arc while the front (bottom) arc stays put,
+    // so growing height mostly lifts the peak rather than the whole shape.
+    const frontBow = H * CFG.arch * CFG.bowRatio * archScale;
+    const backBow = H * liveArch * archScale;
+    const bow = lerp(frontBow, backBow, Math.pow(q, CFG.bowEase));
     // Front ridges (low q) drawn thicker; back ridges thinner.
     ctx.lineWidth = lerp(CFG.lineWidth, CFG.lineWidthBack, q) * lineScale * lineWidthMul;
     // Front ridges roll in few long swells; back ridges break into more
@@ -474,8 +478,6 @@ let dragVel = 0;
 let dragPrevVel = 0; // spin at the moment a drag takes over (for additive flicks)
 let pressOnBall = false; // the press started on the wool ball, so it toggles spin
 
-let spinDir = 1; // which way the ridges drift; the Direction button flips it
-
 // Every adjustable parameter behind one model: a range, a getter and a setter.
 // Each gets its own labelled slider; a vertical line-drag also nudges height.
 // "speed" drives the steady spin rather than the static shape.
@@ -489,8 +491,8 @@ function maxArch() {
   return clamp(ARC_Y + SPIN_SLIDE - liveWobAmp - 0.05, 0.2, 0.7);
 }
 const PARAMS = {
-  height: { min: 0.08, max: () => maxArch(), step: 0.005,
-    get: () => liveArch, set: (v) => { liveArch = Math.min(v, maxArch()); } },
+  height: { min: 0.18, max: () => maxArch(), step: 0.005,
+    get: () => liveArch, set: (v) => { liveArch = clamp(v, 0.18, maxArch()); } },
   jagged: { min: 3, max: 26, step: 0.1,
     get: () => liveWobFreqBack,
     set: (v) => { liveWobFreqBack = v; fbmOctaves = Math.round(clamp(2 + (v - 3) / 23 * 4, 1, 6)); } },
@@ -501,9 +503,10 @@ const PARAMS = {
     set: (v) => { liveWobAmp = v; liveArch = Math.min(liveArch, maxArch()); } },
   thickness: { min: 0.3, max: 2.6, step: 0.05,
     get: () => lineWidthMul, set: (v) => { lineWidthMul = v; } },
-  speed: { min: 0, max: 6, step: 0.1,
-    get: () => Math.abs(steadyVel),
-    set: (v) => { steadyVel = spinDir * v; steady = v > 0.02; if (steady) braking = false; } },
+  // Centre is stopped; left drifts left, right drifts right.
+  speed: { min: -6, max: 6, step: 0.1,
+    get: () => steadyVel,
+    set: (v) => { steadyVel = v; steady = Math.abs(v) > 0.02; if (steady) braking = false; } },
 };
 const paramMax = (p) => (typeof p.max === "function" ? p.max() : p.max);
 
@@ -561,7 +564,7 @@ document.addEventListener("pointerdown", (e) => {
   didDrag = false;
   pressOnBall = isOnBall(e);
   if (pressOnBall) nudgeBall(); // immediate feedback, even on a touch that scrolls
-  pressOnUI = !!e.target.closest(".menu, .menu-backdrop, .hamburger, .levers, .scrub-pick, .exp-exit");
+  pressOnUI = !!e.target.closest(".menu, .menu-backdrop, .hamburger, .levers, .scrub-pick");
   // A scrub may begin anywhere inside the experiment, or on a line otherwise.
   canScrub = !pressOnBall && !pressOnUI && (experiment || isOnLine(e));
   dragLastX = e.clientX;
@@ -607,7 +610,13 @@ function endPress(deliberate) {
     return;
   }
   if (experiment) return;           // bare taps inside the experiment do nothing
-  if (deliberate) stopMotion();     // a tap elsewhere brakes the spin to a stop
+  // On the normal site a tap on the mountains toggles the drift: start it from
+  // a near standstill, stop it when it is already moving.
+  if (deliberate) {
+    const speed = Math.max(Math.abs(vel), Math.abs(targetVel));
+    if (speed > 0.3) stopMotion();
+    else startAnim(LOAD_BOOST);
+  }
 }
 document.addEventListener("pointerup", () => endPress(true));
 document.addEventListener("pointercancel", () => endPress(false));
@@ -621,6 +630,7 @@ function setExperiment(on) {
   experiment = on;
   document.body.classList.toggle("experiment", on);
   strandScale = on ? 0.45 : 1; // shorter dangling strands while playing
+  setSlide(on ? SPIN_SLIDE : 0); // drop the arch down within the canvas
   if (on) {
     nudgeBall();
   } else {
@@ -629,20 +639,31 @@ function setExperiment(on) {
   }
   if (animRAF === null) render(); // reflect the strand change if not animating
 }
-const isSpinning = () => steady && Math.abs(steadyVel) > 0.02;
-function expPlay() {
-  steady = true;
-  if (Math.abs(steadyVel) < 0.05) steadyVel = spinDir * 2; // default speed at rest
-  else steadyVel = spinDir * Math.abs(steadyVel);
-  braking = false;
-  if (animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
-  syncSliders();
-  updatePlayBtn();
+// Ease the arch's drop in and out. Done in JS (re-rendering) rather than a CSS
+// transform so the peak is drawn within the canvas and never clipped at the
+// top. On the very first paint it snaps, so a direct load of /spin shows the
+// arch already dropped without sliding.
+let slideTarget = 0;
+let slideRAF = null;
+let firstPaint = true;
+function tweenSlide() {
+  slideFrac += (slideTarget - slideFrac) * 0.06; // ~1s ease at 60fps
+  const done = Math.abs(slideTarget - slideFrac) < 0.001;
+  if (done) { slideFrac = slideTarget; slideRAF = null; }
+  else slideRAF = requestAnimationFrame(tweenSlide);
+  if (animRAF === null) render(); // the spin loop already repaints when running
 }
-function expPause() {
+function setSlide(target) {
+  slideTarget = target;
+  if (firstPaint) { slideFrac = target; return; } // no slide on initial load
+  if (slideRAF === null) slideRAF = requestAnimationFrame(tweenSlide);
+}
+// Stop drifting and return the speed slider to its centre.
+function stopSpin() {
+  steadyVel = 0;
   steady = false;
-  stopMotion();
-  updatePlayBtn();
+  stopMotion(); // coast gently to a halt
+  syncSliders();
 }
 function resetShape() {
   liveArch = CFG.arch;
@@ -652,11 +673,7 @@ function resetShape() {
   strandsF = CFG.strands;
   strands = CFG.strands;
   lineWidthMul = 1;
-  steadyVel = 0; steady = false; spinDir = 1;
-  stopMotion();
-  syncSliders();
-  updatePlayBtn();
-  updateDirBtn();
+  stopSpin();
   if (animRAF === null) render();
 }
 
@@ -707,8 +724,6 @@ if (yarnBall && "IntersectionObserver" in window) {
 
 // Control panel: one labelled slider per parameter, plus the transport.
 const rangeEls = document.querySelectorAll(".exp-range");
-const playBtn = document.getElementById("exp-playpause");
-const dirBtn = document.getElementById("exp-dir");
 // Push the model values out to every slider (ranges and current positions).
 function syncSliders() {
   rangeEls.forEach((el) => {
@@ -719,12 +734,6 @@ function syncSliders() {
     el.value = p.get();
   });
 }
-function updatePlayBtn() {
-  if (playBtn) playBtn.textContent = isSpinning() ? "⏸ Pause" : "▶ Play";
-}
-function updateDirBtn() {
-  if (dirBtn) dirBtn.textContent = spinDir === 1 ? "→" : "←";
-}
 rangeEls.forEach((el) => {
   const key = el.dataset.param;
   el.addEventListener("input", () => {
@@ -732,27 +741,16 @@ rangeEls.forEach((el) => {
     el.value = PARAMS[key].get(); // snap back if the value was capped
     if (key === "wobble") syncSliders(); // ripple height changes the height cap
     if (key === "speed") {
-      updatePlayBtn();
       if (steady && animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
     } else if (animRAF === null) {
       render();
     }
   });
 });
-playBtn?.addEventListener("click", () => (isSpinning() ? expPause() : expPlay()));
-dirBtn?.addEventListener("click", () => {
-  spinDir = -spinDir;
-  updateDirBtn();
-  if (isSpinning()) steadyVel = spinDir * Math.abs(steadyVel); // reverse live
-});
+document.getElementById("exp-stop")?.addEventListener("click", stopSpin);
 document.getElementById("exp-reset")?.addEventListener("click", resetShape);
 document.getElementById("exp-done")?.addEventListener("click", exitSpin);
 syncSliders();
-updatePlayBtn();
-updateDirBtn();
-
-// The floating exit ball closes play mode (returns to the previous route).
-document.getElementById("exp-exit")?.addEventListener("click", exitSpin);
 
 // ---- single-page-app router ------------------------------------------------
 // Path-based routes, all served by this one page (the deploy copies index.html
@@ -806,4 +804,4 @@ startAnim(LOAD_BOOST);
 showRoute(routeFromPath()); // render the subpage for the URL we loaded on
 // Enable the arch slide transition only after the first paint, so loading
 // straight into /spin shows it already settled rather than sliding on load.
-requestAnimationFrame(() => document.body.classList.add("anim"));
+requestAnimationFrame(() => { firstPaint = false; });
