@@ -448,28 +448,40 @@ body::before {
 .levers__step { padding: 0.2rem 0.5rem; }
 #out-tagfont, #out-bodyfont { min-width: 9rem; text-transform: none; letter-spacing: 0; }
 
-/* Prototyping picker pinned to the bottom: choose what a vertical scrub over
-   the lines reshapes. Remove before launch. */
+/* Play-mode ("Spin") control panel, pinned to the bottom. Hidden until the
+   experiment is open, then shown prominently. */
 .scrub-pick {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 28;
+  z-index: 32;
+  display: none; /* shown only inside the experiment */
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 1rem 1.2rem calc(1rem + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter: blur(6px);
+  border-top: 1px solid var(--hair);
+  font-family: "Coming Soon", cursive;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+body.experiment .scrub-pick {
+  display: flex;
+  transform: translateY(0);
+}
+.scrub-pick__row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 0.5rem 0.8rem;
-  padding: 0.6rem 1rem;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: blur(4px);
-  border-top: 1px solid var(--hair);
-  font-family: "Coming Soon", cursive;
 }
 .scrub-pick__label {
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
 }
 .scrub-pick__opts {
   display: flex;
@@ -478,14 +490,14 @@ body::before {
 }
 .scrub-pick__opt {
   font-family: inherit;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: var(--ink);
   background: transparent;
   border: 1px solid var(--hair);
   border-radius: 999px;
-  padding: 0.25rem 0.8rem;
+  padding: 0.3rem 0.95rem;
   cursor: pointer;
-  opacity: 0.7;
+  opacity: 0.75;
   transition: opacity 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }
 .scrub-pick__opt:hover { opacity: 1; border-color: var(--muted); }
@@ -495,6 +507,54 @@ body::before {
   color: var(--bg);
   border-color: var(--ink);
 }
+.scrub-pick__transport { gap: 0.6rem 1rem; }
+.scrub-pick__speed {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.scrub-pick__speed input[type="range"] {
+  accent-color: var(--ink);
+  width: 8rem;
+}
+
+/* While the experiment is open: lock the page to the mountains, fade the
+   prose and wordmark out, and float the wool ball top-right as the way out. */
+.hero__mark, .lead, .shot, .prose, .hero__chev, .yarn-divider {
+  transition: opacity 0.4s ease;
+}
+body.experiment { overflow: hidden; }
+body.experiment .hero__mark,
+body.experiment .lead,
+body.experiment .shot,
+body.experiment .prose,
+body.experiment .hero__chev,
+body.experiment .yarn-divider {
+  opacity: 0;
+  pointer-events: none;
+}
+body.experiment .hero canvas { touch-action: none; }
+
+/* A dedicated floating wool ball, top-right, that closes the experiment. It
+   sits above the canvas so it takes native clicks (the in-page ball can't,
+   being hidden behind the canvas). Shown only while the experiment is open. */
+.exp-exit {
+  position: fixed;
+  top: 0.9rem;
+  right: 1rem;
+  z-index: 34;
+  display: none;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--yarn);
+  cursor: pointer;
+  filter: url(#wonky);
+}
+.exp-exit svg { display: block; width: 2.3rem; height: auto; }
+body.experiment .exp-exit { display: block; }
 
 @media (prefers-reduced-motion: reduce) {
   /* No motion anywhere: the mountain intro is already skipped in JS; here the

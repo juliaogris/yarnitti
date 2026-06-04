@@ -367,6 +367,9 @@ let peakedVel = false;    // the load spin has reached speed, so a later slowdow
 let vel = 0;              // current ridge-pattern speed
 let targetVel = 0;        // speed it is easing toward (clicks raise it, friction lowers it)
 let braking = false;      // a stop request: decelerate quickly to a halt
+let steady = false;       // hold a constant spin speed (the experiment Play control)
+let steadyVel = 0;        // the speed to hold while steady
+let experiment = false;   // the "Spin" play mode is open
 let lastFrame = null;
 let animRAF = null;
 
@@ -409,6 +412,9 @@ function animate(now) {
   if (braking) {
     targetVel = 0;
     vel *= Math.exp(-dt / BRAKE_TAU);                  // quick, smooth stop
+  } else if (steady) {
+    targetVel = steadyVel;                             // hold a set speed, no friction
+    vel += (targetVel - vel) * Math.min(1, ACCEL * dt);
   } else {
     targetVel *= Math.exp(-dt / TAU);                  // friction on the target
     vel += (targetVel - vel) * Math.min(1, ACCEL * dt); // ease the real speed toward it
@@ -423,7 +429,9 @@ function animate(now) {
     maybeIntroNudge();
   }
   render();
-  if (Math.abs(vel) > 0.02 || Math.abs(targetVel) > 0.02) {
+  const keepGoing = (steady && Math.abs(steadyVel) > 0.02) ||
+    Math.abs(vel) > 0.02 || Math.abs(targetVel) > 0.02;
+  if (keepGoing) {
     animRAF = requestAnimationFrame(animate);
   } else {
     vel = 0;
@@ -542,8 +550,9 @@ document.addEventListener("pointerdown", (e) => {
   didDrag = false;
   pressOnBall = isOnBall(e);
   if (pressOnBall) nudgeBall(); // immediate feedback, even on a touch that scrolls
-  canScrub = !pressOnBall && isOnLine(e); // a scrub may only begin on a line
-  pressOnUI = !!e.target.closest(".menu, .menu-backdrop, .hamburger, .levers, .scrub-pick");
+  pressOnUI = !!e.target.closest(".menu, .menu-backdrop, .hamburger, .levers, .scrub-pick, .exp-exit");
+  // A scrub may begin anywhere inside the experiment, or on a line otherwise.
+  canScrub = !pressOnBall && !pressOnUI && (experiment || isOnLine(e));
   dragLastX = e.clientX;
   dragLastY = e.clientY;
   dragLastT = e.timeStamp;
@@ -564,11 +573,12 @@ document.addEventListener("pointermove", (e) => {
   // loop moves the pattern at this speed, so we don't shift it directly here.
   const fv = Math.max(-VEL_MAX, Math.min(VEL_MAX, (-dx / dt) * SCRUB));
   if (Math.sign(fv) !== Math.sign(vel) || Math.abs(fv) > Math.abs(vel)) {
+    if (experiment && Math.abs(dx) > 2) steady = false; // a manual grab takes over Play
     vel = fv;
   }
   targetVel = vel;
-  // Vertical drag reshapes the mountains via the selected scrub mode.
-  applyScrub(dy);
+  // Vertical drag reshapes the mountains, but only inside the experiment.
+  if (experiment) applyScrub(dy);
   dragLastX = e.clientX;
   dragLastY = e.clientY;
   dragLastT = e.timeStamp;
@@ -581,22 +591,53 @@ function endPress(deliberate) {
   if (!pressing) return;
   pressing = false;
   if (pressOnUI || didDrag) return; // scrub keeps coasting; UI is not ours
-  if (pressOnBall) {                // a full tap on the ball toggles the spin
-    if (deliberate) toggleSpin();   // (a cancelled press, e.g. a scroll, does not)
+  if (pressOnBall) {                // a full tap on the ball opens or closes the play mode
+    if (deliberate) toggleExperiment(); // (a cancelled press, e.g. a scroll, does not)
     return;
   }
-  if (deliberate) stopMotion();     // a tap elsewhere brakes to a stop
-}
-// Start the ridges from a near standstill, or stop them if already moving.
-function toggleSpin() {
-  if (reduceMotion) return;
-  nudgeBall(); // a little visual acknowledgement of the tap
-  const speed = Math.max(Math.abs(vel), Math.abs(targetVel));
-  if (speed > 0.3) stopMotion();
-  else startAnim(LOAD_BOOST);
+  if (experiment) return;           // bare taps inside the experiment do nothing
+  if (deliberate) stopMotion();     // a tap elsewhere brakes the spin to a stop
 }
 document.addEventListener("pointerup", () => endPress(true));
 document.addEventListener("pointercancel", () => endPress(false));
+
+// ---- experiment ("Spin") play mode -----------------------------------------
+// Opening it locks the page to the mountains and reveals the control panel.
+// Closing it keeps whatever shape was made and lets the spin coast to a halt.
+function toggleExperiment() { setExperiment(!experiment); }
+function setExperiment(on) {
+  if (reduceMotion) return;
+  experiment = on;
+  document.body.classList.toggle("experiment", on);
+  setMenu(false);
+  if (on) {
+    nudgeBall();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } else {
+    steady = false;     // drop the held speed
+    stopMotion();       // coast gently to a stop, keeping the new shape
+  }
+}
+function expPlay() {
+  steady = true;
+  if (Math.abs(steadyVel) < 0.05) steadyVel = 2; // a sensible default if the slider is at rest
+  braking = false;
+  if (animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
+}
+function expPause() {
+  steady = false;
+  stopMotion();
+}
+function resetShape() {
+  liveArch = CFG.arch;
+  liveWobAmp = CFG.wobAmp;
+  liveWobFreqBack = CFG.wobFreqBack;
+  fbmOctaves = CFG.octaves;
+  strandsF = CFG.strands;
+  strands = CFG.strands;
+  morph = 0.4;
+  if (animRAF === null) render();
+}
 
 // Desktop hover, hit-tested by hand because the canvas sits over everything:
 // over the ball, nudge it once on entry and show a pointer cursor; over a
@@ -643,7 +684,7 @@ if (yarnBall && "IntersectionObserver" in window) {
   ballVisible = true;
 }
 
-// Footer picker (prototyping): choose which parameter a vertical scrub drives.
+// Control panel: choose which parameter a vertical scrub drives.
 document.querySelectorAll(".scrub-pick__opt").forEach((btn) => {
   btn.addEventListener("click", () => {
     scrubMode = btn.dataset.mode;
@@ -655,6 +696,26 @@ document.querySelectorAll(".scrub-pick__opt").forEach((btn) => {
   });
 });
 
+// Transport: Play, Pause, speed slider and Reset.
+const speedEl = document.getElementById("exp-speed");
+document.getElementById("exp-play")?.addEventListener("click", expPlay);
+document.getElementById("exp-pause")?.addEventListener("click", expPause);
+document.getElementById("exp-reset")?.addEventListener("click", resetShape);
+speedEl?.addEventListener("input", () => {
+  steadyVel = parseFloat(speedEl.value);
+  steady = true; // dragging the slider spins live
+  braking = false;
+  if (animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
+});
+
+// The "Spin" menu item and the floating exit ball both toggle play mode.
+document.getElementById("menu-spin")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  toggleExperiment();
+});
+document.getElementById("exp-exit")?.addEventListener("click", toggleExperiment);
+
 window.addEventListener("resize", resize);
 resize();
 startAnim(LOAD_BOOST);
+if (params.get("spin") === "1") setExperiment(true); // prototyping: open play mode
