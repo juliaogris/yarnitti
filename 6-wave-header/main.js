@@ -111,6 +111,9 @@ let strandScale = 1;      // shortens the dangling foot strands in spin mode
 let lineWidthMul = 1;     // scales every ridge stroke (the Thickness slider)
 let slideFrac = 0;        // how far the whole arch is dropped within the canvas
 let fbmOctaves = CFG.octaves; // more jagged detail on narrow screens
+// The arch band (top silhouette to the feet), set each render so a drag can
+// grab the mountains anywhere within it.
+let bandTop = null, bandCx = 0, bandA = 0, bandSteps = 0, bandFootY = 0;
 
 // Live, scrub-adjustable copies of the ridge parameters. Vertical drags over
 // the lines change whichever one the footer picker has selected, so the
@@ -140,7 +143,12 @@ function render() {
   ctx.lineCap = "round";
   ctx.globalAlpha = 1;
 
-  const footY = H * (footYfrac + slideFrac); // dropped within the canvas in spin
+  // The feet sit at their base height plus the spin-mode drop, but never so
+  // high that the peak (bow + ripples) would clip at the canvas top: a tall
+  // arch pushes the whole thing down just enough to stay on screen.
+  const baseFoot = footYfrac + slideFrac;
+  const fitFoot = liveArch + liveWobAmp + 0.04;
+  const footY = H * Math.max(baseFoot, fitFoot);
   const xL = W * footLfrac;
   const xR = W * footRfrac;
   const cx = (xL + xR) / 2;
@@ -211,6 +219,14 @@ function render() {
       if (ys[s] < horizon[s]) horizon[s] = ys[s];
     }
   }
+
+  // Remember the arch band (top silhouette down to the feet) so a drag can grab
+  // the mountains anywhere between the top and bottom lines, not only on a line.
+  bandTop = horizon;
+  bandCx = cx;
+  bandA = a;
+  bandSteps = steps;
+  bandFootY = footY;
 
   // Loose strands thinning out and fading from each foot: long on the left,
   // short on the right.
@@ -481,32 +497,23 @@ let pressOnBall = false; // the press started on the wool ball, so it toggles sp
 // Every adjustable parameter behind one model: a range, a getter and a setter.
 // Each gets its own labelled slider; a vertical line-drag also nudges height.
 // "speed" drives the steady spin rather than the static shape.
-const SPIN_SLIDE = 0.22; // must match body.experiment .hero translateY (vh/100)
-// Tallest arch that keeps its peak on screen: the bow rises from the feet, the
-// ripples ride on top of it, and the whole thing is slid down in spin mode.
-// Past this the height simply stops rather than clipping at the top.
-function maxArch() {
-  // The bow rises by liveArch and the ripples add up to ~liveWobAmp on top of
-  // it, all slid down by SPIN_SLIDE. Leave a 0.05 margin below the top edge.
-  return clamp(ARC_Y + SPIN_SLIDE - liveWobAmp - 0.05, 0.2, 0.7);
-}
+const SPIN_SLIDE = 0.22; // how far the arch drops within the canvas in spin mode
 const PARAMS = {
-  height: { min: 0.18, max: () => maxArch(), step: 0.005,
-    get: () => liveArch, set: (v) => { liveArch = clamp(v, 0.18, maxArch()); } },
+  height: { min: 0.18, max: 0.42, step: 0.005,
+    get: () => liveArch, set: (v) => { liveArch = v; } },
   jagged: { min: 3, max: 26, step: 0.1,
     get: () => liveWobFreqBack,
     set: (v) => { liveWobFreqBack = v; fbmOctaves = Math.round(clamp(2 + (v - 3) / 23 * 4, 1, 6)); } },
   lines: { min: 8, max: 74, step: 1,
     get: () => strandsF, set: (v) => { strandsF = v; strands = Math.round(v); } },
   wobble: { min: 0.02, max: 0.24, step: 0.005,
-    get: () => liveWobAmp,
-    set: (v) => { liveWobAmp = v; liveArch = Math.min(liveArch, maxArch()); } },
+    get: () => liveWobAmp, set: (v) => { liveWobAmp = v; } },
   thickness: { min: 0.3, max: 2.6, step: 0.05,
     get: () => lineWidthMul, set: (v) => { lineWidthMul = v; } },
-  // Centre is stopped; left drifts left, right drifts right.
+  // Centre is stopped; the knob left drifts left, right drifts right.
   speed: { min: -6, max: 6, step: 0.1,
-    get: () => steadyVel,
-    set: (v) => { steadyVel = v; steady = Math.abs(v) > 0.02; if (steady) braking = false; } },
+    get: () => -steadyVel,
+    set: (v) => { steadyVel = -v; steady = Math.abs(v) > 0.02; if (steady) braking = false; } },
 };
 const paramMax = (p) => (typeof p.max === "function" ? p.max() : p.max);
 
@@ -530,21 +537,19 @@ function isOnBall(e) {
          e.clientY >= r.top && e.clientY <= r.bottom;
 }
 
-// Is a click roughly on a drawn line? Sample the canvas alpha in a small box
-// around the point. (The wordmark and tagline are HTML, not on the canvas.)
-function isOnLine(e) {
+// Is the pointer within the arch band, anywhere between the top silhouette and
+// the feet (not just on a drawn line)? Maps the x to its arch column and checks
+// the y against that column's top and the foot line.
+function isInBand(e) {
+  if (!bandTop) return false;
   const rect = canvas.getBoundingClientRect();
-  if (e.clientX < rect.left || e.clientX > rect.right ||
-      e.clientY < rect.top || e.clientY > rect.bottom) return false;
-  const r = 9; // CSS-px tolerance
-  const x = Math.max(0, Math.round((e.clientX - rect.left - r) * dpr));
-  const y = Math.max(0, Math.round((e.clientY - rect.top - r) * dpr));
-  const w = Math.min(canvas.width - x, Math.round(2 * r * dpr));
-  const h = Math.min(canvas.height - y, Math.round(2 * r * dpr));
-  if (w <= 0 || h <= 0) return false;
-  const data = ctx.getImageData(x, y, w, h).data;
-  for (let i = 3; i < data.length; i += 4) if (data[i] > 10) return true;
-  return false;
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  if (x < 0 || x > rect.width || y < 0 || y > rect.height) return false;
+  const cosv = clamp((bandCx - x) / bandA, -1, 1);
+  const s = Math.round((bandSteps * Math.acos(cosv)) / Math.PI);
+  const pad = 16; // a little tolerance above the ridge and below the feet
+  return y >= bandTop[s] - pad && y <= bandFootY + pad;
 }
 function stopMotion() {
   if (animRAF === null && vel === 0 && targetVel === 0) return;
@@ -566,7 +571,7 @@ document.addEventListener("pointerdown", (e) => {
   if (pressOnBall) nudgeBall(); // immediate feedback, even on a touch that scrolls
   pressOnUI = !!e.target.closest(".menu, .menu-backdrop, .hamburger, .levers, .scrub-pick");
   // A scrub may begin anywhere inside the experiment, or on a line otherwise.
-  canScrub = !pressOnBall && !pressOnUI && (experiment || isOnLine(e));
+  canScrub = !pressOnBall && !pressOnUI && (experiment || isInBand(e));
   dragLastX = e.clientX;
   dragLastY = e.clientY;
   dragLastT = e.timeStamp;
@@ -633,10 +638,9 @@ function setExperiment(on) {
   setSlide(on ? SPIN_SLIDE : 0); // drop the arch down within the canvas
   if (on) {
     nudgeBall();
-    steadyVel = -1.2;   // start with a slow drift to the left
-    steady = true;
+    PARAMS.speed.set(-1.2); // start with a slow drift to the left
     braking = false;
-    syncSliders();      // reflect the speed (and shape) on the panel
+    syncSliders();          // reflect the speed (and shape) on the panel
     if (animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
   } else {
     steady = false;     // drop the held speed
@@ -689,8 +693,6 @@ function resetShape() {
 // never triggers it.
 const canHover = window.matchMedia("(hover: hover)").matches;
 let ballHovering = false;
-let lastMove = null;
-let cursorRAF = null;
 if (canHover) {
   document.addEventListener("mousemove", (e) => {
     const overBall = isOnBall(e); // cheap rect test, run every move for snappy hover
@@ -698,16 +700,7 @@ if (canHover) {
       ballHovering = overBall;
       if (overBall) nudgeBall();
     }
-    // isOnLine reads pixels back from the GPU, so coalesce it to one test per
-    // frame to keep the spin smooth.
-    lastMove = e;
-    if (cursorRAF === null) {
-      cursorRAF = requestAnimationFrame(() => {
-        cursorRAF = null;
-        canvas.style.cursor = isOnBall(lastMove) ? "pointer"
-          : isOnLine(lastMove) ? "grab" : "default";
-      });
-    }
+    canvas.style.cursor = overBall ? "pointer" : isInBand(e) ? "grab" : "default";
   });
 }
 

@@ -572,6 +572,31 @@ body.experiment .scrub-pick {
   flex: 1;
   min-width: 0;
 }
+/* Speed is a centre-zero control, so show just a knob on a thin track with no
+   left-fill (a filled bar would read as a level rather than a direction). */
+.exp-range--speed {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 1rem;
+}
+.exp-range--speed::-webkit-slider-runnable-track {
+  height: 2px;
+  border-radius: 2px;
+  background: var(--hair);
+}
+.exp-range--speed::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+.exp-range--speed::-moz-range-track { height: 2px; border-radius: 2px; background: var(--hair); }
+.exp-range--speed::-moz-range-progress { background: transparent; }
+.exp-range--speed::-moz-range-thumb { width: 14px; height: 14px; border: none; border-radius: 50%; background: var(--ink); }
 
 /* On narrow screens, drop to two columns. */
 @media (max-width: 640px) {
