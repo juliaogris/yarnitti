@@ -754,7 +754,12 @@ body.experiment .scrub-pick {
 .hero__mark, .lead, .shot, .prose, .hero__chev, .yarn-divider {
   transition: opacity 0.4s ease;
 }
-body.experiment { overflow: hidden; }
+/* In spin mode the page does not scroll, so hand every touch gesture to the
+   scrub logic. Without this the browser claims a horizontal swipe as a pan and
+   cancels the pointer stream, and the spin never picks up speed. The canvas is
+   pointer-events: none, so the gesture lands on the body; setting touch-action
+   here is what reaches it. */
+body.experiment { overflow: hidden; touch-action: none; }
 /* The arch's downward slide in spin mode is done in JS (lowering the feet
    within the canvas) so a tall peak is never clipped at the canvas top. */
 body.experiment .hero__mark,
