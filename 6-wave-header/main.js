@@ -44,14 +44,14 @@ const hero = document.getElementById("hero");
 
 // Foot line of the arc, as a fraction of hero height. Drives where the
 // mountains sit and where the content fade lands. The arc-y lever moves it.
-let ARC_Y = 0.38; // around the bottom of the top third
+let ARC_Y = 0.5; // feet sit around the vertical middle, arch bowing up above
 
 // Two debug guides framing the content fade (remove before launch). The lower
 // guide is where body content starts fading; the upper guide is where it is
 // completely gone. Each has its own lever; both hide with one toggle (or
 // ?guide=0). Pink so they read as scaffolding.
-let GUIDE_Y = 0.37;  // lower line: fade starts here
-let GUIDE2_Y = 0.29; // upper line: content fully gone above here
+let GUIDE_Y = 0.49;  // lower line: fade starts here
+let GUIDE2_Y = 0.41; // upper line: content fully gone above here
 let SHOW_GUIDE = new URLSearchParams(location.search).get("guide") === "1";
 const GUIDE_COLOR = "#ff2d8e";
 
@@ -208,8 +208,8 @@ function render() {
 
   // Loose strands thinning out and fading from each foot: long on the left,
   // short on the right.
-  drawStrand(xL, footY, 0.4, ink, 0.46, 0.024);
-  drawStrand(xR, footY, 2.1, ink, 0.13, 0.008);
+  drawStrand(xL, footY, 0.4, ink, 0.28, 0.024);
+  drawStrand(xR, footY, 2.1, ink, 0.08, 0.008);
 
   // Debug-only guides (remove before launch). Draw on top so they are always
   // visible; each sits at its own height, independent of the arc.
@@ -475,7 +475,6 @@ let pressOnBall = false; // the press started on the wool ball, so it toggles sp
 // Which mountain parameter a vertical scrub reshapes. Set by the footer picker
 // while prototyping; dragging up grows the value, dragging down shrinks it.
 let scrubMode = "height";
-let morph = 0.4; // position along the "everything" blend, 0..1
 function applyScrub(dy) {
   const up = -dy; // up the screen grows the value
   switch (scrubMode) {
@@ -493,16 +492,6 @@ function applyScrub(dy) {
     case "wobble": // height of the ripples without changing their count
       liveWobAmp = clamp(liveWobAmp + up * 0.0007, 0.02, 0.24);
       break;
-    case "all": { // blend height, ripple size, ripple count, octaves and lines
-      morph = clamp(morph + up * 0.0045, 0, 1);
-      liveArch = lerp(0.12, 0.44, morph);
-      liveWobAmp = lerp(0.04, 0.18, morph);
-      liveWobFreqBack = lerp(4, 20, morph);
-      fbmOctaves = Math.round(lerp(2, 5, morph));
-      strandsF = lerp(14, 60, morph);
-      strands = Math.round(strandsF);
-      break;
-    }
   }
   if (animRAF === null) render(); // not spinning, so repaint now
 }
@@ -618,9 +607,11 @@ function setExperiment(on) {
     stopMotion();       // coast gently to a stop, keeping the new shape
   }
 }
+let spinDir = 1; // which way the ridges drift; the Direction button flips it
 function expPlay() {
   steady = true;
-  if (Math.abs(steadyVel) < 0.05) steadyVel = 2; // a sensible default if the slider is at rest
+  const speed = speedEl ? parseFloat(speedEl.value) : 2;
+  steadyVel = spinDir * (speed < 0.05 ? 2 : speed); // a sensible default if the slider is at rest
   braking = false;
   if (animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
 }
@@ -635,7 +626,6 @@ function resetShape() {
   fbmOctaves = CFG.octaves;
   strandsF = CFG.strands;
   strands = CFG.strands;
-  morph = 0.4;
   if (animRAF === null) render();
 }
 
@@ -696,14 +686,24 @@ document.querySelectorAll(".scrub-pick__opt").forEach((btn) => {
   });
 });
 
-// Transport: Play, Pause, speed slider and Reset.
+// Transport: Play, Pause, Direction, speed slider, Reset, Done.
 const speedEl = document.getElementById("exp-speed");
+const dirBtn = document.getElementById("exp-dir");
 document.getElementById("exp-play")?.addEventListener("click", expPlay);
 document.getElementById("exp-pause")?.addEventListener("click", expPause);
 document.getElementById("exp-reset")?.addEventListener("click", resetShape);
+document.getElementById("exp-done")?.addEventListener("click", () => setExperiment(false));
 speedEl?.addEventListener("input", () => {
-  steadyVel = parseFloat(speedEl.value);
+  steadyVel = spinDir * parseFloat(speedEl.value);
   steady = true; // dragging the slider spins live
+  braking = false;
+  if (animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
+});
+dirBtn?.addEventListener("click", () => {
+  spinDir = -spinDir;
+  dirBtn.textContent = spinDir === 1 ? "⟳ Direction" : "⟲ Direction";
+  steadyVel = spinDir * Math.abs(steadyVel || (speedEl ? parseFloat(speedEl.value) : 2));
+  steady = true;
   braking = false;
   if (animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
 });

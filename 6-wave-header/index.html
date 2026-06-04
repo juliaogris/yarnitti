@@ -151,16 +151,17 @@
       <button type="button" class="scrub-pick__opt is-on" data-mode="height" role="radio" aria-checked="true">Height</button>
       <button type="button" class="scrub-pick__opt" data-mode="lines" role="radio" aria-checked="false">Number of lines</button>
       <button type="button" class="scrub-pick__opt" data-mode="wobble" role="radio" aria-checked="false">Ripple height</button>
-      <button type="button" class="scrub-pick__opt" data-mode="all" role="radio" aria-checked="false">Everything</button>
     </div>
   </div>
   <div class="scrub-pick__row scrub-pick__transport">
     <button type="button" id="exp-play" class="scrub-pick__opt">▶ Play</button>
     <button type="button" id="exp-pause" class="scrub-pick__opt">⏸ Pause</button>
+    <button type="button" id="exp-dir" class="scrub-pick__opt" aria-label="Reverse direction">⟳ Direction</button>
     <label class="scrub-pick__speed">Speed
       <input id="exp-speed" type="range" min="0" max="6" step="0.1" value="2">
     </label>
     <button type="button" id="exp-reset" class="scrub-pick__opt">Reset</button>
+    <button type="button" id="exp-done" class="scrub-pick__opt scrub-pick__done">✓ Done</button>
   </div>
 </footer>
 
