@@ -11,17 +11,17 @@
 :root[data-theme="dark"] {
   --bg: #0d0a07; /* near-black with a slight warm tinge */
   --ink: #f4f1ea;
-  --muted: rgba(244, 241, 234, 0.62);
+  --muted: rgba(244, 241, 234, 0.72);
   --hair: rgba(244, 241, 234, 0.18);
-  --yarn: #b3aea2; /* solid warm grey for the wool ball */
+  --yarn: #c2bcae; /* solid warm grey for the wool ball */
   color-scheme: dark;
 }
 :root[data-theme="light"] {
   --bg: #f3ecdf;
   --ink: #1a160e;
-  --muted: rgba(26, 22, 14, 0.6);
+  --muted: rgba(26, 22, 14, 0.74);
   --hair: rgba(26, 22, 14, 0.16);
-  --yarn: #6f685c; /* solid warm grey for the wool ball */
+  --yarn: #595348; /* solid warm grey for the wool ball */
   color-scheme: light;
 }
 
@@ -341,14 +341,14 @@ body::before {
 
 .prose p {
   font-family: var(--body-font);
-  font-size: calc(clamp(0.95rem, 2.1vw, 1.18rem) * var(--body-scale));
+  font-size: calc(clamp(1.08rem, 2.1vw, 1.18rem) * var(--body-scale));
   line-height: 1.65;
   margin-bottom: 1.1rem;
 }
 /* A quiet aside: the take-down note sits softer than the body copy. */
 .prose p.note {
   margin-top: 1.8rem;
-  font-size: calc(clamp(0.85rem, 1.8vw, 1rem) * var(--body-scale));
+  font-size: calc(clamp(0.95rem, 1.8vw, 1rem) * var(--body-scale));
   color: var(--muted);
 }
 
@@ -472,11 +472,11 @@ body.lb-open { overflow: hidden; } /* freeze page scroll behind the viewer */
 }
 .subpage__lede {
   /* The hero tagline, repeated per page: short, centred, handwritten. */
-  margin: 0.3rem auto 0;
+  margin: 0.6rem auto 0;
   max-width: 30ch;
   text-align: center;
   font-family: "Coming Soon", cursive;
-  font-size: clamp(1rem, 2.4vw, 1.3rem);
+  font-size: clamp(1.18rem, 3vw, 1.35rem);
   letter-spacing: 0.02em;
   line-height: 1.3;
   color: var(--muted);
@@ -510,8 +510,9 @@ body[data-route=""] .hero__mark { display: block; }
   .page { padding-left: 2.5rem; padding-right: 2.5rem; }
   .hero__mark { padding: 0 0.5rem; }
   .hero__title { font-size: clamp(3.4rem, 17vw, 5.6rem); }
-  .hero__tag { font-size: clamp(0.9rem, 3.6vw, 1.05rem); }
-  .yarn-ball { width: 1.4rem; }
+  .hero__tag { font-size: clamp(1.05rem, 4vw, 1.2rem); }
+  .subpage__title { font-size: clamp(3.5rem, 15vw, 5.6rem); }
+  .yarn-ball { width: 2rem; }
 }
 
 /* ---- lead line (opening of the letter, body-text format, above photo) ---- */
@@ -519,7 +520,7 @@ body[data-route=""] .hero__mark { display: block; }
   margin: 0 0 clamp(1.4rem, 4vw, 2.2rem);
   text-align: left;
   font-family: var(--body-font);
-  font-size: calc(clamp(0.95rem, 2.1vw, 1.18rem) * var(--body-scale));
+  font-size: calc(clamp(1.08rem, 2.1vw, 1.18rem) * var(--body-scale));
   line-height: 1.65;
 }
 
@@ -737,6 +738,15 @@ body.experiment .scrub-pick {
     gap: 0.6rem 1rem;
   }
   .slider-unit span { width: 4.5rem; }
+  /* Keep Stop, Reset and Done on a single row: equal-width, no wrap. */
+  .scrub-pick__transport { flex-wrap: nowrap; gap: 0.5rem; }
+  .scrub-pick__transport .scrub-pick__opt {
+    min-width: 0;
+    flex: 1 1 0;
+    padding: 0.3rem 0.4rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
 }
 
 /* While the experiment is open: lock the page to the mountains, fade the
