@@ -42,13 +42,14 @@ const canvas = document.getElementById("waves");
 const ctx = canvas.getContext("2d", { alpha: true });
 const hero = document.getElementById("hero");
 
-// The horizon: a single fraction of hero height that the foot line, the
-// content fade, and the debug guide all share. Every mountain ridge sits above
-// it (ridges are footY - bow), and the scrolling content fades out into it.
-let GUIDE_Y = 0.33; // around the bottom of the top third (arc-y lever)
+// Foot line of the arc, as a fraction of hero height. Drives where the
+// mountains sit and where the content fade lands. The arc-y lever moves it.
+let ARC_Y = 0.33; // around the bottom of the top third
 
-// Debug-only horizon guide (remove before launch). Pink so it reads as
-// scaffolding. Toggle off with ?guide=0.
+// Debug guide, an independent reference line at its own fraction of hero
+// height (the line lever moves it, separately from the arc). Remove before
+// launch. Pink so it reads as scaffolding. Toggle off with ?guide=0.
+let GUIDE_Y = 0.33;
 const SHOW_GUIDE = new URLSearchParams(location.search).get("guide") !== "0";
 const GUIDE_COLOR = "#ff2d8e";
 
@@ -195,17 +196,18 @@ function render() {
   drawStrand(xL, footY, 0.4, ink, 0.46, 0.024);
   drawStrand(xR, footY, 2.1, ink, 0.13, 0.008);
 
-  // Debug-only horizon guide (remove before launch). Draws on top so it is
-  // always visible; sits exactly on the foot line.
+  // Debug-only guide (remove before launch). Draws on top so it is always
+  // visible; sits at its own height, independent of the arc.
   if (SHOW_GUIDE) {
+    const guideY = H * GUIDE_Y;
     ctx.save();
     ctx.setLineDash([6, 6]);
     ctx.strokeStyle = GUIDE_COLOR;
     ctx.lineWidth = 1;
     ctx.globalAlpha = 1;
     ctx.beginPath();
-    ctx.moveTo(0, footY);
-    ctx.lineTo(W, footY);
+    ctx.moveTo(0, guideY);
+    ctx.lineTo(W, guideY);
     ctx.stroke();
     ctx.restore();
   }
@@ -249,13 +251,13 @@ function resize() {
   // shared horizon so mountains stay above the guide on every width.
   footLfrac = small ? 0.04 : CFG.footL;
   footRfrac = small ? 0.96 : CFG.footR;
-  footYfrac = GUIDE_Y;
+  footYfrac = ARC_Y;
   lineScale = small ? 0.72 : 1; // a little thinner on mobile, unchanged on desktop
   strands = small ? Math.round(CFG.strands * 0.9) : CFG.strands;
   steps = Math.max(200, Math.round((small ? 0.6 : 0.85) * W));
 
-  // Land the content fade exactly on the horizon so text dissolves into it.
-  root.style.setProperty("--foot-pct", (footYfrac * 100).toFixed(1) + "%");
+  // Land the content fade exactly on the pink guide so text dissolves into it.
+  root.style.setProperty("--foot-pct", (GUIDE_Y * 100).toFixed(1) + "%");
   render();
 }
 
@@ -319,10 +321,16 @@ function wireLever(id, outId, fn, fmt) {
   });
 }
 
-// arc y: move the whole horizon (foot line, guide, and fade) up or down.
+// arc y: move the arc (foot line) up or down, independent of the guide.
 wireLever("lever-arcy", "out-arcy", (v) => {
+  ARC_Y = parseFloat(v);
+  footYfrac = ARC_Y;
+  render();
+}, (v) => parseFloat(v).toFixed(2));
+
+// line: move the pink guide, which also sets where body content fades out.
+wireLever("lever-line", "out-line", (v) => {
   GUIDE_Y = parseFloat(v);
-  footYfrac = GUIDE_Y;
   root.style.setProperty("--foot-pct", (GUIDE_Y * 100).toFixed(1) + "%");
   render();
 }, (v) => parseFloat(v).toFixed(2));
