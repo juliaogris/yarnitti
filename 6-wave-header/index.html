@@ -112,6 +112,19 @@
   </section>
 </main>
 
+<!-- Prototyping only: pick what a vertical scrub over the lines reshapes.
+     Remove before launch. -->
+<footer class="scrub-pick" aria-label="Vertical scrub controls">
+  <span class="scrub-pick__label">Drag up/down on the lines to change:</span>
+  <div class="scrub-pick__opts" role="radiogroup">
+    <button type="button" class="scrub-pick__opt" data-mode="jagged" role="radio" aria-checked="false">Jaggedness</button>
+    <button type="button" class="scrub-pick__opt is-on" data-mode="height" role="radio" aria-checked="true">Height</button>
+    <button type="button" class="scrub-pick__opt" data-mode="lines" role="radio" aria-checked="false">Number of lines</button>
+    <button type="button" class="scrub-pick__opt" data-mode="wobble" role="radio" aria-checked="false">Ripple height</button>
+    <button type="button" class="scrub-pick__opt" data-mode="all" role="radio" aria-checked="false">Everything</button>
+  </div>
+</footer>
+
 <script src="main.js"></script>
 </body>
 </html>

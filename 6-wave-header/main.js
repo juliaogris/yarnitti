@@ -109,6 +109,15 @@ let archScale = 1;        // flattens the arch on narrow screens (set in resize)
 let wobScale = 1;         // more ridge ripples on narrow screens (set in resize)
 let fbmOctaves = CFG.octaves; // more jagged detail on narrow screens
 
+// Live, scrub-adjustable copies of the ridge parameters. Vertical drags over
+// the lines change whichever one the footer picker has selected, so the
+// mountains can be reshaped by hand while prototyping.
+let liveArch = CFG.arch;             // overall mountain height
+let liveWobAmp = CFG.wobAmp;         // ripple height
+let liveWobFreqBack = CFG.wobFreqBack; // ripple count (jaggedness)
+let strandsF = CFG.strands;          // fractional line count, rounded into `strands`
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
 // Read the live theme colours so the canvas inverts with the page.
 function themeColors() {
   const cs = getComputedStyle(document.documentElement);
@@ -133,7 +142,7 @@ function render() {
   const xR = W * footRfrac;
   const cx = (xL + xR) / 2;
   const a = (xR - xL) / 2; // horizontal radius, fixed -> both feet are points
-  const wobPx = H * CFG.wobAmp;
+  const wobPx = H * liveWobAmp;
   const jitPx = H * CFG.jitterAmp;
   const xJitPx = W * CFG.xJitterAmp;
 
@@ -151,13 +160,13 @@ function render() {
   // it rises above every nearer ridge, so front hills occlude the ones behind.
   for (let i = 0; i < strands; i++) {
     const q = strands > 1 ? i / (strands - 1) : 1;
-    const archH = H * CFG.arch * archScale;
+    const archH = H * liveArch * archScale;
     const bow = lerp(archH * CFG.bowRatio, archH, Math.pow(q, CFG.bowEase));
     // Front ridges (low q) drawn thicker; back ridges thinner.
     ctx.lineWidth = lerp(CFG.lineWidth, CFG.lineWidthBack, q) * lineScale;
     // Front ridges roll in few long swells; back ridges break into more
     // ripples, like waves stacking out to sea.
-    const wf = lerp(CFG.wobFreqFront, CFG.wobFreqBack, q) * wobScale;
+    const wf = lerp(CFG.wobFreqFront, liveWobFreqBack, q) * wobScale;
 
     for (let s = 0; s <= steps; s++) {
       const t = s / steps;
@@ -268,8 +277,7 @@ function resize() {
   lineScale = small ? 0.6 : 1;
   archScale = 1;
   wobScale = 1;
-  fbmOctaves = CFG.octaves;
-  strands = CFG.strands;
+  strands = Math.round(strandsF); // keep any scrubbed line count across resizes
   steps = Math.max(360, Math.round(0.85 * W));
 
   // Frame the content fade with the two pink guides: it starts at the lower
@@ -450,10 +458,46 @@ let didDrag = false;
 let canScrub = false;  // the press started on a line, so a drag may scrub
 let pressOnUI = false; // the press started on the menu/controls
 let dragLastX = 0;
+let dragLastY = 0;
 let dragLastT = 0;
 let dragVel = 0;
 let dragPrevVel = 0; // spin at the moment a drag takes over (for additive flicks)
 let pressOnBall = false; // the press started on the wool ball, so it toggles spin
+
+// Which mountain parameter a vertical scrub reshapes. Set by the footer picker
+// while prototyping; dragging up grows the value, dragging down shrinks it.
+let scrubMode = "height";
+let morph = 0.4; // position along the "everything" blend, 0..1
+function applyScrub(dy) {
+  const up = -dy; // up the screen grows the value
+  switch (scrubMode) {
+    case "jagged": // more, finer ripples + an extra noise octave near the top
+      liveWobFreqBack = clamp(liveWobFreqBack + up * 0.07, 3, 26);
+      fbmOctaves = Math.round(clamp(2 + (liveWobFreqBack - 3) / 23 * 4, 1, 6));
+      break;
+    case "height":
+      liveArch = clamp(liveArch + up * 0.001, 0.08, 0.52);
+      break;
+    case "lines":
+      strandsF = clamp(strandsF + up * 0.22, 8, 74);
+      strands = Math.round(strandsF);
+      break;
+    case "wobble": // height of the ripples without changing their count
+      liveWobAmp = clamp(liveWobAmp + up * 0.0007, 0.02, 0.24);
+      break;
+    case "all": { // blend height, ripple size, ripple count, octaves and lines
+      morph = clamp(morph + up * 0.0045, 0, 1);
+      liveArch = lerp(0.12, 0.44, morph);
+      liveWobAmp = lerp(0.04, 0.18, morph);
+      liveWobFreqBack = lerp(4, 20, morph);
+      fbmOctaves = Math.round(lerp(2, 5, morph));
+      strandsF = lerp(14, 60, morph);
+      strands = Math.round(strandsF);
+      break;
+    }
+  }
+  if (animRAF === null) render(); // not spinning, so repaint now
+}
 
 // Is the pointer over the wool ball? The ball is HTML behind the full-screen
 // canvas, so it never receives events itself; hit-test its box by hand.
@@ -499,31 +543,36 @@ document.addEventListener("pointerdown", (e) => {
   pressOnBall = isOnBall(e);
   if (pressOnBall) nudgeBall(); // immediate feedback, even on a touch that scrolls
   canScrub = !pressOnBall && isOnLine(e); // a scrub may only begin on a line
-  pressOnUI = !!e.target.closest(".menu, .menu-backdrop, .hamburger, .levers");
+  pressOnUI = !!e.target.closest(".menu, .menu-backdrop, .hamburger, .levers, .scrub-pick");
   dragLastX = e.clientX;
+  dragLastY = e.clientY;
   dragLastT = e.timeStamp;
 });
 document.addEventListener("pointermove", (e) => {
   if (!pressing || !canScrub) return;
   const dx = e.clientX - dragLastX;
+  const dy = e.clientY - dragLastY;
   if (!didDrag) {
-    if (Math.abs(dx) <= 2) return; // ignore jitter; keep the start point
+    if (Math.abs(dx) <= 2 && Math.abs(dy) <= 2) return; // ignore jitter
     didDrag = true;
     braking = false;
   }
   const dt = Math.max(0.008, (e.timeStamp - dragLastT) / 1000);
-  // Flywheel push: the drag imparts speed. Pushing faster (or the other way)
-  // changes the spin; pushing slower in the same direction never brakes it, so
-  // "keep pushing" keeps it going, like a roundabout. The loop moves the
-  // pattern at this speed, so we don't shift it directly here.
+  // Horizontal push spins the flywheel: the drag imparts speed. Pushing faster
+  // (or the other way) changes the spin; pushing slower in the same direction
+  // never brakes it, so "keep pushing" keeps it going, like a roundabout. The
+  // loop moves the pattern at this speed, so we don't shift it directly here.
   const fv = Math.max(-VEL_MAX, Math.min(VEL_MAX, (-dx / dt) * SCRUB));
   if (Math.sign(fv) !== Math.sign(vel) || Math.abs(fv) > Math.abs(vel)) {
     vel = fv;
   }
   targetVel = vel;
+  // Vertical drag reshapes the mountains via the selected scrub mode.
+  applyScrub(dy);
   dragLastX = e.clientX;
+  dragLastY = e.clientY;
   dragLastT = e.timeStamp;
-  if (animRAF === null) {
+  if (vel !== 0 && animRAF === null) {
     lastFrame = null;
     animRAF = requestAnimationFrame(animate);
   }
@@ -593,6 +642,18 @@ if (yarnBall && "IntersectionObserver" in window) {
 } else {
   ballVisible = true;
 }
+
+// Footer picker (prototyping): choose which parameter a vertical scrub drives.
+document.querySelectorAll(".scrub-pick__opt").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    scrubMode = btn.dataset.mode;
+    document.querySelectorAll(".scrub-pick__opt").forEach((b) => {
+      const on = b === btn;
+      b.classList.toggle("is-on", on);
+      b.setAttribute("aria-checked", String(on));
+    });
+  });
+});
 
 window.addEventListener("resize", resize);
 resize();

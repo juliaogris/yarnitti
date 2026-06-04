@@ -448,6 +448,54 @@ body::before {
 .levers__step { padding: 0.2rem 0.5rem; }
 #out-tagfont, #out-bodyfont { min-width: 9rem; text-transform: none; letter-spacing: 0; }
 
+/* Prototyping picker pinned to the bottom: choose what a vertical scrub over
+   the lines reshapes. Remove before launch. */
+.scrub-pick {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 28;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 0.8rem;
+  padding: 0.6rem 1rem;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(4px);
+  border-top: 1px solid var(--hair);
+  font-family: "Coming Soon", cursive;
+}
+.scrub-pick__label {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.scrub-pick__opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.scrub-pick__opt {
+  font-family: inherit;
+  font-size: 0.85rem;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  padding: 0.25rem 0.8rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+.scrub-pick__opt:hover { opacity: 1; border-color: var(--muted); }
+.scrub-pick__opt.is-on {
+  opacity: 1;
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+
 @media (prefers-reduced-motion: reduce) {
   /* No motion anywhere: the mountain intro is already skipped in JS; here the
      menu, hamburger, and fades stop sliding too. */
