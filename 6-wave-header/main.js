@@ -289,6 +289,7 @@ if (saved) {
 
 // Prototyping overrides: ?theme=light&scrollto=N
 const params = new URLSearchParams(location.search);
+const isMobile = window.matchMedia("(max-width: 640px)").matches;
 const themeParam = params.get("theme");
 if (themeParam) root.setAttribute("data-theme", themeParam);
 const scrollToParam = params.get("scrollto");
@@ -398,16 +399,26 @@ if (guideBtn) {
 // body fonts. ?bodyfont=N preselects one. Remove before launch.
 const BODY_FONTS = [
   { name: "Fraunces", css: '"Fraunces", Georgia, serif' },
+  { name: "Newsreader", css: '"Newsreader", Georgia, serif' },
+  { name: "Lora", css: '"Lora", Georgia, serif' },
+  { name: "Vollkorn", css: '"Vollkorn", Georgia, serif' },
+  { name: "Bitter", css: '"Bitter", Georgia, serif' },
+  { name: "EB Garamond", css: '"EB Garamond", Georgia, serif' },
+  { name: "Spectral", css: '"Spectral", Georgia, serif' },
   { name: "Nunito", css: '"Nunito", system-ui, sans-serif' },
   { name: "Mulish", css: '"Mulish", system-ui, sans-serif' },
   { name: "Hanken Grotesk", css: '"Hanken Grotesk", system-ui, sans-serif' },
-  { name: "EB Garamond", css: '"EB Garamond", Georgia, serif' },
-  { name: "Lora", css: '"Lora", Georgia, serif' },
-  { name: "Spectral", css: '"Spectral", Georgia, serif' },
+  { name: "Karla", css: '"Karla", system-ui, sans-serif' },
+  { name: "DM Sans", css: '"DM Sans", system-ui, sans-serif' },
+  { name: "Mali", css: '"Mali", Georgia, serif' },
   { name: "Coming Soon", css: '"Coming Soon", Georgia, serif' },
+  { name: "Itim", css: '"Itim", system-ui, sans-serif' },
+  { name: "Chilanka", css: '"Chilanka", system-ui, sans-serif' },
+  { name: "Klee One", css: '"Klee One", Georgia, serif' },
+  { name: "Andika", css: '"Andika", system-ui, sans-serif' },
 ];
 const bodyOut = document.getElementById("out-bodyfont");
-let bodyIdx = 7; // Coming Soon (the chosen body font)
+let bodyIdx = 12; // Mali (the chosen body font)
 function applyBodyFont() {
   const f = BODY_FONTS[bodyIdx];
   root.style.setProperty("--body-font", f.css);
@@ -427,13 +438,13 @@ applyBodyFont();
 
 // reset: restore every lever to its default and replay its handler.
 const LEVER_DEFAULTS = {
-  "lever-heading": "28",
+  "lever-heading": isMobile ? "24" : "28",
   "lever-arch": "0.26",
   "lever-arcy": "0.38",
   "lever-line": "0.30",
   "lever-line2": "0.22",
   "lever-fold": "70",
-  "lever-space": "7",
+  "lever-space": "9",
   "lever-body": "1",
 };
 const resetBtn = document.getElementById("lever-reset");
@@ -446,6 +457,14 @@ if (resetBtn) {
       el.dispatchEvent(new Event("input"));
     }
   });
+}
+
+// On mobile the wordmark rests higher, so show 24 on the heading slider.
+if (isMobile) {
+  const lh = document.getElementById("lever-heading");
+  const oh = document.getElementById("out-heading");
+  if (lh) lh.value = "24";
+  if (oh) oh.textContent = "24";
 }
 
 window.addEventListener("resize", resize);

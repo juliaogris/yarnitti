@@ -20,12 +20,12 @@
 
 :root {
   --display-font: "Over the Rainbow", cursive; /* wordmark only */
-  --body-font: "Coming Soon", Georgia, serif; /* body font picker */
+  --body-font: "Mali", Georgia, serif; /* body font picker */
   --tag-font: "Hanken Grotesk", system-ui, sans-serif;
   --body-scale: 1;     /* body size lever */
   --hero-h: 70vh;        /* fold lever (fixed arch layer height) */
   --heading-top: 28vh;   /* heading lever (wordmark rest position) */
-  --body-gap: 7rem;      /* space lever (gap below tagline) */
+  --body-gap: 9rem;      /* space lever (gap below tagline) */
 }
 
 html { background: var(--bg); overflow-x: hidden; }
@@ -136,9 +136,28 @@ body::before {
   position: relative;
   z-index: 1;
   max-width: 68ch;
-  margin: var(--body-gap) auto 0;
+  margin: 0 auto;
   padding: 0 clamp(1.4rem, 6vw, 2rem) 6rem;
 }
+/* Small wound-yarn ball resting in the gap between the tagline and the body,
+   drawn in the same thin line style as the mountains. */
+/* The divider is the gap itself: a block as tall as the space value, with the
+   ball flex-centred so it always sits in the exact vertical middle. */
+.yarn-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--body-gap);
+  color: #fff;
+  opacity: 1;
+}
+/* Keep it dark on the light theme, where pure white would vanish. */
+:root[data-theme="light"] .yarn-divider { color: var(--ink); }
+.yarn-ball {
+  width: 1.8rem;
+  height: auto;
+}
+
 .shot {
   margin-bottom: clamp(2rem, 6vw, 3.5rem);
   text-align: center;
@@ -185,11 +204,15 @@ body::before {
 
 /* ---- mobile: less side margin, wider + lower arch handled in JS ---- */
 @media (max-width: 640px) {
-  :root { --heading-top: 22vh; } /* wordmark sits a little higher on mobile */
-  .page { padding-left: 1.5rem; padding-right: 1.5rem; }
+  :root {
+    --heading-top: 24vh; /* wordmark sits a little higher on mobile */
+    --body-gap: 7rem;    /* a little less space below the tagline on mobile */
+  }
+  .page { padding-left: 2rem; padding-right: 2rem; }
   .hero__mark { padding: 0 0.5rem; }
-  .hero__title { font-size: clamp(3.2rem, 16vw, 5.4rem); }
+  .hero__title { font-size: clamp(3.4rem, 17vw, 5.6rem); }
   .hero__tag { font-size: clamp(0.9rem, 3.6vw, 1.05rem); }
+  .yarn-ball { width: 1.2rem; }
   /* Park some sliders on mobile only, to free up vertical space. Defaults
      still apply; the controls remain available on desktop. */
   .levers label.lever-parked { display: none; }

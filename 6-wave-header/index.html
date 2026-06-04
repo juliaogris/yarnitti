@@ -6,7 +6,7 @@
 <title>yarnitti</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Coming+Soon&family=Delius&family=EB+Garamond:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Hanken+Grotesk:wght@400;500&family=Lora:wght@400;500&family=Mulish:wght@400;500&family=Nunito:wght@400;500&family=Over+the+Rainbow&family=Patrick+Hand&family=Quicksand:wght@400;500&family=Shantell+Sans:wght@400&family=Sniglet:wght@400;800&family=Space+Grotesk:wght@400;500&family=Spectral:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Bitter:wght@400;500&family=Chilanka&family=Coming+Soon&family=DM+Sans:wght@400;500&family=EB+Garamond:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Hanken+Grotesk:wght@400;500&family=Itim&family=Karla:wght@400;500&family=Klee+One&family=Lora:wght@400;500&family=Mali:wght@400;500&family=Mulish:wght@400;500&family=Newsreader:wght@400;500&family=Nunito:wght@400;500&family=Over+the+Rainbow&family=Space+Grotesk:wght@400;500&family=Spectral:wght@400;500&family=Vollkorn:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -23,6 +23,16 @@
 </div>
 
 <main class="page" id="more">
+  <div class="yarn-divider" aria-hidden="true">
+    <svg class="yarn-ball" viewBox="0 0 40 40" fill="none" stroke="currentColor"
+         stroke-width="2.4" stroke-linecap="round">
+      <circle cx="20" cy="20" r="16"/>
+      <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(30 20 20)"/>
+      <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(90 20 20)"/>
+      <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(150 20 20)"/>
+    </svg>
+  </div>
+
   <p class="lead">
     This is a small experiment in caring for a place out loud, one stitch and
     one street corner at a time.
@@ -78,8 +88,8 @@
     <output id="out-fold">70</output>
   </label>
   <label class="lever-parked">space
-    <input type="range" id="lever-space" min="0" max="28" step="0.5" value="7">
-    <output id="out-space">7</output>
+    <input type="range" id="lever-space" min="0" max="28" step="0.5" value="9">
+    <output id="out-space">9</output>
   </label>
   <label class="lever-parked">body
     <input type="range" id="lever-body" min="0.7" max="1.5" step="0.05" value="1">
@@ -87,7 +97,7 @@
   </label>
   <label>body&nbsp;font
     <button type="button" id="bodyfont-prev" class="levers__reset levers__step">‹</button>
-    <output id="out-bodyfont">Coming Soon</output>
+    <output id="out-bodyfont">Mali</output>
     <button type="button" id="bodyfont-next" class="levers__reset levers__step">›</button>
   </label>
   <button type="button" id="lever-guide" class="levers__reset" aria-pressed="true">hide line</button>
