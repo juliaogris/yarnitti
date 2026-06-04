@@ -407,14 +407,27 @@ let animRAF = null;
 // that carries an SVG filter. The class clears itself on animationend so a
 // later hover or tap can replay the same nudge (re-adding a still-present
 // animation never restarts it).
-const yarnBall = document.querySelector(".yarn-ball");
-const yarnDivider = yarnBall?.closest(".yarn-divider");
+// The home wordmark and every subpage carry their own wool ball, but only the
+// active page's is on screen. Track them all so a tap or nudge always lands on
+// the visible one, not just the first in the document.
+const yarnBalls = Array.from(document.querySelectorAll(".yarn-ball"));
+const yarnDividers = yarnBalls.map((b) => b.closest(".yarn-divider")).filter(Boolean);
 const hamburger = document.querySelector(".hamburger");
-[yarnDivider, hamburger].forEach((el) =>
+[...yarnDividers, hamburger].forEach((el) =>
   el?.addEventListener("animationend", () => el.classList.remove("nudge")));
+// The ball currently displayed. The balls are <svg> elements, which do not
+// expose offsetParent, so test the measured box instead: a ball on a hidden
+// subpage (display:none) measures 0x0, the visible one has real dimensions.
+function visibleBall() {
+  return yarnBalls.find((b) => {
+    const r = b.getBoundingClientRect();
+    return r.width > 0 && r.height > 0;
+  }) || null;
+}
+const yarnBall = yarnBalls[0]; // the home ball: drives the one-time intro nudge
 function nudgeBall() {
-  if (!yarnDivider || reduceMotion) return;
-  yarnDivider.classList.add("nudge");
+  if (reduceMotion) return;
+  visibleBall()?.closest(".yarn-divider")?.classList.add("nudge");
 }
 let introSettled = false;
 let ballVisible = false;
@@ -497,6 +510,7 @@ let dragLastT = 0;
 let dragVel = 0;
 let dragPrevVel = 0; // spin at the moment a drag takes over (for additive flicks)
 let pressOnBall = false; // the press started on the wool ball, so it toggles spin
+let pressOnLine = false; // the press landed on a drawn line, so it drives the spin
 
 // Every adjustable parameter behind one model: a range, a getter and a setter.
 // Each gets its own labelled slider; a vertical line-drag also nudges height.
@@ -536,8 +550,9 @@ function applyScrub(dy) {
 // Is the pointer over the wool ball? The ball is HTML behind the full-screen
 // canvas, so it never receives events itself; hit-test its box by hand.
 function isOnBall(e) {
-  if (!yarnBall) return false;
-  const r = yarnBall.getBoundingClientRect();
+  const ball = visibleBall();
+  if (!ball) return false;
+  const r = ball.getBoundingClientRect();
   return e.clientX >= r.left && e.clientX <= r.right &&
          e.clientY >= r.top && e.clientY <= r.bottom;
 }
@@ -555,6 +570,32 @@ function isInBand(e) {
   const s = Math.round((bandSteps * Math.acos(cosv)) / Math.PI);
   const pad = 16; // a little tolerance above the ridge and below the feet
   return y >= bandTop[s] - pad && y <= bandFootY + pad;
+}
+// Is the pointer on an actual drawn line (the horseshoe strokes), rather than
+// the empty space inside or around it? The canvas is transparent except where
+// the lines are painted, so sample the pixel alpha in a small neighbourhood of
+// the click: any opaque pixel means a line is under the pointer. This is what
+// lets a tap on the wordmark text or a photo fall through while a tap on the
+// lines still drives the spin.
+function isOnLine(e) {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  if (x < 0 || y < 0 || x > rect.width || y > rect.height) return false;
+  const dpr = canvas.width / rect.width;
+  const reach = Math.max(2, Math.round(6 * dpr)); // ~6 CSS px of tolerance
+  const px = Math.round(x * dpr);
+  const py = Math.round(y * dpr);
+  const x0 = Math.max(0, px - reach);
+  const y0 = Math.max(0, py - reach);
+  const w = Math.min(canvas.width - x0, reach * 2 + 1);
+  const h = Math.min(canvas.height - y0, reach * 2 + 1);
+  if (w <= 0 || h <= 0) return false;
+  const data = ctx.getImageData(x0, y0, w, h).data;
+  for (let i = 3; i < data.length; i += 4) {
+    if (data[i] > 24) return true; // a non-transparent pixel: a line is here
+  }
+  return false;
 }
 function stopMotion() {
   if (animRAF === null && vel === 0 && targetVel === 0) return;
@@ -574,9 +615,14 @@ document.addEventListener("pointerdown", (e) => {
   didDrag = false;
   pressOnBall = isOnBall(e);
   if (pressOnBall) nudgeBall(); // immediate feedback, even on a touch that scrolls
-  pressOnUI = !!e.target.closest(".menu, .menu-backdrop, .hamburger, .levers, .scrub-pick");
+  // Menu, controls, and any interactive content (links, buttons, the gallery
+  // grid, the lightbox) own their own clicks; the spin never steals them.
+  pressOnUI = !!e.target.closest(
+    ".menu, .menu-backdrop, .hamburger, .levers, .scrub-pick, " +
+    ".gallery-grid, .lightbox, a, button, input, label, select, textarea");
+  pressOnLine = !pressOnBall && !pressOnUI && isOnLine(e);
   // A scrub may begin anywhere inside the experiment, or on a line otherwise.
-  canScrub = !pressOnBall && !pressOnUI && (experiment || isInBand(e));
+  canScrub = !pressOnBall && !pressOnUI && (experiment || pressOnLine);
   dragLastX = e.clientX;
   dragLastY = e.clientY;
   dragLastT = e.timeStamp;
@@ -620,6 +666,7 @@ function endPress(deliberate) {
     return;
   }
   if (experiment) return;           // bare taps inside the experiment do nothing
+  if (!pressOnLine) return;         // only a tap on a line toggles; text/photos pass through
   // On the normal site a tap on the mountains toggles the drift: start it from
   // a near standstill, stop it when it is already moving.
   if (deliberate) {
@@ -800,6 +847,65 @@ document.addEventListener("click", (e) => {
 document.querySelectorAll("a[data-route]").forEach((a) => {
   a.setAttribute("href", BASE + a.dataset.route);
 });
+
+// ---- gallery lightbox ----
+// Click a thumbnail to enlarge its full-size photo. Close with the X, the
+// backdrop, or Escape. Step between photos with the arrows, the keyboard, or
+// a horizontal swipe on touch screens. The list wraps at both ends.
+const galleryCells = Array.from(document.querySelectorAll(".gallery-cell"));
+const gallerySrcs = galleryCells.map((c) => c.dataset.full);
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightbox-img");
+let lightboxIndex = 0;
+
+function showPhoto(i) {
+  lightboxIndex = (i + gallerySrcs.length) % gallerySrcs.length;
+  lightboxImg.src = gallerySrcs[lightboxIndex];
+}
+function openLightbox(i) {
+  if (!lightbox) return;
+  showPhoto(i);
+  lightbox.classList.add("is-open");
+  lightbox.setAttribute("aria-hidden", "false");
+  document.body.classList.add("lb-open");
+}
+function closeLightbox() {
+  if (!lightbox) return;
+  lightbox.classList.remove("is-open");
+  lightbox.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("lb-open");
+}
+const lightboxOpen = () => lightbox?.classList.contains("is-open");
+
+galleryCells.forEach((cell, i) =>
+  cell.addEventListener("click", () => openLightbox(i)));
+document.getElementById("lightbox-close")?.addEventListener("click", closeLightbox);
+document.getElementById("lightbox-prev")?.addEventListener("click", () => showPhoto(lightboxIndex - 1));
+document.getElementById("lightbox-next")?.addEventListener("click", () => showPhoto(lightboxIndex + 1));
+// A click on the dark backdrop (not the image or a button) closes the viewer.
+lightbox?.addEventListener("click", (e) => {
+  if (e.target === lightbox) closeLightbox();
+});
+document.addEventListener("keydown", (e) => {
+  if (!lightboxOpen()) return;
+  if (e.key === "Escape") closeLightbox();
+  else if (e.key === "ArrowLeft") showPhoto(lightboxIndex - 1);
+  else if (e.key === "ArrowRight") showPhoto(lightboxIndex + 1);
+});
+// Horizontal swipe to page between photos; ignore mostly-vertical drags.
+let touchX = 0;
+let touchY = 0;
+lightbox?.addEventListener("touchstart", (e) => {
+  touchX = e.changedTouches[0].clientX;
+  touchY = e.changedTouches[0].clientY;
+}, { passive: true });
+lightbox?.addEventListener("touchend", (e) => {
+  const dx = e.changedTouches[0].clientX - touchX;
+  const dy = e.changedTouches[0].clientY - touchY;
+  if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+    showPhoto(lightboxIndex + (dx < 0 ? 1 : -1));
+  }
+}, { passive: true });
 
 window.addEventListener("resize", resize);
 resize();
