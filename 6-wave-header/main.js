@@ -108,6 +108,7 @@ let lineScale = 1;        // thins every stroke on narrow screens (set in resize
 let archScale = 1;        // flattens the arch on narrow screens (set in resize)
 let wobScale = 1;         // more ridge ripples on narrow screens (set in resize)
 let strandScale = 1;      // shortens the dangling foot strands in spin mode
+let lineWidthMul = 1;     // scales every ridge stroke (the Thickness slider)
 let fbmOctaves = CFG.octaves; // more jagged detail on narrow screens
 
 // Live, scrub-adjustable copies of the ridge parameters. Vertical drags over
@@ -164,7 +165,7 @@ function render() {
     const archH = H * liveArch * archScale;
     const bow = lerp(archH * CFG.bowRatio, archH, Math.pow(q, CFG.bowEase));
     // Front ridges (low q) drawn thicker; back ridges thinner.
-    ctx.lineWidth = lerp(CFG.lineWidth, CFG.lineWidthBack, q) * lineScale;
+    ctx.lineWidth = lerp(CFG.lineWidth, CFG.lineWidthBack, q) * lineScale * lineWidthMul;
     // Front ridges roll in few long swells; back ridges break into more
     // ripples, like waves stacking out to sea.
     const wf = lerp(CFG.wobFreqFront, liveWobFreqBack, q) * wobScale;
@@ -483,7 +484,9 @@ const SPIN_SLIDE = 0.22; // must match body.experiment .hero translateY (vh/100)
 // ripples ride on top of it, and the whole thing is slid down in spin mode.
 // Past this the height simply stops rather than clipping at the top.
 function maxArch() {
-  return clamp(ARC_Y + SPIN_SLIDE - liveWobAmp - 0.03, 0.2, 0.7);
+  // The bow rises by liveArch and the ripples add up to ~liveWobAmp on top of
+  // it, all slid down by SPIN_SLIDE. Leave a 0.05 margin below the top edge.
+  return clamp(ARC_Y + SPIN_SLIDE - liveWobAmp - 0.05, 0.2, 0.7);
 }
 const PARAMS = {
   height: { min: 0.08, max: () => maxArch(), step: 0.005,
@@ -494,7 +497,10 @@ const PARAMS = {
   lines: { min: 8, max: 74, step: 1,
     get: () => strandsF, set: (v) => { strandsF = v; strands = Math.round(v); } },
   wobble: { min: 0.02, max: 0.24, step: 0.005,
-    get: () => liveWobAmp, set: (v) => { liveWobAmp = v; } },
+    get: () => liveWobAmp,
+    set: (v) => { liveWobAmp = v; liveArch = Math.min(liveArch, maxArch()); } },
+  thickness: { min: 0.3, max: 2.6, step: 0.05,
+    get: () => lineWidthMul, set: (v) => { lineWidthMul = v; } },
   speed: { min: 0, max: 6, step: 0.1,
     get: () => Math.abs(steadyVel),
     set: (v) => { steadyVel = spinDir * v; steady = v > 0.02; if (steady) braking = false; } },
@@ -645,6 +651,7 @@ function resetShape() {
   fbmOctaves = CFG.octaves;
   strandsF = CFG.strands;
   strands = CFG.strands;
+  lineWidthMul = 1;
   steadyVel = 0; steady = false; spinDir = 1;
   stopMotion();
   syncSliders();
