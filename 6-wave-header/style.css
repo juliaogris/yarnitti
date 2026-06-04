@@ -20,7 +20,7 @@
 
 :root {
   --display-font: "Over the Rainbow", cursive; /* wordmark only */
-  --body-font: "Hanken Grotesk", system-ui, sans-serif; /* body font picker */
+  --body-font: "Coming Soon", Georgia, serif; /* body font picker */
   --tag-font: "Hanken Grotesk", system-ui, sans-serif;
   --body-scale: 1;     /* body size lever */
   --hero-h: 70vh;        /* fold lever (fixed arch layer height) */
@@ -181,14 +181,15 @@ body::before {
   pointer-events: none;
   background: radial-gradient(
     ellipse at center,
-    transparent 40%,
-    var(--bg) 100%
+    transparent 26%,
+    var(--bg) 78%
   );
 }
 .shot figcaption {
   margin-top: 0.7rem;
-  font-family: "Coming Soon", cursive;
-  font-size: 0.95rem;
+  font-family: var(--display-font);
+  font-size: 1.5rem;
+  line-height: 1.2;
   color: var(--muted);
 }
 .shot figcaption em { opacity: 0.7; }
@@ -211,9 +212,6 @@ body::before {
   .hero__title { font-size: clamp(3.4rem, 17vw, 5.6rem); }
   .hero__tag { font-size: clamp(0.9rem, 3.6vw, 1.05rem); }
   .yarn-ball { width: 1.2rem; }
-  /* Park some sliders on mobile only, to free up vertical space. Defaults
-     still apply; the controls remain available on desktop. */
-  .levers label.lever-parked { display: none; }
 }
 
 /* ---- lead line (opening of the letter, body-text format, above photo) ---- */
@@ -286,6 +284,12 @@ body::before {
   gap: 0.5rem;
 }
 .levers input[type="range"] { accent-color: var(--ink); width: 9rem; }
+
+/* Hide the whole tuning bar on mobile; defaults still apply. The controls
+   remain available on desktop. Placed after the .levers rules so it wins. */
+@media (max-width: 640px) {
+  .levers { display: none; }
+}
 .levers__reset {
   border: 1px solid var(--hair);
   background: transparent;
