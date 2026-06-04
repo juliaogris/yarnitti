@@ -19,7 +19,7 @@ const CFG = {
   footL: 0.10,        // left foot x, fraction of width
   footR: 0.90,        // right foot x
 
-  arch: 0.41,         // overall arch height (back bow), fraction H (arch lever)
+  arch: 0.37,         // overall arch height (back bow), fraction H (arch lever)
   bowRatio: 0.62,     // front bow as a fraction of the back bow: higher ->
                       // the bottom line curves into a horseshoe, not flat
   bowEase: 1.1,       // >1 crowds strands toward the low bows
@@ -39,7 +39,7 @@ const CFG = {
 };
 
 const canvas = document.getElementById("waves");
-const ctx = canvas.getContext("2d", { alpha: false });
+const ctx = canvas.getContext("2d", { alpha: true });
 const hero = document.getElementById("hero");
 
 // ---- seeded value noise ---------------------------------------------------
@@ -89,6 +89,7 @@ function fbm(x, y) {
 
 let W = 0, H = 0, dpr = 1;
 let strands = CFG.strands, steps = CFG.steps;
+let footLfrac = CFG.footL, footRfrac = CFG.footR, footYfrac = CFG.footY;
 
 // Read the live theme colours so the canvas inverts with the page.
 function themeColors() {
@@ -100,9 +101,8 @@ function themeColors() {
 }
 
 function render() {
-  const { bg, ink } = themeColors();
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, W, H);
+  const { ink } = themeColors();
+  ctx.clearRect(0, 0, W, H); // transparent: the page background shows through
 
   ctx.strokeStyle = ink;
   ctx.lineWidth = CFG.lineWidth;
@@ -110,9 +110,9 @@ function render() {
   ctx.lineCap = "round";
   ctx.globalAlpha = 1;
 
-  const footY = H * CFG.footY;
-  const xL = W * CFG.footL;
-  const xR = W * CFG.footR;
+  const footY = H * footYfrac;
+  const xL = W * footLfrac;
+  const xR = W * footRfrac;
   const cx = (xL + xR) / 2;
   const a = (xR - xL) / 2; // horizontal radius, fixed -> both feet are points
   const wobPx = H * CFG.wobAmp;
@@ -219,6 +219,10 @@ function resize() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   const small = W < 640;
+  // On mobile, spread the feet near the edges and drop the arch lower.
+  footLfrac = small ? 0.04 : CFG.footL;
+  footRfrac = small ? 0.96 : CFG.footR;
+  footYfrac = small ? 0.46 : CFG.footY;
   strands = small ? Math.round(CFG.strands * 0.9) : CFG.strands;
   steps = Math.max(200, Math.round((small ? 0.6 : 0.85) * W));
   render();
@@ -256,11 +260,10 @@ if (toggle) {
 // ---- temporary tuning levers (remove before launch) ----------------------
 
 const leverHeading = document.getElementById("lever-heading");
-const mark = document.querySelector(".hero__mark");
 const outHeading = document.getElementById("out-heading");
-if (leverHeading && mark) {
+if (leverHeading) {
   leverHeading.addEventListener("input", () => {
-    mark.style.top = `${leverHeading.value}%`;
+    root.style.setProperty("--heading-top", `${leverHeading.value}vh`);
     if (outHeading) outHeading.textContent = leverHeading.value;
   });
 }
@@ -274,6 +277,30 @@ if (leverArch) {
     render();
   });
 }
+
+function wireLever(id, outId, fn, fmt) {
+  const el = document.getElementById(id);
+  const out = document.getElementById(outId);
+  if (!el) return;
+  el.addEventListener("input", () => {
+    fn(el.value);
+    if (out) out.textContent = fmt ? fmt(el.value) : el.value;
+  });
+}
+
+// fold: hero height (vh); resize so the canvas refits.
+wireLever("lever-fold", "out-fold", (v) => {
+  root.style.setProperty("--hero-h", `${v}vh`);
+  resize();
+});
+// space: gap between the tagline and the body (rem); 0 = tight to heading.
+wireLever("lever-space", "out-space", (v) => {
+  root.style.setProperty("--body-gap", `${v}rem`);
+});
+// body: body text size scale.
+wireLever("lever-body", "out-body", (v) => {
+  root.style.setProperty("--body-scale", v);
+}, (v) => parseFloat(v).toFixed(2));
 
 window.addEventListener("resize", resize);
 resize();
