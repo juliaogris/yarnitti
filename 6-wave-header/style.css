@@ -526,6 +526,10 @@ body.experiment .scrub-pick {
   transition: opacity 0.4s ease;
 }
 body.experiment { overflow: hidden; }
+/* Slide the whole arch down to clear room for the controls while playing;
+   the landing page keeps its original higher position. */
+.hero { transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.3, 1); }
+body.experiment .hero { transform: translateY(15vh); }
 body.experiment .hero__mark,
 body.experiment .lead,
 body.experiment .shot,

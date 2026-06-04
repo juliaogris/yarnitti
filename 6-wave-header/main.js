@@ -44,14 +44,14 @@ const hero = document.getElementById("hero");
 
 // Foot line of the arc, as a fraction of hero height. Drives where the
 // mountains sit and where the content fade lands. The arc-y lever moves it.
-let ARC_Y = 0.5; // feet sit around the vertical middle, arch bowing up above
+let ARC_Y = 0.38; // around the bottom of the top third
 
 // Two debug guides framing the content fade (remove before launch). The lower
 // guide is where body content starts fading; the upper guide is where it is
 // completely gone. Each has its own lever; both hide with one toggle (or
 // ?guide=0). Pink so they read as scaffolding.
-let GUIDE_Y = 0.49;  // lower line: fade starts here
-let GUIDE2_Y = 0.41; // upper line: content fully gone above here
+let GUIDE_Y = 0.37;  // lower line: fade starts here
+let GUIDE2_Y = 0.29; // upper line: content fully gone above here
 let SHOW_GUIDE = new URLSearchParams(location.search).get("guide") === "1";
 const GUIDE_COLOR = "#ff2d8e";
 
@@ -107,6 +107,7 @@ let tAnim = 0;            // animated noise offset (load / click intro motion)
 let lineScale = 1;        // thins every stroke on narrow screens (set in resize)
 let archScale = 1;        // flattens the arch on narrow screens (set in resize)
 let wobScale = 1;         // more ridge ripples on narrow screens (set in resize)
+let strandScale = 1;      // shortens the dangling foot strands in spin mode
 let fbmOctaves = CFG.octaves; // more jagged detail on narrow screens
 
 // Live, scrub-adjustable copies of the ridge parameters. Vertical drags over
@@ -208,8 +209,8 @@ function render() {
 
   // Loose strands thinning out and fading from each foot: long on the left,
   // short on the right.
-  drawStrand(xL, footY, 0.4, ink, 0.28, 0.024);
-  drawStrand(xR, footY, 2.1, ink, 0.08, 0.008);
+  drawStrand(xL, footY, 0.4, ink, 0.46 * strandScale, 0.024);
+  drawStrand(xR, footY, 2.1, ink, 0.13 * strandScale, 0.008);
 
   // Debug-only guides (remove before launch). Draw on top so they are always
   // visible; each sits at its own height, independent of the arc.
@@ -599,6 +600,7 @@ function setExperiment(on) {
   experiment = on;
   document.body.classList.toggle("experiment", on);
   setMenu(false);
+  strandScale = on ? 0.45 : 1; // shorter dangling strands while playing
   if (on) {
     nudgeBall();
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -606,6 +608,7 @@ function setExperiment(on) {
     steady = false;     // drop the held speed
     stopMotion();       // coast gently to a stop, keeping the new shape
   }
+  if (animRAF === null) render(); // reflect the strand change if not animating
 }
 let spinDir = 1; // which way the ridges drift; the Direction button flips it
 function expPlay() {
