@@ -190,18 +190,14 @@
 
 <!-- Play-mode control panel: shown only while the "Spin" experiment is open. -->
 <footer class="scrub-pick" aria-label="Spin controls">
-  <div class="scrub-pick__row">
-    <span class="scrub-pick__label">Adjust:</span>
-    <div class="scrub-pick__opts" role="radiogroup">
-      <button type="button" class="scrub-pick__opt is-on" data-mode="height" role="radio" aria-checked="true">Height</button>
-      <button type="button" class="scrub-pick__opt" data-mode="jagged" role="radio" aria-checked="false">Jaggedness</button>
-      <button type="button" class="scrub-pick__opt" data-mode="lines" role="radio" aria-checked="false">Number of lines</button>
-      <button type="button" class="scrub-pick__opt" data-mode="wobble" role="radio" aria-checked="false">Ripple</button>
-      <button type="button" class="scrub-pick__opt" data-mode="speed" role="radio" aria-checked="false">Speed</button>
-    </div>
+  <div class="scrub-pick__sliders">
+    <label class="slider-unit">Height<input class="exp-range" data-param="height" type="range"></label>
+    <label class="slider-unit">Jaggedness<input class="exp-range" data-param="jagged" type="range"></label>
+    <label class="slider-unit">Lines<input class="exp-range" data-param="lines" type="range"></label>
+    <label class="slider-unit">Ripple<input class="exp-range" data-param="wobble" type="range"></label>
+    <label class="slider-unit">Speed<input class="exp-range" data-param="speed" type="range"></label>
   </div>
   <div class="scrub-pick__row scrub-pick__transport">
-    <input id="exp-slider" class="scrub-pick__slider" type="range" min="0" max="1" step="0.005" value="0.5" aria-label="Adjust the selected value">
     <button type="button" id="exp-playpause" class="scrub-pick__opt">▶ Play</button>
     <button type="button" id="exp-dir" class="scrub-pick__opt" aria-label="Reverse direction" title="Direction">→</button>
     <button type="button" id="exp-reset" class="scrub-pick__opt">Reset</button>

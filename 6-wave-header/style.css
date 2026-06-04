@@ -541,9 +541,24 @@ body.experiment .scrub-pick {
   border-color: var(--ink);
 }
 .scrub-pick__transport { gap: 0.6rem 0.8rem; }
-.scrub-pick__slider {
+/* One labelled slider per parameter. */
+.scrub-pick__sliders {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 1.1rem;
+}
+.slider-unit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.exp-range {
   accent-color: var(--ink);
-  width: min(46vw, 18rem);
+  width: clamp(6rem, 14vw, 9rem);
 }
 /* The direction toggle is a single glyph, so keep it square-ish. */
 #exp-dir { min-width: 2.4rem; text-align: center; }
@@ -555,9 +570,11 @@ body.experiment .scrub-pick {
 }
 body.experiment { overflow: hidden; }
 /* Slide the whole arch down to clear room for the controls while playing;
-   the landing page keeps its original higher position. */
-.hero { transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.3, 1); }
-body.experiment .hero { transform: translateY(15vh); }
+   the landing page keeps its original higher position. The transition is only
+   enabled after first paint (body.anim), so a direct load of /spin shows the
+   mountains already down with no slide; navigating into spin animates it. */
+body.anim .hero { transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.3, 1); }
+body.experiment .hero { transform: translateY(22vh); }
 body.experiment .hero__mark,
 body.experiment .lead,
 body.experiment .shot,

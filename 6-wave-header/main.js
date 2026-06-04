@@ -476,12 +476,18 @@ let pressOnBall = false; // the press started on the wool ball, so it toggles sp
 let spinDir = 1; // which way the ridges drift; the Direction button flips it
 
 // Every adjustable parameter behind one model: a range, a getter and a setter.
-// The picker chooses which one is active; the slider and a vertical line-drag
-// both write to that same one, so there is a single, consistent way to set any
-// value. "speed" drives the steady spin rather than the static shape.
+// Each gets its own labelled slider; a vertical line-drag also nudges height.
+// "speed" drives the steady spin rather than the static shape.
+const SPIN_SLIDE = 0.22; // must match body.experiment .hero translateY (vh/100)
+// Tallest arch that keeps its peak on screen: the bow rises from the feet, the
+// ripples ride on top of it, and the whole thing is slid down in spin mode.
+// Past this the height simply stops rather than clipping at the top.
+function maxArch() {
+  return clamp(ARC_Y + SPIN_SLIDE - liveWobAmp - 0.03, 0.2, 0.7);
+}
 const PARAMS = {
-  height: { min: 0.08, max: 0.52, step: 0.005,
-    get: () => liveArch, set: (v) => { liveArch = v; } },
+  height: { min: 0.08, max: () => maxArch(), step: 0.005,
+    get: () => liveArch, set: (v) => { liveArch = Math.min(v, maxArch()); } },
   jagged: { min: 3, max: 26, step: 0.1,
     get: () => liveWobFreqBack,
     set: (v) => { liveWobFreqBack = v; fbmOctaves = Math.round(clamp(2 + (v - 3) / 23 * 4, 1, 6)); } },
@@ -493,17 +499,16 @@ const PARAMS = {
     get: () => Math.abs(steadyVel),
     set: (v) => { steadyVel = spinDir * v; steady = v > 0.02; if (steady) braking = false; } },
 };
-let scrubMode = "height"; // the active parameter (set by the picker)
+const paramMax = (p) => (typeof p.max === "function" ? p.max() : p.max);
 
-// A vertical drag nudges the active parameter across its own range.
+// A vertical drag on the lines nudges the arch height (the most natural drag),
+// and the Height slider follows.
 function applyScrub(dy) {
-  const p = PARAMS[scrubMode];
-  const range = p.max - p.min;
-  let v = clamp(p.get() + (-dy) * range * 0.004, p.min, p.max);
-  if (p.step >= 1) v = Math.round(v);
+  const p = PARAMS.height;
+  const max = paramMax(p);
+  const v = clamp(p.get() + (-dy) * (max - p.min) * 0.004, p.min, max);
   p.set(v);
-  syncSlider();
-  if (scrubMode === "speed") updatePlayBtn();
+  syncSliders();
   if (animRAF === null) render();
 }
 
@@ -625,7 +630,7 @@ function expPlay() {
   else steadyVel = spinDir * Math.abs(steadyVel);
   braking = false;
   if (animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
-  syncSlider();
+  syncSliders();
   updatePlayBtn();
 }
 function expPause() {
@@ -642,7 +647,7 @@ function resetShape() {
   strands = CFG.strands;
   steadyVel = 0; steady = false; spinDir = 1;
   stopMotion();
-  syncSlider();
+  syncSliders();
   updatePlayBtn();
   updateDirBtn();
   if (animRAF === null) render();
@@ -693,18 +698,19 @@ if (yarnBall && "IntersectionObserver" in window) {
   ballVisible = true;
 }
 
-// Control panel. The chips preselect which parameter the single slider (and a
-// vertical line-drag) control, so every value is set the same way.
-const sliderEl = document.getElementById("exp-slider");
+// Control panel: one labelled slider per parameter, plus the transport.
+const rangeEls = document.querySelectorAll(".exp-range");
 const playBtn = document.getElementById("exp-playpause");
 const dirBtn = document.getElementById("exp-dir");
-function syncSlider() {
-  if (!sliderEl) return;
-  const p = PARAMS[scrubMode];
-  sliderEl.min = p.min;
-  sliderEl.max = p.max;
-  sliderEl.step = p.step;
-  sliderEl.value = p.get();
+// Push the model values out to every slider (ranges and current positions).
+function syncSliders() {
+  rangeEls.forEach((el) => {
+    const p = PARAMS[el.dataset.param];
+    el.min = p.min;
+    el.max = paramMax(p);
+    el.step = p.step;
+    el.value = p.get();
+  });
 }
 function updatePlayBtn() {
   if (playBtn) playBtn.textContent = isSpinning() ? "⏸ Pause" : "▶ Play";
@@ -712,25 +718,19 @@ function updatePlayBtn() {
 function updateDirBtn() {
   if (dirBtn) dirBtn.textContent = spinDir === 1 ? "→" : "←";
 }
-document.querySelectorAll(".scrub-pick__opt[data-mode]").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    scrubMode = btn.dataset.mode;
-    document.querySelectorAll(".scrub-pick__opt[data-mode]").forEach((b) => {
-      const on = b === btn;
-      b.classList.toggle("is-on", on);
-      b.setAttribute("aria-checked", String(on));
-    });
-    syncSlider();
+rangeEls.forEach((el) => {
+  const key = el.dataset.param;
+  el.addEventListener("input", () => {
+    PARAMS[key].set(parseFloat(el.value));
+    el.value = PARAMS[key].get(); // snap back if the value was capped
+    if (key === "wobble") syncSliders(); // ripple height changes the height cap
+    if (key === "speed") {
+      updatePlayBtn();
+      if (steady && animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
+    } else if (animRAF === null) {
+      render();
+    }
   });
-});
-sliderEl?.addEventListener("input", () => {
-  PARAMS[scrubMode].set(parseFloat(sliderEl.value));
-  if (scrubMode === "speed") {
-    updatePlayBtn();
-    if (steady && animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
-  } else if (animRAF === null) {
-    render();
-  }
 });
 playBtn?.addEventListener("click", () => (isSpinning() ? expPause() : expPlay()));
 dirBtn?.addEventListener("click", () => {
@@ -740,7 +740,7 @@ dirBtn?.addEventListener("click", () => {
 });
 document.getElementById("exp-reset")?.addEventListener("click", resetShape);
 document.getElementById("exp-done")?.addEventListener("click", exitSpin);
-syncSlider();
+syncSliders();
 updatePlayBtn();
 updateDirBtn();
 
@@ -797,3 +797,6 @@ window.addEventListener("resize", resize);
 resize();
 startAnim(LOAD_BOOST);
 showRoute(routeFromPath()); // render the subpage for the URL we loaded on
+// Enable the arch slide transition only after the first paint, so loading
+// straight into /spin shows it already settled rather than sliding on load.
+requestAnimationFrame(() => document.body.classList.add("anim"));
