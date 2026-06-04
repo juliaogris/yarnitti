@@ -50,9 +50,9 @@ let ARC_Y = 0.38; // around the bottom of the top third
 // guide is where body content starts fading; the upper guide is where it is
 // completely gone. Each has its own lever; both hide with one toggle (or
 // ?guide=0). Pink so they read as scaffolding.
-let GUIDE_Y = 0.33;  // lower line: fade starts here
-let GUIDE2_Y = 0.26; // upper line: content fully gone above here
-let SHOW_GUIDE = new URLSearchParams(location.search).get("guide") !== "0";
+let GUIDE_Y = 0.30;  // lower line: fade starts here
+let GUIDE2_Y = 0.22; // upper line: content fully gone above here
+let SHOW_GUIDE = new URLSearchParams(location.search).get("guide") === "1";
 const GUIDE_COLOR = "#ff2d8e";
 
 // ---- seeded value noise ---------------------------------------------------
@@ -89,7 +89,7 @@ function noise2(x, y) {
 
 function fbm(x, y) {
   let amp = 1, freq = 1, sum = 0, norm = 0;
-  for (let o = 0; o < CFG.octaves; o++) {
+  for (let o = 0; o < fbmOctaves; o++) {
     sum += amp * noise2(x * freq, y * freq);
     norm += amp;
     amp *= 0.5;
@@ -103,7 +103,10 @@ function fbm(x, y) {
 let W = 0, H = 0, dpr = 1;
 let strands = CFG.strands, steps = CFG.steps;
 let footLfrac = CFG.footL, footRfrac = CFG.footR, footYfrac = CFG.footY;
-let lineScale = 1; // thins every stroke on narrow screens (set in resize)
+let lineScale = 1;        // thins every stroke on narrow screens (set in resize)
+let archScale = 1;        // flattens the arch on narrow screens (set in resize)
+let wobScale = 1;         // more ridge ripples on narrow screens (set in resize)
+let fbmOctaves = CFG.octaves; // more jagged detail on narrow screens
 
 // Read the live theme colours so the canvas inverts with the page.
 function themeColors() {
@@ -147,13 +150,13 @@ function render() {
   // it rises above every nearer ridge, so front hills occlude the ones behind.
   for (let i = 0; i < strands; i++) {
     const q = strands > 1 ? i / (strands - 1) : 1;
-    const archH = H * CFG.arch;
+    const archH = H * CFG.arch * archScale;
     const bow = lerp(archH * CFG.bowRatio, archH, Math.pow(q, CFG.bowEase));
     // Front ridges (low q) drawn thicker; back ridges thinner.
     ctx.lineWidth = lerp(CFG.lineWidth, CFG.lineWidthBack, q) * lineScale;
     // Front ridges roll in few long swells; back ridges break into more
     // ripples, like waves stacking out to sea.
-    const wf = lerp(CFG.wobFreqFront, CFG.wobFreqBack, q);
+    const wf = lerp(CFG.wobFreqFront, CFG.wobFreqBack, q) * wobScale;
 
     for (let s = 0; s <= steps; s++) {
       const t = s / steps;
@@ -242,7 +245,9 @@ function drawStrand(footX, footY, sway, ink, lenFrac, waveAmt) {
 }
 
 function resize() {
-  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  // The render is static, so a higher pixel ratio costs nothing at runtime and
+  // keeps the thin lines crisp on 3x phone screens.
+  dpr = Math.min(window.devicePixelRatio || 1, 3);
   const r = hero.getBoundingClientRect();
   W = r.width;
   H = r.height;
@@ -250,15 +255,18 @@ function resize() {
   canvas.height = Math.round(H * dpr);
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+  // Render the mountains with the same values at every width (arch height,
+  // wobble, detail), except the lines are a touch thinner on mobile.
   const small = W < 640;
-  // On mobile, spread the feet near the edges. The foot height tracks the
-  // shared horizon so mountains stay above the guide on every width.
-  footLfrac = small ? 0.04 : CFG.footL;
-  footRfrac = small ? 0.96 : CFG.footR;
+  footLfrac = CFG.footL;
+  footRfrac = CFG.footR;
   footYfrac = ARC_Y;
-  lineScale = small ? 0.72 : 1; // a little thinner on mobile, unchanged on desktop
-  strands = small ? Math.round(CFG.strands * 0.9) : CFG.strands;
-  steps = Math.max(200, Math.round((small ? 0.6 : 0.85) * W));
+  lineScale = small ? 0.7 : 1;
+  archScale = 1;
+  wobScale = 1;
+  fbmOctaves = CFG.octaves;
+  strands = CFG.strands;
+  steps = Math.max(360, Math.round(0.85 * W));
 
   // Frame the content fade with the two pink guides: it starts at the lower
   // line and is fully gone at the upper one.
@@ -384,15 +392,51 @@ if (guideBtn) {
   });
 }
 
+// tag font picker (temporary). Cycle the tagline through candidate fonts to
+// compare them in context. ?tagfont=N preselects one. Remove before launch.
+const TAG_FONTS = [
+  { name: "Space Grotesk", css: '"Space Grotesk", system-ui, sans-serif' },
+  { name: "Quicksand", css: '"Quicksand", system-ui, sans-serif' },
+  { name: "Nunito", css: '"Nunito", system-ui, sans-serif' },
+  { name: "Delius", css: '"Delius", system-ui, sans-serif' },
+  { name: "Shantell Sans", css: '"Shantell Sans", cursive' },
+  { name: "Comic Neue", css: '"Comic Neue", cursive' },
+  { name: "Patrick Hand", css: '"Patrick Hand", cursive' },
+  { name: "Coming Soon", css: '"Coming Soon", cursive' },
+  { name: "Sniglet", css: '"Sniglet", cursive' },
+];
+const tagEl = document.querySelector(".hero__tag");
+const tagOut = document.getElementById("out-tagfont");
+let tagIdx = 5; // Comic Neue (the chosen tagline font)
+function applyTagFont() {
+  const f = TAG_FONTS[tagIdx];
+  if (tagEl) {
+    tagEl.style.fontFamily = f.css;
+    tagEl.style.fontStyle = f.italic ? "italic" : "normal";
+  }
+  if (tagOut) tagOut.textContent = f.name;
+}
+const tagParam = parseInt(params.get("tagfont") || "", 10);
+if (Number.isInteger(tagParam) && tagParam >= 0 && tagParam < TAG_FONTS.length) {
+  tagIdx = tagParam;
+}
+const stepTag = (d) => {
+  tagIdx = (tagIdx + d + TAG_FONTS.length) % TAG_FONTS.length;
+  applyTagFont();
+};
+document.getElementById("tagfont-prev")?.addEventListener("click", () => stepTag(-1));
+document.getElementById("tagfont-next")?.addEventListener("click", () => stepTag(1));
+applyTagFont();
+
 // reset: restore every lever to its default and replay its handler.
 const LEVER_DEFAULTS = {
-  "lever-heading": "30",
+  "lever-heading": "28",
   "lever-arch": "0.26",
   "lever-arcy": "0.38",
-  "lever-line": "0.33",
-  "lever-line2": "0.26",
+  "lever-line": "0.30",
+  "lever-line2": "0.22",
   "lever-fold": "70",
-  "lever-space": "2.5",
+  "lever-space": "13",
   "lever-body": "1",
 };
 const resetBtn = document.getElementById("lever-reset");
