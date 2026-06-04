@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>yarnitti</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Bitter:wght@400;500&family=Chilanka&family=Coming+Soon&family=DM+Sans:wght@400;500&family=EB+Garamond:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Hanken+Grotesk:wght@400;500&family=Itim&family=Karla:wght@400;500&family=Klee+One&family=Lora:wght@400;500&family=Mali:wght@400;500&family=Mulish:wght@400;500&family=Newsreader:wght@400;500&family=Nunito:wght@400;500&family=Over+the+Rainbow&family=Space+Grotesk:wght@400;500&family=Spectral:wght@400;500&family=Vollkorn:wght@400;500&display=swap" rel="stylesheet">
@@ -110,48 +111,6 @@
     </p>
   </section>
 </main>
-
-<aside class="levers" id="levers" aria-label="Temporary layout levers">
-  <label>heading
-    <input type="range" id="lever-heading" min="8" max="55" step="1" value="28">
-    <output id="out-heading">28</output>
-  </label>
-  <label class="lever-parked">arch
-    <input type="range" id="lever-arch" min="0.16" max="0.40" step="0.01" value="0.26">
-    <output id="out-arch">0.26</output>
-  </label>
-  <label>arc&nbsp;y
-    <input type="range" id="lever-arcy" min="0.15" max="0.70" step="0.01" value="0.38">
-    <output id="out-arcy">0.38</output>
-  </label>
-  <label>line
-    <input type="range" id="lever-line" min="0.05" max="0.95" step="0.01" value="0.30">
-    <output id="out-line">0.30</output>
-  </label>
-  <label class="lever-parked">line&nbsp;2
-    <input type="range" id="lever-line2" min="0.05" max="0.95" step="0.01" value="0.22">
-    <output id="out-line2">0.22</output>
-  </label>
-  <label class="lever-parked">fold
-    <input type="range" id="lever-fold" min="55" max="92" step="1" value="70">
-    <output id="out-fold">70</output>
-  </label>
-  <label class="lever-parked">space
-    <input type="range" id="lever-space" min="0" max="28" step="0.5" value="9">
-    <output id="out-space">9</output>
-  </label>
-  <label class="lever-parked">body
-    <input type="range" id="lever-body" min="0.7" max="1.5" step="0.05" value="1">
-    <output id="out-body">1.00</output>
-  </label>
-  <label>body&nbsp;font
-    <button type="button" id="bodyfont-prev" class="levers__reset levers__step">‹</button>
-    <output id="out-bodyfont">Coming Soon</output>
-    <button type="button" id="bodyfont-next" class="levers__reset levers__step">›</button>
-  </label>
-  <button type="button" id="lever-guide" class="levers__reset" aria-pressed="true">hide line</button>
-  <button type="button" id="lever-reset" class="levers__reset">reset</button>
-</aside>
 
 <script src="main.js"></script>
 </body>

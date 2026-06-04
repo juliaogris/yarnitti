@@ -161,7 +161,7 @@ body {
   position: fixed;
   inset: 0;
   z-index: 29;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.75); /* dim the page more when open */
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.4s ease, visibility 0.4s ease;
@@ -195,8 +195,8 @@ body::before {
   background: linear-gradient(
     to bottom,
     var(--bg) 0%,
-    var(--bg) var(--gone-pct, 22%),
-    transparent var(--foot-pct, 30%)
+    var(--bg) var(--gone-pct, 29%),
+    transparent var(--foot-pct, 37%)
   );
 }
 .hero canvas {
@@ -205,6 +205,8 @@ body::before {
   width: 100%;
   height: 100%;
   display: block;
+  pointer-events: auto;   /* clicking/dragging the mountains drives the motion */
+  touch-action: pan-y;    /* keep vertical scroll; horizontal drags are ours */
 }
 
 /* Wordmark sits in the dark opening under the arch. */
@@ -265,6 +267,20 @@ body::before {
 .yarn-ball {
   width: 1.8rem;
   height: auto;
+  cursor: pointer;
+  transform-origin: center;
+}
+/* Soft pop when the ball scrolls into view (slight overshoot, then settle). */
+.yarn-ball.is-in { animation: yarnPop 0.85s cubic-bezier(0.34, 1.56, 0.64, 1); }
+/* Gentle breathing while hovered. */
+.yarn-ball:hover { animation: yarnBreathe 2.6s ease-in-out infinite; }
+@keyframes yarnPop {
+  from { transform: scale(0.45); }
+  to { transform: scale(1); }
+}
+@keyframes yarnBreathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
 }
 
 .shot {
@@ -314,7 +330,7 @@ body::before {
 /* ---- mobile: less side margin, wider + lower arch handled in JS ---- */
 @media (max-width: 640px) {
   :root {
-    --heading-top: 24vh; /* wordmark sits a little higher on mobile */
+    --heading-top: 28vh; /* wordmark (and the body below it) sit a little lower on mobile */
     --body-gap: 7rem;    /* a little less space below the tagline on mobile */
   }
   .page { padding-left: 2.5rem; padding-right: 2.5rem; }
@@ -394,6 +410,7 @@ body::before {
   gap: 0.5rem;
 }
 .levers input[type="range"] { accent-color: var(--ink); width: 9rem; }
+.levers.is-hidden { display: none; } /* hidden while the menu is open */
 
 /* Hide the whole tuning bar on mobile; defaults still apply. The controls
    remain available on desktop. Placed after the .levers rules so it wins. */
@@ -417,6 +434,9 @@ body::before {
 #out-tagfont, #out-bodyfont { min-width: 9rem; text-transform: none; letter-spacing: 0; }
 
 @media (prefers-reduced-motion: reduce) {
-  body, .theme-toggle { transition: none; }
-  .hero__chev { animation: none; }
+  /* No motion anywhere: the mountain intro is already skipped in JS; here the
+     menu, hamburger, and fades stop sliding too. */
+  body, .menu, .menu-backdrop, .hamburger__line,
+  .menu__link, .menu__icon { transition: none; }
+  .hero__chev, .yarn-ball { animation: none; }
 }

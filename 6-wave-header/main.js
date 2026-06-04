@@ -50,8 +50,8 @@ let ARC_Y = 0.38; // around the bottom of the top third
 // guide is where body content starts fading; the upper guide is where it is
 // completely gone. Each has its own lever; both hide with one toggle (or
 // ?guide=0). Pink so they read as scaffolding.
-let GUIDE_Y = 0.30;  // lower line: fade starts here
-let GUIDE2_Y = 0.22; // upper line: content fully gone above here
+let GUIDE_Y = 0.37;  // lower line: fade starts here
+let GUIDE2_Y = 0.29; // upper line: content fully gone above here
 let SHOW_GUIDE = new URLSearchParams(location.search).get("guide") === "1";
 const GUIDE_COLOR = "#ff2d8e";
 
@@ -103,6 +103,7 @@ function fbm(x, y) {
 let W = 0, H = 0, dpr = 1;
 let strands = CFG.strands, steps = CFG.steps;
 let footLfrac = CFG.footL, footRfrac = CFG.footR, footYfrac = CFG.footY;
+let tAnim = 0;            // animated noise offset (load / click intro motion)
 let lineScale = 1;        // thins every stroke on narrow screens (set in resize)
 let archScale = 1;        // flattens the arch on narrow screens (set in resize)
 let wobScale = 1;         // more ridge ripples on narrow screens (set in resize)
@@ -162,7 +163,7 @@ function render() {
       const t = s / steps;
       const env = Math.sin(Math.PI * t);
       const baseY = footY - bow * env;
-      const wob = fbm(t * wf, i * CFG.rowOffset) * wobPx * env;
+      const wob = fbm(t * wf + tAnim, i * CFG.rowOffset) * wobPx * env;
       // Fine hand-drawn tremor on top of the main wobble; tapers to zero at
       // the feet so the strands still converge to a sharp point.
       const jit = fbm(t * CFG.jitterFreq + i * 3.1, i * 0.9 + 50) * jitPx * env;
@@ -245,9 +246,10 @@ function drawStrand(footX, footY, sway, ink, lenFrac, waveAmt) {
 }
 
 function resize() {
-  // The render is static, so a higher pixel ratio costs nothing at runtime and
-  // keeps the thin lines crisp on 3x phone screens.
-  dpr = Math.min(window.devicePixelRatio || 1, 3);
+  // Cap the pixel ratio at 2: the canvas now animates, so a 3x backing store
+  // is a lot of pixels to redraw each frame and causes occasional jank on
+  // retina/phone screens. 2x stays crisp enough.
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
   const r = hero.getBoundingClientRect();
   W = r.width;
   H = r.height;
@@ -304,78 +306,6 @@ function toggleTheme() {
   render();
 }
 document.getElementById("menu-theme")?.addEventListener("click", toggleTheme);
-// ---- temporary tuning levers (remove before launch) ----------------------
-
-const leverHeading = document.getElementById("lever-heading");
-const outHeading = document.getElementById("out-heading");
-if (leverHeading) {
-  leverHeading.addEventListener("input", () => {
-    root.style.setProperty("--heading-top", `${leverHeading.value}vh`);
-    if (outHeading) outHeading.textContent = leverHeading.value;
-  });
-}
-
-const leverArch = document.getElementById("lever-arch");
-const outArch = document.getElementById("out-arch");
-if (leverArch) {
-  leverArch.addEventListener("input", () => {
-    CFG.arch = parseFloat(leverArch.value);
-    if (outArch) outArch.textContent = leverArch.value;
-    render();
-  });
-}
-
-function wireLever(id, outId, fn, fmt) {
-  const el = document.getElementById(id);
-  const out = document.getElementById(outId);
-  if (!el) return;
-  el.addEventListener("input", () => {
-    fn(el.value);
-    if (out) out.textContent = fmt ? fmt(el.value) : el.value;
-  });
-}
-
-// arc y: move the arc (foot line) up or down, independent of the guide.
-wireLever("lever-arcy", "out-arcy", (v) => {
-  ARC_Y = parseFloat(v);
-  footYfrac = ARC_Y;
-  render();
-}, (v) => parseFloat(v).toFixed(2));
-
-// line: move both pink guides together, keeping the fade margin between them.
-const line2El = document.getElementById("lever-line2");
-const out2El = document.getElementById("out-line2");
-wireLever("lever-line", "out-line", (v) => {
-  const gap = GUIDE_Y - GUIDE2_Y; // preserve the current fade margin
-  GUIDE_Y = parseFloat(v);
-  GUIDE2_Y = GUIDE_Y - gap;
-  root.style.setProperty("--foot-pct", (GUIDE_Y * 100).toFixed(1) + "%");
-  root.style.setProperty("--gone-pct", (GUIDE2_Y * 100).toFixed(1) + "%");
-  if (line2El) line2El.value = GUIDE2_Y.toFixed(2);
-  if (out2El) out2El.textContent = GUIDE2_Y.toFixed(2);
-  render();
-}, (v) => parseFloat(v).toFixed(2));
-
-// line 2: upper pink guide alone, which sets the fade margin (the gap to line).
-wireLever("lever-line2", "out-line2", (v) => {
-  GUIDE2_Y = parseFloat(v);
-  root.style.setProperty("--gone-pct", (GUIDE2_Y * 100).toFixed(1) + "%");
-  render();
-}, (v) => parseFloat(v).toFixed(2));
-
-// fold: hero height (vh); resize so the canvas refits.
-wireLever("lever-fold", "out-fold", (v) => {
-  root.style.setProperty("--hero-h", `${v}vh`);
-  resize();
-});
-// space: gap between the tagline and the body (rem); 0 = tight to heading.
-wireLever("lever-space", "out-space", (v) => {
-  root.style.setProperty("--body-gap", `${v}rem`);
-});
-// body: body text size scale.
-wireLever("lever-body", "out-body", (v) => {
-  root.style.setProperty("--body-scale", v);
-}, (v) => parseFloat(v).toFixed(2));
 
 // hamburger menu: animate the button to an X and slide the menu panel and its
 // backdrop in and out together.
@@ -388,6 +318,7 @@ function setMenu(open) {
   menuToggle?.setAttribute("aria-label", open ? "Close menu" : "Open menu");
   menu?.classList.toggle("is-open", open);
   menuBackdrop?.classList.toggle("is-open", open);
+  document.getElementById("levers")?.classList.toggle("is-hidden", open);
 }
 menuToggle?.addEventListener("click", () =>
   setMenu(!menuToggle.classList.contains("is-open")));
@@ -406,92 +337,157 @@ menuSound?.addEventListener("click", () => {
   menuSound.setAttribute("aria-pressed", String(on));
 });
 
-// guide toggle: show or hide the pink debug line.
-const guideBtn = document.getElementById("lever-guide");
-if (guideBtn) {
-  const syncGuideBtn = () => {
-    guideBtn.textContent = SHOW_GUIDE ? "hide line" : "show line";
-    guideBtn.setAttribute("aria-pressed", String(SHOW_GUIDE));
-  };
-  syncGuideBtn();
-  guideBtn.addEventListener("click", () => {
-    SHOW_GUIDE = !SHOW_GUIDE;
-    syncGuideBtn();
-    render();
-  });
+// ---- intro motion -----------------------------------------------------------
+// On load (and on every click on the mountains) the ridges undulate, then
+// decelerate to a standstill within 7 seconds. Each run continues from the
+// current offset so a mid-run click never snaps.
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const TAU = 1.5;          // seconds; how long the spin coasts (long, like a roundabout)
+const ACCEL = 1.0;        // how fast actual speed chases the target (lower = gentler ramp)
+const CLICK_BOOST = 1.6;  // target speed added per click (gentle, builds slowly)
+const LOAD_BOOST = 1.9;   // a bit more kick on first load
+const VEL_MAX = 8;        // cap, reached at roughly five quick clicks
+const BRAKE_TAU = 0.22;   // seconds; gentle coast to a stop, never a hard cut
+let vel = 0;              // current ridge-pattern speed
+let targetVel = 0;        // speed it is easing toward (clicks raise it, friction lowers it)
+let braking = false;      // a stop request: decelerate quickly to a halt
+let lastFrame = null;
+let animRAF = null;
+function animate(now) {
+  if (lastFrame === null) lastFrame = now;
+  const dt = Math.min(0.05, (now - lastFrame) / 1000); // clamp big tab-switch gaps
+  lastFrame = now;
+  if (braking) {
+    targetVel = 0;
+    vel *= Math.exp(-dt / BRAKE_TAU);                  // quick, smooth stop
+  } else {
+    targetVel *= Math.exp(-dt / TAU);                  // friction on the target
+    vel += (targetVel - vel) * Math.min(1, ACCEL * dt); // ease the real speed toward it
+  }
+  tAnim += vel * dt;
+  render();
+  if (Math.abs(vel) > 0.02 || Math.abs(targetVel) > 0.02) {
+    animRAF = requestAnimationFrame(animate);
+  } else {
+    vel = 0;
+    targetVel = 0;
+    braking = false;
+    lastFrame = null;
+    animRAF = null;
+  }
 }
+// Each click adds to the target speed, so more (and faster) clicks build up
+// more motion; the real speed eases in and out so it starts and stops gently.
+function startAnim(boost) {
+  if (reduceMotion) return;
+  braking = false;
+  // Push in whatever direction we are already moving (default to + at rest), so
+  // clicking continues and speeds up the current spin rather than fighting it.
+  const cur = Math.abs(vel) >= Math.abs(targetVel) ? vel : targetVel;
+  const dir = cur === 0 ? 1 : Math.sign(cur);
+  targetVel = Math.max(-VEL_MAX, Math.min(VEL_MAX, targetVel + boost * dir));
+  if (animRAF === null) {
+    lastFrame = null;
+    animRAF = requestAnimationFrame(animate);
+  }
+}
+// Drag state (declared before the click handler, which ignores a click that
+// was really the end of a drag).
+const SCRUB = 0.0015; // tAnim units per CSS pixel dragged (lower = less reactive)
+let pressing = false;
+let didDrag = false;
+let canScrub = false;  // the press started on a line, so a drag may scrub
+let pressOnUI = false; // the press started on the menu/controls
+let dragLastX = 0;
+let dragLastT = 0;
+let dragVel = 0;
+let dragPrevVel = 0; // spin at the moment a drag takes over (for additive flicks)
 
-// body font picker (temporary). Cycle the lead and prose through candidate
-// body fonts. ?bodyfont=N preselects one. Remove before launch.
-const BODY_FONTS = [
-  { name: "Fraunces", css: '"Fraunces", Georgia, serif' },
-  { name: "Newsreader", css: '"Newsreader", Georgia, serif' },
-  { name: "Lora", css: '"Lora", Georgia, serif' },
-  { name: "Vollkorn", css: '"Vollkorn", Georgia, serif' },
-  { name: "Bitter", css: '"Bitter", Georgia, serif' },
-  { name: "EB Garamond", css: '"EB Garamond", Georgia, serif' },
-  { name: "Spectral", css: '"Spectral", Georgia, serif' },
-  { name: "Nunito", css: '"Nunito", system-ui, sans-serif' },
-  { name: "Mulish", css: '"Mulish", system-ui, sans-serif' },
-  { name: "Hanken Grotesk", css: '"Hanken Grotesk", system-ui, sans-serif' },
-  { name: "Karla", css: '"Karla", system-ui, sans-serif' },
-  { name: "DM Sans", css: '"DM Sans", system-ui, sans-serif' },
-  { name: "Mali", css: '"Mali", Georgia, serif' },
-  { name: "Coming Soon", css: '"Coming Soon", Georgia, serif' },
-  { name: "Itim", css: '"Itim", system-ui, sans-serif' },
-  { name: "Chilanka", css: '"Chilanka", system-ui, sans-serif' },
-  { name: "Klee One", css: '"Klee One", Georgia, serif' },
-  { name: "Andika", css: '"Andika", system-ui, sans-serif' },
-];
-const bodyOut = document.getElementById("out-bodyfont");
-let bodyIdx = 13; // Coming Soon (the chosen body font)
-function applyBodyFont() {
-  const f = BODY_FONTS[bodyIdx];
-  root.style.setProperty("--body-font", f.css);
-  if (bodyOut) bodyOut.textContent = f.name;
+// Is a click roughly on a drawn line? Sample the canvas alpha in a small box
+// around the point. (The wordmark and tagline are HTML, not on the canvas.)
+function isOnLine(e) {
+  const rect = canvas.getBoundingClientRect();
+  if (e.clientX < rect.left || e.clientX > rect.right ||
+      e.clientY < rect.top || e.clientY > rect.bottom) return false;
+  const r = 9; // CSS-px tolerance
+  const x = Math.max(0, Math.round((e.clientX - rect.left - r) * dpr));
+  const y = Math.max(0, Math.round((e.clientY - rect.top - r) * dpr));
+  const w = Math.min(canvas.width - x, Math.round(2 * r * dpr));
+  const h = Math.min(canvas.height - y, Math.round(2 * r * dpr));
+  if (w <= 0 || h <= 0) return false;
+  const data = ctx.getImageData(x, y, w, h).data;
+  for (let i = 3; i < data.length; i += 4) if (data[i] > 10) return true;
+  return false;
 }
-const bodyParam = parseInt(params.get("bodyfont") || "", 10);
-if (Number.isInteger(bodyParam) && bodyParam >= 0 && bodyParam < BODY_FONTS.length) {
-  bodyIdx = bodyParam;
+function stopMotion() {
+  if (animRAF === null && vel === 0 && targetVel === 0) return;
+  braking = true; // decelerate quickly to a halt rather than cutting dead
+  targetVel = 0;
+  if (animRAF === null) {
+    lastFrame = null;
+    animRAF = requestAnimationFrame(animate);
+  }
 }
-const stepBody = (d) => {
-  bodyIdx = (bodyIdx + d + BODY_FONTS.length) % BODY_FONTS.length;
-  applyBodyFont();
-};
-document.getElementById("bodyfont-prev")?.addEventListener("click", () => stepBody(-1));
-document.getElementById("bodyfont-next")?.addEventListener("click", () => stepBody(1));
-applyBodyFont();
+// A press that starts on a line can scrub; any other press may be a tap. We
+// decide which at let-go: a scrub leaves momentum, a tap brakes to a stop, a
+// cancelled press (e.g. a vertical scroll) does nothing.
+document.addEventListener("pointerdown", (e) => {
+  if (reduceMotion) return;
+  pressing = true;
+  didDrag = false;
+  canScrub = isOnLine(e); // a scrub may only begin on a line
+  pressOnUI = !!e.target.closest(".menu, .menu-backdrop, .hamburger, .levers");
+  dragLastX = e.clientX;
+  dragLastT = e.timeStamp;
+});
+document.addEventListener("pointermove", (e) => {
+  if (!pressing || !canScrub) return;
+  const dx = e.clientX - dragLastX;
+  if (!didDrag) {
+    if (Math.abs(dx) <= 2) return; // ignore jitter; keep the start point
+    didDrag = true;
+    braking = false;
+  }
+  const dt = Math.max(0.008, (e.timeStamp - dragLastT) / 1000);
+  // Flywheel push: the drag imparts speed. Pushing faster (or the other way)
+  // changes the spin; pushing slower in the same direction never brakes it, so
+  // "keep pushing" keeps it going, like a roundabout. The loop moves the
+  // pattern at this speed, so we don't shift it directly here.
+  const fv = Math.max(-VEL_MAX, Math.min(VEL_MAX, (-dx / dt) * SCRUB));
+  if (Math.sign(fv) !== Math.sign(vel) || Math.abs(fv) > Math.abs(vel)) {
+    vel = fv;
+  }
+  targetVel = vel;
+  dragLastX = e.clientX;
+  dragLastT = e.timeStamp;
+  if (animRAF === null) {
+    lastFrame = null;
+    animRAF = requestAnimationFrame(animate);
+  }
+});
+function endPress(deliberate) {
+  if (!pressing) return;
+  pressing = false;
+  if (pressOnUI || didDrag) return; // scrub keeps coasting; UI is not ours
+  if (deliberate) stopMotion();     // a tap brakes to a stop
+}
+document.addEventListener("pointerup", () => endPress(true));
+document.addEventListener("pointercancel", () => endPress(false));
 
-// reset: restore every lever to its default and replay its handler.
-const LEVER_DEFAULTS = {
-  "lever-heading": isMobile ? "24" : "28",
-  "lever-arch": "0.26",
-  "lever-arcy": "0.38",
-  "lever-line": "0.30",
-  "lever-line2": "0.22",
-  "lever-fold": "70",
-  "lever-space": "9",
-  "lever-body": "1",
-};
-const resetBtn = document.getElementById("lever-reset");
-if (resetBtn) {
-  resetBtn.addEventListener("click", () => {
-    for (const [id, value] of Object.entries(LEVER_DEFAULTS)) {
-      const el = document.getElementById(id);
-      if (!el) continue;
-      el.value = value;
-      el.dispatchEvent(new Event("input"));
+// Pop the wool ball when it first scrolls into view.
+const yarnBall = document.querySelector(".yarn-ball");
+if (yarnBall && !reduceMotion && "IntersectionObserver" in window) {
+  const io = new IntersectionObserver((entries, obs) => {
+    for (const en of entries) {
+      if (en.isIntersecting) {
+        yarnBall.classList.add("is-in");
+        obs.unobserve(yarnBall);
+      }
     }
-  });
-}
-
-// On mobile the wordmark rests higher, so show 24 on the heading slider.
-if (isMobile) {
-  const lh = document.getElementById("lever-heading");
-  const oh = document.getElementById("out-heading");
-  if (lh) lh.value = "24";
-  if (oh) oh.textContent = "24";
+  }, { threshold: 0.6 });
+  io.observe(yarnBall);
 }
 
 window.addEventListener("resize", resize);
 resize();
+startAnim(LOAD_BOOST);
