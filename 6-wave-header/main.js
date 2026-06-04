@@ -15,19 +15,26 @@ const CFG = {
   strands: 34,        // line count, from the panel
   steps: 300,         // samples along each arch
 
-  footY: 0.66,        // height of the two feet, fraction of canvas height
+  footY: 0.54,        // height of the two feet, fraction of canvas height
   footL: 0.10,        // left foot x, fraction of width
   footR: 0.90,        // right foot x
 
-  bowMin: 0.08,       // bow height of the lowest (front) strand, fraction H
-  bowMax: 0.48,       // bow height of the highest (back) strand -> tall arch
+  arch: 0.50,         // overall arch height (back bow), fraction H (arch lever)
+  bowRatio: 0.62,     // front bow as a fraction of the back bow: higher ->
+                      // the bottom line curves into a horseshoe, not flat
   bowEase: 1.1,       // >1 crowds strands toward the low bows
 
   wobAmp: 0.09,       // ridge wobble, fraction of height -> higher peaks
-  wobFreq: 6.0,       // number of crests across the arch
+  wobFreqFront: 3.0,  // front: few long swells (like ocean swell)
+  wobFreqBack: 9.5,   // back: many small ripples
   octaves: 4,         // higher -> more jagged ridgeline
 
-  lineWidth: 1.1,
+  jitterAmp: 0,       // hand-drawn tremor off (smooth lines)
+  jitterFreq: 26,
+  xJitterAmp: 0,
+
+  lineWidth: 2.7,      // front (low / foreground) ridges, thicker
+  lineWidthBack: 2.0,  // back (high) ridges, a little thinner
 };
 
 const canvas = document.getElementById("waves");
@@ -82,11 +89,21 @@ function fbm(x, y) {
 let W = 0, H = 0, dpr = 1;
 let strands = CFG.strands, steps = CFG.steps;
 
+// Read the live theme colours so the canvas inverts with the page.
+function themeColors() {
+  const cs = getComputedStyle(document.documentElement);
+  return {
+    bg: cs.getPropertyValue("--bg").trim() || "#000",
+    ink: cs.getPropertyValue("--ink").trim() || "#fff",
+  };
+}
+
 function render() {
-  ctx.fillStyle = "#000";
+  const { bg, ink } = themeColors();
+  ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
-  ctx.strokeStyle = "#fff";
+  ctx.strokeStyle = ink;
   ctx.lineWidth = CFG.lineWidth;
   ctx.lineJoin = "round";
   ctx.lineCap = "round";
@@ -98,6 +115,8 @@ function render() {
   const cx = (xL + xR) / 2;
   const a = (xR - xL) / 2; // horizontal radius, fixed -> both feet are points
   const wobPx = H * CFG.wobAmp;
+  const jitPx = H * CFG.jitterAmp;
+  const xJitPx = W * CFG.xJitterAmp;
 
   // x is the same for every strand at a given step, so each step is one
   // screen column: an upper-silhouette per column gives hidden-line removal.
@@ -107,19 +126,31 @@ function render() {
   }
   const horizon = new Float32Array(steps + 1).fill(Infinity);
   const ys = new Float32Array(steps + 1);
+  const xs = new Float32Array(steps + 1);
 
   // Draw front (low bow) to back (high bow). A back point is drawn only where
   // it rises above every nearer ridge, so front hills occlude the ones behind.
   for (let i = 0; i < strands; i++) {
     const q = strands > 1 ? i / (strands - 1) : 1;
-    const bow = lerp(H * CFG.bowMin, H * CFG.bowMax, Math.pow(q, CFG.bowEase));
+    const archH = H * CFG.arch;
+    const bow = lerp(archH * CFG.bowRatio, archH, Math.pow(q, CFG.bowEase));
+    // Front ridges (low q) drawn thicker; back ridges thinner.
+    ctx.lineWidth = lerp(CFG.lineWidth, CFG.lineWidthBack, q);
+    // Front ridges roll in few long swells; back ridges break into more
+    // ripples, like waves stacking out to sea.
+    const wf = lerp(CFG.wobFreqFront, CFG.wobFreqBack, q);
 
     for (let s = 0; s <= steps; s++) {
       const t = s / steps;
       const env = Math.sin(Math.PI * t);
       const baseY = footY - bow * env;
-      const wob = fbm(t * CFG.wobFreq, i * 0.37) * wobPx * env;
-      ys[s] = baseY - wob;
+      const wob = fbm(t * wf, i * 0.37) * wobPx * env;
+      // Fine hand-drawn tremor on top of the main wobble; tapers to zero at
+      // the feet so the strands still converge to a sharp point.
+      const jit = fbm(t * CFG.jitterFreq + i * 3.1, i * 0.9 + 50) * jitPx * env;
+      const xJit = fbm(t * CFG.jitterFreq * 0.7 + i * 4.2, 80) * xJitPx * env;
+      ys[s] = baseY - wob - jit;
+      xs[s] = colX[s] + xJit;
     }
 
     // Stroke only the visible runs (above the silhouette), as broken subpaths.
@@ -129,10 +160,10 @@ function render() {
       if (visible) {
         if (!drawing) {
           ctx.beginPath();
-          ctx.moveTo(colX[s], ys[s]);
+          ctx.moveTo(xs[s], ys[s]);
           drawing = true;
         } else {
-          ctx.lineTo(colX[s], ys[s]);
+          ctx.lineTo(xs[s], ys[s]);
         }
       } else if (drawing) {
         ctx.stroke();
@@ -146,6 +177,35 @@ function render() {
       if (ys[s] < horizon[s]) horizon[s] = ys[s];
     }
   }
+
+  // Loose strands thinning out and fading from each foot: long on the left,
+  // short on the right.
+  drawStrand(xL, footY, 0.4, ink, 0.46, 0.024);
+  drawStrand(xR, footY, 2.1, ink, 0.13, 0.008);
+}
+
+// A loose strand dropping from a foot, tapering and fading as it falls.
+function drawStrand(footX, footY, sway, ink, lenFrac, waveAmt) {
+  const len = H * lenFrac;
+  const seg = 46;
+  ctx.strokeStyle = ink;
+  ctx.lineCap = "round";
+  let px = footX;
+  let py = footY;
+  for (let s = 1; s <= seg; s++) {
+    const t = s / seg;
+    const y = footY + len * t;
+    const x = footX + Math.sin(t * Math.PI * 2.2 + sway) * H * waveAmt * t * (1 - 0.25 * t);
+    ctx.lineWidth = lerp(2.6, 0.15, t);            // thins out toward the end
+    ctx.globalAlpha = t < 0.6 ? 1 : Math.max(0, 1 - (t - 0.6) / 0.4); // fades
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    px = x;
+    py = y;
+  }
+  ctx.globalAlpha = 1;
 }
 
 function resize() {
@@ -161,6 +221,53 @@ function resize() {
   strands = small ? Math.round(CFG.strands * 0.9) : CFG.strands;
   steps = Math.max(200, Math.round((small ? 0.6 : 0.85) * W));
   render();
+}
+
+// ---- theme toggle ----------------------------------------------------------
+
+const root = document.documentElement;
+const saved = localStorage.getItem("yarnitti-theme");
+if (saved) {
+  root.setAttribute("data-theme", saved);
+} else if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+  root.setAttribute("data-theme", "light");
+}
+
+// Prototyping overrides: ?theme=light&scrollto=N
+const params = new URLSearchParams(location.search);
+const themeParam = params.get("theme");
+if (themeParam) root.setAttribute("data-theme", themeParam);
+const scrollToParam = params.get("scrollto");
+if (scrollToParam) {
+  window.addEventListener("load", () => window.scrollTo(0, +scrollToParam));
+}
+
+const toggle = document.getElementById("theme-toggle");
+if (toggle) {
+  toggle.addEventListener("click", () => {
+    const next =
+      root.getAttribute("data-theme") === "light" ? "dark" : "light";
+    root.setAttribute("data-theme", next);
+    localStorage.setItem("yarnitti-theme", next);
+    render();
+  });
+}
+// ---- temporary tuning levers (remove before launch) ----------------------
+
+const leverHeading = document.getElementById("lever-heading");
+const mark = document.querySelector(".hero__mark");
+if (leverHeading && mark) {
+  leverHeading.addEventListener("input", () => {
+    mark.style.top = `${leverHeading.value}%`;
+  });
+}
+
+const leverArch = document.getElementById("lever-arch");
+if (leverArch) {
+  leverArch.addEventListener("input", () => {
+    CFG.arch = parseFloat(leverArch.value);
+    render();
+  });
 }
 
 window.addEventListener("resize", resize);

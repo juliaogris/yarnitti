@@ -1,27 +1,63 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root {
-  --ink: #f3ead9;
-  --night: #0d1626;
+/* ---- theme ---------------------------------------------------------------
+   Dark is the default (white lines on black). The toggle flips to a warm
+   light theme (dark ink on paper), echoing the daytime "resplendent canvas"
+   reference. The canvas reads --bg / --ink from here and re-renders. */
+:root,
+:root[data-theme="dark"] {
+  --bg: #0a0a0b;
+  --ink: #f4f1ea;
+  --muted: rgba(244, 241, 234, 0.62);
+  --hair: rgba(244, 241, 234, 0.18);
+}
+:root[data-theme="light"] {
+  --bg: #f3ecdf;
+  --ink: #1a160e;
+  --muted: rgba(26, 22, 14, 0.6);
+  --hair: rgba(26, 22, 14, 0.16);
 }
 
+:root { --display-font: "Over the Rainbow", "Fraunces", cursive; }
+
+html { background: var(--bg); }
 body {
-  font-family: "Iowan Old Style", Palatino, Georgia, serif;
-  background: var(--night);
+  background: var(--bg);
   color: var(--ink);
+  font-family: "Fraunces", Georgia, serif;
   line-height: 1.6;
+  transition: background 0.4s ease, color 0.4s ease;
 }
 
-/* ---- hero / header ---- */
+/* ---- theme toggle ---- */
+.theme-toggle {
+  position: fixed;
+  top: clamp(0.9rem, 2vw, 1.4rem);
+  right: clamp(0.9rem, 2vw, 1.4rem);
+  z-index: 10;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  border: 1px solid var(--hair);
+  background: transparent;
+  color: var(--ink);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, border-color 0.2s ease, transform 0.4s ease;
+}
+.theme-toggle:hover { opacity: 1; border-color: var(--ink); }
+:root[data-theme="light"] .theme-toggle { transform: rotate(180deg); }
+
+/* ---- hero / arch ---- */
 .hero {
   position: relative;
   width: 100%;
-  /* Full viewport while we evaluate the bare visual. */
   height: 100vh;
   overflow: hidden;
-  background: #000;
+  background: var(--bg);
 }
-
 .hero canvas {
   position: absolute;
   inset: 0;
@@ -30,58 +66,140 @@ body {
   display: block;
 }
 
+/* Wordmark sits in the dark opening under the arch. */
 .hero__mark {
   position: absolute;
-  left: clamp(1.5rem, 6vw, 5rem);
-  top: clamp(1.5rem, 6vw, 4rem);
+  left: 0;
+  right: 0;
+  top: 50%;
   z-index: 2;
-  max-width: 28ch;
-  /* Lift the text off the lighter bands so it stays readable. */
-  text-shadow: 0 1px 18px rgba(7, 11, 20, 0.7);
+  text-align: center;
+  padding: 0 1.2rem;
+}
+.hero__title {
+  font-family: var(--display-font);
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: clamp(3rem, 13vw, 8.5rem);
+  line-height: 0.9;
+  letter-spacing: 0;
+  /* Single-weight handwriting fonts can't go lighter by weight, so erode the
+     strokes with a background-coloured outline to thin them. */
+  -webkit-text-stroke: 0.8px var(--bg);
+}
+.hero__tag {
+  margin: 0.7rem auto 0;
+  max-width: 34ch;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: clamp(0.85rem, 2.2vw, 1.05rem);
+  letter-spacing: 0.02em;
+  color: var(--muted);
 }
 
-.hero__tag {
-  font-size: 0.78rem;
+/* ---- page body (scrolls; the arch scrolls away above it) ---- */
+.page {
+  max-width: 68ch;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 8vw, 6rem) clamp(1.4rem, 6vw, 2rem) 6rem;
+}
+.shot {
+  margin-bottom: clamp(2rem, 6vw, 3.5rem);
+  text-align: center;
+}
+.shot img {
+  display: block;
+  width: 100%;
+  max-width: 440px;
+  height: auto;
+  margin: 0 auto;
+}
+.shot figcaption {
+  margin-top: 0.7rem;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.shot figcaption em { opacity: 0.7; }
+
+.prose p {
+  font-size: clamp(1.05rem, 2.4vw, 1.22rem);
+  line-height: 1.7;
+  margin-bottom: 1.3rem;
+}
+
+/* ---- lead line (intro prose, sits above the photo) ---- */
+.lead {
+  max-width: 30ch;
+  margin: 0 auto clamp(2rem, 6vw, 3rem);
+  text-align: center;
+  font-family: var(--display-font);
+  font-style: italic;
+  font-size: clamp(1.3rem, 3.6vw, 2rem);
+  line-height: 1.4;
+}
+
+/* ---- scroll cue ---- */
+.hero__scroll {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(3rem, 7vh, 4.5rem);
+  transform: translateX(-50%);
+  z-index: 3;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--muted);
+  text-decoration: none;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 0.7rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: #f4c95d;
-  opacity: 0.92;
+  transition: color 0.2s ease;
+}
+.hero__scroll:hover { color: var(--ink); }
+.hero__chev {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  animation: chevBounce 1.9s ease-in-out infinite;
+}
+@keyframes chevBounce {
+  0%, 100% { transform: rotate(45deg) translate(-2px, -2px); opacity: 0.4; }
+  50% { transform: rotate(45deg) translate(2px, 2px); opacity: 1; }
 }
 
-.hero__title {
-  font-size: clamp(3rem, 13vw, 7rem);
-  line-height: 0.95;
-  margin: 0.3rem 0 0.6rem;
-  letter-spacing: -0.01em;
-}
 
-.hero__sub {
-  font-size: clamp(1rem, 2.6vw, 1.35rem);
-  opacity: 0.9;
-  max-width: 24ch;
-}
-
-.hero__hint {
-  position: absolute;
-  right: clamp(1rem, 4vw, 2.5rem);
-  bottom: clamp(0.9rem, 3vw, 1.6rem);
-  z-index: 2;
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
+/* ---- temporary tuning levers (remove before launch) ---- */
+.levers {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  padding: 0.6rem 0.9rem;
+  background: color-mix(in srgb, var(--bg) 84%, transparent);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--hair);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  opacity: 0.5;
-  transition: opacity 0.6s ease;
+  color: var(--muted);
 }
-.hero__hint.is-faded { opacity: 0; }
-
-/* ---- placeholder page body ---- */
-.page {
-  max-width: 60ch;
-  margin: 0 auto;
-  padding: clamp(2rem, 6vw, 4rem) clamp(1.5rem, 6vw, 2rem);
+.levers label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
-.page p { margin-bottom: 1.1rem; opacity: 0.85; }
+.levers input[type="range"] { accent-color: var(--ink); width: 9rem; }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero__hint { display: none; }
+  body, .theme-toggle { transition: none; }
+  .hero__chev { animation: none; }
 }

@@ -3,13 +3,65 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>yarnitti — wave header (polar, b&w)</title>
+<title>yarnitti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Over+the+Rainbow&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle light and dark theme">◐</button>
+
 <header class="hero" id="hero">
   <canvas id="waves" aria-hidden="true"></canvas>
+  <div class="hero__mark">
+    <h1 class="hero__title">Yarnitti</h1>
+    <p class="hero__tag">a woolly love letter to people and country</p>
+  </div>
+  <a class="hero__scroll" href="#more" aria-label="Read on">
+    <span>read on</span>
+    <span class="hero__chev" aria-hidden="true"></span>
+  </a>
 </header>
+
+<main class="page" id="more">
+  <p class="lead">
+    Each piece gathers memories, dreams, and old stories. A finished one is a
+    map of belonging, woven with tenderness for land and people.
+  </p>
+
+  <figure class="shot">
+    <img src="img/pole-cut.jpg" alt="A wrapped pole on the walk to the bay">
+    <figcaption>A wrapped pole on the walk to the bay.</figcaption>
+  </figure>
+
+  <section class="prose">
+    <p>
+      Yarnitti grows out of love for Edithvale: its bay, its wetlands, its
+      people. I wrap the everyday furniture of the street in hand-crocheted
+      wool, each piece carrying a QR code to the story behind it. A small way
+      of making a place feel held.
+    </p>
+    <p>
+      It is a soft kind of resistance, and a quiet act of care: tending the
+      streets we share the way you might tend a garden, or a friendship.
+      Nothing here stays forever. The pieces come and go, and that is part of
+      the gift. There is no intention to offend; if a piece is unwelcome, tell
+      me and I will take it down.
+    </p>
+  </section>
+</main>
+
+<aside class="levers" id="levers" aria-label="Temporary layout levers">
+  <label>heading
+    <input type="range" id="lever-heading" min="34" max="72" step="1" value="50">
+  </label>
+  <label>arch
+    <input type="range" id="lever-arch" min="0.30" max="0.62" step="0.01" value="0.50">
+  </label>
+</aside>
+
 <script src="main.js"></script>
 </body>
 </html>
