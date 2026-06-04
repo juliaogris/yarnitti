@@ -582,7 +582,7 @@ function endPress(deliberate) {
   pressing = false;
   if (pressOnUI || didDrag) return; // scrub keeps coasting; UI is not ours
   if (pressOnBall) {                // a full tap on the ball opens or closes the play mode
-    if (deliberate) toggleExperiment(); // (a cancelled press, e.g. a scroll, does not)
+    if (deliberate) experiment ? exitSpin() : navigate("spin"); // (a scroll does not)
     return;
   }
   if (experiment) return;           // bare taps inside the experiment do nothing
@@ -592,18 +592,16 @@ document.addEventListener("pointerup", () => endPress(true));
 document.addEventListener("pointercancel", () => endPress(false));
 
 // ---- experiment ("Spin") play mode -----------------------------------------
-// Opening it locks the page to the mountains and reveals the control panel.
-// Closing it keeps whatever shape was made and lets the spin coast to a halt.
-function toggleExperiment() { setExperiment(!experiment); }
+// The /spin route drives this through showRoute. Opening it locks the page to
+// the mountains and reveals the control panel. Closing keeps whatever shape was
+// made and lets the spin coast to a halt.
 function setExperiment(on) {
-  if (reduceMotion) return;
+  if (experiment === on) return;
   experiment = on;
   document.body.classList.toggle("experiment", on);
-  setMenu(false);
   strandScale = on ? 0.45 : 1; // shorter dangling strands while playing
   if (on) {
     nudgeBall();
-    window.scrollTo({ top: 0, behavior: "smooth" });
   } else {
     steady = false;     // drop the held speed
     stopMotion();       // coast gently to a stop, keeping the new shape
@@ -695,7 +693,7 @@ const dirBtn = document.getElementById("exp-dir");
 document.getElementById("exp-play")?.addEventListener("click", expPlay);
 document.getElementById("exp-pause")?.addEventListener("click", expPause);
 document.getElementById("exp-reset")?.addEventListener("click", resetShape);
-document.getElementById("exp-done")?.addEventListener("click", () => setExperiment(false));
+document.getElementById("exp-done")?.addEventListener("click", exitSpin);
 speedEl?.addEventListener("input", () => {
   steadyVel = spinDir * parseFloat(speedEl.value);
   steady = true; // dragging the slider spins live
@@ -711,14 +709,55 @@ dirBtn?.addEventListener("click", () => {
   if (animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
 });
 
-// The "Spin" menu item and the floating exit ball both toggle play mode.
-document.getElementById("menu-spin")?.addEventListener("click", (e) => {
+// The floating exit ball closes play mode (returns to the previous route).
+document.getElementById("exp-exit")?.addEventListener("click", exitSpin);
+
+// ---- single-page-app router ------------------------------------------------
+// Path-based routes, all served by this one page (the deploy copies index.html
+// into each route folder). Clicks on internal links push history and swap the
+// visible subpage without a reload; back/forward and direct loads both work.
+const ROUTES = ["", "apricity", "about", "spin", "hunt", "gallery"];
+const BASE = new URL(".", document.currentScript?.src || location.href).pathname;
+let prevRoute = "";
+function routeFromPath() {
+  let r = decodeURIComponent(location.pathname);
+  if (r.startsWith(BASE)) r = r.slice(BASE.length);
+  r = r.replace(/^\/+|\/+$/g, "");
+  return ROUTES.includes(r) ? r : "";
+}
+function showRoute(route) {
+  setMenu(false);
+  document.body.dataset.route = route;
+  document.querySelectorAll(".subpage").forEach((el) =>
+    el.classList.toggle("is-active", (el.dataset.route || "") === route));
+  document.querySelectorAll("a[data-route]").forEach((a) =>
+    a.classList.toggle("is-current", a.dataset.route === route));
+  setExperiment(route === "spin");
+  if (route !== "spin") {
+    prevRoute = route;       // remember where to return when leaving /spin
+    window.scrollTo(0, 0);
+  }
+}
+function navigate(route, push = true) {
+  if (!ROUTES.includes(route)) route = "";
+  if (push) history.pushState({ route }, "", BASE + route);
+  showRoute(route);
+}
+function exitSpin() { navigate(prevRoute || ""); }
+window.addEventListener("popstate", () => showRoute(routeFromPath()));
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a[data-route]");
+  if (!a) return;
+  if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   e.preventDefault();
-  toggleExperiment();
+  navigate(a.dataset.route);
 });
-document.getElementById("exp-exit")?.addEventListener("click", toggleExperiment);
+// Give each nav link its real URL so copy-link and open-in-new-tab work.
+document.querySelectorAll("a[data-route]").forEach((a) => {
+  a.setAttribute("href", BASE + a.dataset.route);
+});
 
 window.addEventListener("resize", resize);
 resize();
 startAnim(LOAD_BOOST);
-if (params.get("spin") === "1") setExperiment(true); // prototyping: open play mode
+showRoute(routeFromPath()); // render the subpage for the URL we loaded on

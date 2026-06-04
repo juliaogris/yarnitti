@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Bitter:wght@400;500&family=Chilanka&family=Coming+Soon&family=DM+Sans:wght@400;500&family=EB+Garamond:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Hanken+Grotesk:wght@400;500&family=Itim&family=Karla:wght@400;500&family=Klee+One&family=Lora:wght@400;500&family=Mali:wght@400;500&family=Mulish:wght@400;500&family=Newsreader:wght@400;500&family=Nunito:wght@400;500&family=Over+the+Rainbow&family=Space+Grotesk:wght@400;500&family=Spectral:wght@400;500&family=Vollkorn:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-route="">
 
 <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
   <filter id="wonky" x="-20%" y="-20%" width="140%" height="140%">
@@ -35,19 +35,22 @@
           vector-effect="non-scaling-stroke"/>
   </svg>
   <ul class="menu__links">
-    <li><a class="menu__link" href="#top">
+    <li><a class="menu__link" data-route="" href=".">
       <svg class="menu__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/></svg>
       <span>Home</span></a></li>
-    <li><a class="menu__link" href="#apricity">
+    <li><a class="menu__link" data-route="apricity" href="apricity">
       <svg class="menu__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M3.5 12H6M18 12h2.5M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/></svg>
       <span>Apricity</span></a></li>
-    <li><a class="menu__link" href="#gallery">
+    <li><a class="menu__link" data-route="gallery" href="gallery">
       <svg class="menu__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-8 8"/></svg>
       <span>Gallery</span></a></li>
-    <li><a class="menu__link" href="#hunt">
+    <li><a class="menu__link" data-route="hunt" href="hunt">
       <svg class="menu__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6 7-11a7 7 0 10-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
       <span>Treasure Hunt</span></a></li>
-    <li><a class="menu__link" id="menu-spin" href="#spin">
+    <li><a class="menu__link" data-route="about" href="about">
+      <svg class="menu__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r="0.6" fill="currentColor" stroke="none"/></svg>
+      <span>About</span></a></li>
+    <li class="menu__sep"><a class="menu__link" data-route="spin" href="spin">
       <svg class="menu__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><ellipse cx="12" cy="12" rx="8" ry="3" transform="rotate(30 12 12)"/><ellipse cx="12" cy="12" rx="8" ry="3" transform="rotate(90 12 12)"/><ellipse cx="12" cy="12" rx="8" ry="3" transform="rotate(150 12 12)"/></svg>
       <span>Spin</span></a></li>
     <li><a class="menu__link" href="mailto:hello@yarnitti.com">
@@ -81,50 +84,86 @@
 </div>
 
 <main class="page" id="more">
-  <div class="yarn-divider" aria-hidden="true">
-    <svg class="yarn-ball" viewBox="0 0 40 40" fill="none" stroke="currentColor"
-         stroke-width="2.4" stroke-linecap="round">
-      <circle cx="20" cy="20" r="16"/>
-      <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(30 20 20)"/>
-      <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(90 20 20)"/>
-      <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(150 20 20)"/>
-    </svg>
+  <!-- HOME -->
+  <div class="subpage" data-route="">
+    <div class="yarn-divider" aria-hidden="true">
+      <svg class="yarn-ball" viewBox="0 0 40 40" fill="none" stroke="currentColor"
+           stroke-width="2.4" stroke-linecap="round">
+        <circle cx="20" cy="20" r="16"/>
+        <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(30 20 20)"/>
+        <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(90 20 20)"/>
+        <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(150 20 20)"/>
+      </svg>
+    </div>
+
+    <p class="lead">
+      This is a small experiment in caring for a place out loud, one stitch and
+      one street corner at a time.
+    </p>
+
+    <figure class="shot">
+      <span class="shot__img">
+        <img src="img/pole.jpg" alt="A wrapped pole on the walk to the bay">
+      </span>
+      <figcaption>A wrapped pole on the walk to the bay.</figcaption>
+    </figure>
   </div>
 
-  <p class="lead">
-    This is a small experiment in caring for a place out loud, one stitch and
-    one street corner at a time.
-  </p>
-
-  <figure class="shot">
-    <span class="shot__img">
-      <img src="img/pole.jpg" alt="A wrapped pole on the walk to the bay">
-    </span>
-    <figcaption>A wrapped pole on the walk to the bay.</figcaption>
-  </figure>
-
-  <section class="prose">
+  <!-- ABOUT (placeholder copy) -->
+  <section class="subpage prose" data-route="about">
+    <h1 class="subpage__title">About</h1>
+    <p class="subpage__lede">Yarnitti is the umbrella: street art where yarn meets graffiti.</p>
     <p>
-      Yarnitti grows out of love for Edithvale. I wrap the everyday furniture
-      of the street in hand-crocheted wool, each piece carrying a QR code to
-      the story behind it. A small way of making a place feel held.
+      It marries knitting and graffiti into a soft kind of resistance, made out
+      of love for land and people. Hand-crocheted wool wraps the everyday
+      furniture of the street, and each piece carries a QR code to the story
+      behind it.
+    </p>
+    <p>
+      Yarnitti grows out of love for Edithvale. A small way of making a place
+      feel held.
     </p>
   </section>
 
-  <!-- Placeholder copy for the scavenger hunt. Wording and prizes to be
-       finalised. -->
-  <section class="prose" id="hunt">
-    <h2>Treasure Hunt</h2>
+  <!-- APRICITY (placeholder copy) -->
+  <section class="subpage prose" data-route="apricity">
+    <h1 class="subpage__title">Apricity</h1>
+    <p class="subpage__lede">Apricity (noun): the warmth of the sun in winter.</p>
+    <p>
+      Apricity is the winter 2026 collection, a season of work wrapped in the
+      colours of cold-weather light: yellow, orange, red and purple, the tones
+      of a low sun catching the bay.
+    </p>
+    <p>
+      It is a love letter to community and to old things. To the people who
+      gather at the water's edge, to the courage of swimming in the cold, and to
+      the small awe of finding warmth in the middle of winter. The cold is real.
+      So is the warmth we make together.
+    </p>
+    <p>
+      More about the pieces, and where to find them, is on its way.
+    </p>
+  </section>
+
+  <!-- GALLERY (placeholder) -->
+  <section class="subpage prose" data-route="gallery">
+    <h1 class="subpage__title">Gallery</h1>
+    <p>Photographs of the pieces, out in the world, are on their way.</p>
+  </section>
+
+  <!-- TREASURE HUNT (placeholder copy) -->
+  <section class="subpage prose" data-route="hunt">
+    <h1 class="subpage__title">Treasure Hunt</h1>
     <p>
       All around Edithvale and the suburbs nearby, small wrapped pieces are
       hiding in plain sight, on poles, fences, benches and the odd surprising
       corner. They will only be up for a while before they come back down.
     </p>
     <p>
-      Go and find them. Log each one by its address, a photo, or both.
-      Whoever has found the most pieces by the time they are taken down wins
-      a custom amigurumi, crocheted by me just for them. A few runner-up
-      prizes will go to the next keenest hunters.
+      Go and find them. Log each one by its address, a photo, or both. Whoever
+      has found the most pieces by the time they are taken down wins a custom
+      amigurumi, crocheted by me just for them. A few runner-up prizes will go
+      to the next keenest finders.
     </p>
     <p>
       Full rules, the map, and how to submit your finds are on their way.

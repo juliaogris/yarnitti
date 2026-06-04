@@ -342,6 +342,32 @@ body::before {
   margin-bottom: 1.1rem;
 }
 
+/* ---- single-page-app subpages ---- */
+/* Only the active route's subpage shows. The mountains stay as a fixed
+   backdrop on every route; the wordmark shows on home alone. */
+.subpage { display: none; }
+.subpage.is-active { display: block; }
+/* Push the inner pages (everything but home) below the arch so their text
+   clears the mountains. Home keeps its own scroll-into-the-arch layout. */
+.subpage[data-route]:not([data-route=""]) { padding-top: 42vh; min-height: 100vh; }
+.subpage__title {
+  font-family: var(--body-font);
+  font-size: clamp(2rem, 6vw, 3rem);
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+.subpage__lede {
+  font-family: var(--body-font);
+  font-size: clamp(1.1rem, 2.6vw, 1.4rem);
+  color: var(--muted);
+  margin-bottom: 1.4rem;
+}
+/* Wordmark only on the home route. */
+.hero__mark { display: none; }
+body[data-route=""] .hero__mark { display: block; }
+/* A little gap above the Spin item so it reads as an action, not a page. */
+.menu__sep { margin-top: 0.6rem; padding-top: 0.9rem; border-top: 1px solid var(--hair); }
+
 /* ---- mobile: less side margin, wider + lower arch handled in JS ---- */
 @media (max-width: 640px) {
   :root {

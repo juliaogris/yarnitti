@@ -26,6 +26,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      # Serve the single-page app on every route by copying index.html into a
+      # folder per path, so a direct hit on /apricity, /about, etc. (QR codes,
+      # refresh, shared links) returns the app with a 200 instead of a 404.
+      - name: Fan out SPA routes
+        run: |
+          cd 6-wave-header
+          # Each route is one folder deep, so inject <base href="../"> into the
+          # copy to resolve main.js, style.css and images back to the root.
+          for r in apricity about spin hunt gallery; do
+            mkdir -p "$r"
+            sed 's#<head>#<head><base href="../">#' index.html > "$r/index.html"
+          done
       - uses: actions/upload-pages-artifact@v3
         with:
           path: 6-wave-header
