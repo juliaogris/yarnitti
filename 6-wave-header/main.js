@@ -256,12 +256,14 @@ function resize() {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   // Render the mountains with the same values at every width (arch height,
-  // wobble, detail), except the lines are a touch thinner on mobile.
+  // wobble, detail), except on mobile the lines are a touch thinner and the
+  // feet (with their dangling strands) spread out toward the edges, widening
+  // the arch and clearing the centre for body text.
   const small = W < 640;
-  footLfrac = CFG.footL;
-  footRfrac = CFG.footR;
+  footLfrac = small ? 0.04 : CFG.footL;
+  footRfrac = small ? 0.96 : CFG.footR;
   footYfrac = ARC_Y;
-  lineScale = small ? 0.7 : 1;
+  lineScale = small ? 0.6 : 1;
   archScale = 1;
   wobScale = 1;
   fbmOctaves = CFG.octaves;
@@ -392,41 +394,36 @@ if (guideBtn) {
   });
 }
 
-// tag font picker (temporary). Cycle the tagline through candidate fonts to
-// compare them in context. ?tagfont=N preselects one. Remove before launch.
-const TAG_FONTS = [
-  { name: "Space Grotesk", css: '"Space Grotesk", system-ui, sans-serif' },
-  { name: "Quicksand", css: '"Quicksand", system-ui, sans-serif' },
+// body font picker (temporary). Cycle the lead and prose through candidate
+// body fonts. ?bodyfont=N preselects one. Remove before launch.
+const BODY_FONTS = [
+  { name: "Fraunces", css: '"Fraunces", Georgia, serif' },
   { name: "Nunito", css: '"Nunito", system-ui, sans-serif' },
-  { name: "Delius", css: '"Delius", system-ui, sans-serif' },
-  { name: "Shantell Sans", css: '"Shantell Sans", cursive' },
-  { name: "Comic Neue", css: '"Comic Neue", cursive' },
-  { name: "Patrick Hand", css: '"Patrick Hand", cursive' },
-  { name: "Coming Soon", css: '"Coming Soon", cursive' },
-  { name: "Sniglet", css: '"Sniglet", cursive' },
+  { name: "Mulish", css: '"Mulish", system-ui, sans-serif' },
+  { name: "Hanken Grotesk", css: '"Hanken Grotesk", system-ui, sans-serif' },
+  { name: "EB Garamond", css: '"EB Garamond", Georgia, serif' },
+  { name: "Lora", css: '"Lora", Georgia, serif' },
+  { name: "Spectral", css: '"Spectral", Georgia, serif' },
+  { name: "Coming Soon", css: '"Coming Soon", Georgia, serif' },
 ];
-const tagEl = document.querySelector(".hero__tag");
-const tagOut = document.getElementById("out-tagfont");
-let tagIdx = 5; // Comic Neue (the chosen tagline font)
-function applyTagFont() {
-  const f = TAG_FONTS[tagIdx];
-  if (tagEl) {
-    tagEl.style.fontFamily = f.css;
-    tagEl.style.fontStyle = f.italic ? "italic" : "normal";
-  }
-  if (tagOut) tagOut.textContent = f.name;
+const bodyOut = document.getElementById("out-bodyfont");
+let bodyIdx = 7; // Coming Soon (the chosen body font)
+function applyBodyFont() {
+  const f = BODY_FONTS[bodyIdx];
+  root.style.setProperty("--body-font", f.css);
+  if (bodyOut) bodyOut.textContent = f.name;
 }
-const tagParam = parseInt(params.get("tagfont") || "", 10);
-if (Number.isInteger(tagParam) && tagParam >= 0 && tagParam < TAG_FONTS.length) {
-  tagIdx = tagParam;
+const bodyParam = parseInt(params.get("bodyfont") || "", 10);
+if (Number.isInteger(bodyParam) && bodyParam >= 0 && bodyParam < BODY_FONTS.length) {
+  bodyIdx = bodyParam;
 }
-const stepTag = (d) => {
-  tagIdx = (tagIdx + d + TAG_FONTS.length) % TAG_FONTS.length;
-  applyTagFont();
+const stepBody = (d) => {
+  bodyIdx = (bodyIdx + d + BODY_FONTS.length) % BODY_FONTS.length;
+  applyBodyFont();
 };
-document.getElementById("tagfont-prev")?.addEventListener("click", () => stepTag(-1));
-document.getElementById("tagfont-next")?.addEventListener("click", () => stepTag(1));
-applyTagFont();
+document.getElementById("bodyfont-prev")?.addEventListener("click", () => stepBody(-1));
+document.getElementById("bodyfont-next")?.addEventListener("click", () => stepBody(1));
+applyBodyFont();
 
 // reset: restore every lever to its default and replay its handler.
 const LEVER_DEFAULTS = {
@@ -436,7 +433,7 @@ const LEVER_DEFAULTS = {
   "lever-line": "0.30",
   "lever-line2": "0.22",
   "lever-fold": "70",
-  "lever-space": "13",
+  "lever-space": "7",
   "lever-body": "1",
 };
 const resetBtn = document.getElementById("lever-reset");
