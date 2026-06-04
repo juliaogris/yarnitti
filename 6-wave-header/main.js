@@ -143,11 +143,15 @@ function render() {
   ctx.lineCap = "round";
   ctx.globalAlpha = 1;
 
+  // On the normal site the wordmark sits in the arch opening, so cap the shown
+  // height there to keep the arch above it; the spin playground shows the full
+  // (kept) height. The stored value is untouched, so it returns intact in spin.
+  const archEff = experiment ? liveArch : Math.min(liveArch, LANDING_ARCH_MAX);
   // The feet sit at their base height plus the spin-mode drop, but never so
   // high that the peak (bow + ripples) would clip at the canvas top: a tall
   // arch pushes the whole thing down just enough to stay on screen.
   const baseFoot = footYfrac + slideFrac;
-  const fitFoot = liveArch + liveWobAmp + 0.04;
+  const fitFoot = archEff + liveWobAmp + 0.04;
   const footY = H * Math.max(baseFoot, fitFoot);
   const xL = W * footLfrac;
   const xR = W * footRfrac;
@@ -174,7 +178,7 @@ function render() {
     // Height raises the back (top) arc while the front (bottom) arc stays put,
     // so growing height mostly lifts the peak rather than the whole shape.
     const frontBow = H * CFG.arch * CFG.bowRatio * archScale;
-    const backBow = H * liveArch * archScale;
+    const backBow = H * archEff * archScale;
     const bow = lerp(frontBow, backBow, Math.pow(q, CFG.bowEase));
     // Front ridges (low q) drawn thicker; back ridges thinner.
     ctx.lineWidth = lerp(CFG.lineWidth, CFG.lineWidthBack, q) * lineScale * lineWidthMul;
@@ -498,8 +502,9 @@ let pressOnBall = false; // the press started on the wool ball, so it toggles sp
 // Each gets its own labelled slider; a vertical line-drag also nudges height.
 // "speed" drives the steady spin rather than the static shape.
 const SPIN_SLIDE = 0.22; // how far the arch drops within the canvas in spin mode
+const LANDING_ARCH_MAX = 0.28; // tallest arch shown on the normal site (clears the wordmark)
 const PARAMS = {
-  height: { min: 0.18, max: 0.42, step: 0.005,
+  height: { min: 0.18, max: 0.48, step: 0.005,
     get: () => liveArch, set: (v) => { liveArch = v; } },
   jagged: { min: 3, max: 26, step: 0.1,
     get: () => liveWobFreqBack,
