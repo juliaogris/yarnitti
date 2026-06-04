@@ -50,7 +50,13 @@
     <li><a class="menu__link" data-route="about" href="about">
       <svg class="menu__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r="0.6" fill="currentColor" stroke="none"/></svg>
       <span>About</span></a></li>
-    <li class="menu__sep"><a class="menu__link" data-route="spin" href="spin">
+    <li class="menu__rule-li" aria-hidden="true">
+      <svg class="menu__rule menu__rule--inline" viewBox="0 0 300 10" preserveAspectRatio="none">
+        <path d="M0 5 Q9 4.4 20 5.1 Q31 5.8 44 4.9 Q52 4.5 60 5.2 Q74 5.9 90 4.8 Q101 4.3 114 5.1 Q126 5.7 140 5 Q150 4.6 162 5.3 Q176 5.8 192 4.9 Q203 4.4 216 5.1 Q228 5.6 244 4.9 Q257 4.5 270 5.2 Q283 5.7 300 5"
+              fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+      </svg>
+    </li>
+    <li><a class="menu__link" data-route="spin" href="spin">
       <svg class="menu__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><ellipse cx="12" cy="12" rx="8" ry="3" transform="rotate(30 12 12)"/><ellipse cx="12" cy="12" rx="8" ry="3" transform="rotate(90 12 12)"/><ellipse cx="12" cy="12" rx="8" ry="3" transform="rotate(150 12 12)"/></svg>
       <span>Spin</span></a></li>
     <li><a class="menu__link" href="mailto:hello@yarnitti.org">
@@ -244,6 +250,10 @@
 
 <!-- Play-mode control panel: shown only while the "Spin" experiment is open. -->
 <footer class="scrub-pick" aria-label="Spin controls">
+  <svg class="scrub-pick__rule" viewBox="0 0 300 10" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 5 Q9 4.4 20 5.1 Q31 5.8 44 4.9 Q52 4.5 60 5.2 Q74 5.9 90 4.8 Q101 4.3 114 5.1 Q126 5.7 140 5 Q150 4.6 162 5.3 Q176 5.8 192 4.9 Q203 4.4 216 5.1 Q228 5.6 244 4.9 Q257 4.5 270 5.2 Q283 5.7 300 5"
+          fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+  </svg>
   <div class="scrub-pick__sliders">
     <label class="slider-unit"><span>Height</span><input class="exp-range" data-param="height" type="range"></label>
     <label class="slider-unit"><span>Jaggedness</span><input class="exp-range" data-param="jagged" type="range"></label>

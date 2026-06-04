@@ -505,6 +505,7 @@ let dragVel = 0;
 let dragPrevVel = 0; // spin at the moment a drag takes over (for additive flicks)
 let pressOnBall = false; // the press started on the wool ball, so it toggles spin
 let pressOnLine = false; // the press landed on a drawn line, so it drives the spin
+let pressInBand = false; // the press landed anywhere on the arch band
 
 // Every adjustable parameter behind one model: a range, a getter and a setter.
 // Each gets its own labelled slider; a vertical line-drag also nudges height.
@@ -577,7 +578,10 @@ function isOnLine(e) {
   const y = e.clientY - rect.top;
   if (x < 0 || y < 0 || x > rect.width || y > rect.height) return false;
   const dpr = canvas.width / rect.width;
-  const reach = Math.max(2, Math.round(6 * dpr)); // ~6 CSS px of tolerance
+  // Generous tolerance so the dense tangle of strands near the top reads as one
+  // interactive region: the small gaps between lines are bridged, while the open
+  // centre and the wordmark (well clear of any stroke) stay non-interactive.
+  const reach = Math.max(2, Math.round(13 * dpr));
   const px = Math.round(x * dpr);
   const py = Math.round(y * dpr);
   const x0 = Math.max(0, px - reach);
@@ -615,6 +619,9 @@ document.addEventListener("pointerdown", (e) => {
     ".menu, .menu-backdrop, .hamburger, .levers, .scrub-pick, " +
     ".gallery-grid, .lightbox, a, button, input, label, select, textarea");
   pressOnLine = !pressOnBall && !pressOnUI && isOnLine(e);
+  // While the arch is already drifting, a click anywhere on the band stops it
+  // (the lines sweep, so a pixel-perfect line hit would be hard to land).
+  pressInBand = !pressOnBall && !pressOnUI && isInBand(e);
   // A scrub may begin anywhere inside the experiment, or on a line otherwise.
   canScrub = !pressOnBall && !pressOnUI && (experiment || pressOnLine);
   dragLastX = e.clientX;
@@ -664,13 +671,16 @@ function endPress(deliberate) {
     return;
   }
   if (experiment) return;           // bare taps inside the experiment do nothing
-  if (!pressOnLine) return;         // only a tap on a line toggles; text/photos pass through
-  // On the normal site a tap on the mountains toggles the drift: start it from
-  // a near standstill, stop it when it is already moving.
-  if (deliberate) {
-    const speed = Math.max(Math.abs(vel), Math.abs(targetVel));
-    if (speed > 0.3) stopMotion();
-    else startAnim(LOAD_BOOST);
+  if (!deliberate) return;
+  // On the normal site a tap on the mountains toggles the drift. While it is
+  // already moving, a tap anywhere on the band stops it (the lines sweep, so a
+  // pixel-perfect line hit is hard to land). At rest, only a tap on a line
+  // starts it, so taps on the wordmark or empty space select text or do nothing.
+  const speed = Math.max(Math.abs(vel), Math.abs(targetVel));
+  if (speed > 0.3) {
+    if (pressInBand) stopMotion();
+  } else if (pressOnLine) {
+    startAnim(LOAD_BOOST);
   }
 }
 document.addEventListener("pointerup", () => endPress(true));
@@ -750,7 +760,10 @@ if (canHover) {
       ballHovering = overBall;
       if (overBall) nudgeBall();
     }
-    canvas.style.cursor = overBall ? "pointer" : isInBand(e) ? "grab" : "default";
+    // The canvas is pointer-events: none, so the cursor has to be set on the
+    // body (what the pointer actually lands on). Grab exactly over a line, and
+    // clear it otherwise so text keeps its own I-beam cursor.
+    document.body.style.cursor = overBall ? "pointer" : isOnLine(e) ? "grab" : "";
   });
 }
 
