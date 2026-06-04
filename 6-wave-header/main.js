@@ -633,6 +633,11 @@ function setExperiment(on) {
   setSlide(on ? SPIN_SLIDE : 0); // drop the arch down within the canvas
   if (on) {
     nudgeBall();
+    steadyVel = -1.2;   // start with a slow drift to the left
+    steady = true;
+    braking = false;
+    syncSliders();      // reflect the speed (and shape) on the panel
+    if (animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
   } else {
     steady = false;     // drop the held speed
     stopMotion();       // coast gently to a stop, keeping the new shape

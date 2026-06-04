@@ -564,7 +564,8 @@ body.experiment .scrub-pick {
 }
 .slider-unit span {
   flex: none;
-  width: 5.5rem;
+  width: 5rem;
+  text-align: right; /* hug the slider; right edges align across the grid */
 }
 .exp-range {
   accent-color: var(--ink);
