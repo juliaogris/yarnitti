@@ -538,10 +538,10 @@ document.addEventListener("pointerup", () => endPress(true));
 document.addEventListener("pointercancel", () => endPress(false));
 
 // Desktop hover, hit-tested by hand because the canvas sits over everything:
-// over the ball, thicken its strokes, nudge it once on entry, and show a
-// pointer cursor; over a ridge line, show a grab cursor; otherwise default.
-// Gated to real hover devices so a touch (which some browsers answer with a
-// synthetic mousemove) never leaves the ball stuck in its thickened state.
+// over the ball, nudge it once on entry and show a pointer cursor; over a
+// ridge line, show a grab cursor; otherwise default. Gated to real hover
+// devices so a touch (answered with a synthetic mousemove by some browsers)
+// never triggers it.
 const canHover = window.matchMedia("(hover: hover)").matches;
 let ballHovering = false;
 let lastMove = null;
@@ -551,7 +551,6 @@ if (canHover) {
     const overBall = isOnBall(e); // cheap rect test, run every move for snappy hover
     if (overBall !== ballHovering) {
       ballHovering = overBall;
-      yarnBall?.classList.toggle("hovering", overBall);
       if (overBall) nudgeBall();
     }
     // isOnLine reads pixels back from the GPU, so coalesce it to one test per

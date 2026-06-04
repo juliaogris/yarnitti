@@ -284,7 +284,6 @@ body::before {
   height: auto;
   color: var(--yarn); /* solid grey, not the semi-transparent --muted */
   cursor: pointer;
-  transition: stroke-width 0.18s ease;
 }
 /* A single nudge: start at normal size, swell a little, then settle back.
    The fast rise and slower return read as a friendly bounce. Added by JS
@@ -293,9 +292,6 @@ body::before {
    not the ball, because iOS Safari skips transform animations on an element
    that also carries an SVG filter (the ball has #wonky). */
 .yarn-divider.nudge { animation: yarnNudge 1s ease-in-out; }
-/* While hovered, draw the wound-yarn lines a little heavier. JS sets this
-   because the full-screen canvas hides the ball from native :hover. */
-.yarn-ball.hovering { stroke-width: 3.4; }
 @keyframes yarnNudge {
   0% { transform: scale(1); }
   40% { transform: scale(1.28); }
