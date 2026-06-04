@@ -13,6 +13,7 @@
   --ink: #f4f1ea;
   --muted: rgba(244, 241, 234, 0.62);
   --hair: rgba(244, 241, 234, 0.18);
+  --yarn: #b3aea2; /* solid warm grey for the wool ball */
   color-scheme: dark;
 }
 :root[data-theme="light"] {
@@ -20,6 +21,7 @@
   --ink: #1a160e;
   --muted: rgba(26, 22, 14, 0.6);
   --hair: rgba(26, 22, 14, 0.16);
+  --yarn: #6f685c; /* solid warm grey for the wool ball */
   color-scheme: light;
 }
 
@@ -280,6 +282,7 @@ body::before {
 .yarn-ball {
   width: 2.3rem;
   height: auto;
+  color: var(--yarn); /* solid grey, not the semi-transparent --muted */
   cursor: pointer;
   transition: stroke-width 0.18s ease;
 }
@@ -353,7 +356,7 @@ body::before {
   .hero__mark { padding: 0 0.5rem; }
   .hero__title { font-size: clamp(3.4rem, 17vw, 5.6rem); }
   .hero__tag { font-size: clamp(0.9rem, 3.6vw, 1.05rem); }
-  .yarn-ball { width: 1.6rem; }
+  .yarn-ball { width: 1.4rem; }
 }
 
 /* ---- lead line (opening of the letter, body-text format, above photo) ---- */
