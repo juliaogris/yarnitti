@@ -283,10 +283,14 @@ function resize() {
 
 const root = document.documentElement;
 const saved = localStorage.getItem("yarnitti-theme");
+// Always set an explicit theme: follow a saved choice, otherwise the browser
+// preference, falling back to dark. Leaving it unset would drop the palette.
 if (saved) {
   root.setAttribute("data-theme", saved);
 } else if (window.matchMedia("(prefers-color-scheme: light)").matches) {
   root.setAttribute("data-theme", "light");
+} else {
+  root.setAttribute("data-theme", "dark");
 }
 
 // Prototyping overrides: ?theme=light&scrollto=N

@@ -5,17 +5,22 @@
    light theme (dark ink on paper), echoing the daytime "resplendent canvas"
    reference. The canvas reads --bg / --ink from here and re-renders. */
 :root,
+/* Dark is the base palette so the variables are always defined, even before
+   the theme script runs or if data-theme is never set. Light overrides it. */
+:root,
 :root[data-theme="dark"] {
   --bg: #0d0a07; /* near-black with a slight warm tinge */
   --ink: #f4f1ea;
   --muted: rgba(244, 241, 234, 0.62);
   --hair: rgba(244, 241, 234, 0.18);
+  color-scheme: dark;
 }
 :root[data-theme="light"] {
   --bg: #f3ecdf;
   --ink: #1a160e;
   --muted: rgba(26, 22, 14, 0.6);
   --hair: rgba(26, 22, 14, 0.16);
+  color-scheme: light;
 }
 
 :root {
