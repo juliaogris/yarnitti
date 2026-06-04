@@ -19,15 +19,16 @@ const CFG = {
   footL: 0.10,        // left foot x, fraction of width
   footR: 0.90,        // right foot x
 
-  arch: 0.50,         // overall arch height (back bow), fraction H (arch lever)
+  arch: 0.41,         // overall arch height (back bow), fraction H (arch lever)
   bowRatio: 0.62,     // front bow as a fraction of the back bow: higher ->
                       // the bottom line curves into a horseshoe, not flat
   bowEase: 1.1,       // >1 crowds strands toward the low bows
 
   wobAmp: 0.09,       // ridge wobble, fraction of height -> higher peaks
-  wobFreqFront: 3.0,  // front: few long swells (like ocean swell)
+  wobFreqFront: 3.0,  // front: few long swells
   wobFreqBack: 9.5,   // back: many small ripples
-  octaves: 4,         // higher -> more jagged ridgeline
+  octaves: 3,         // higher -> more jagged ridgeline (4 = more jagged)
+  rowOffset: 0.37,    // per-row noise offset (lower -> aligned swells)
 
   jitterAmp: 0,       // hand-drawn tremor off (smooth lines)
   jitterFreq: 26,
@@ -144,7 +145,7 @@ function render() {
       const t = s / steps;
       const env = Math.sin(Math.PI * t);
       const baseY = footY - bow * env;
-      const wob = fbm(t * wf, i * 0.37) * wobPx * env;
+      const wob = fbm(t * wf, i * CFG.rowOffset) * wobPx * env;
       // Fine hand-drawn tremor on top of the main wobble; tapers to zero at
       // the feet so the strands still converge to a sharp point.
       const jit = fbm(t * CFG.jitterFreq + i * 3.1, i * 0.9 + 50) * jitPx * env;
@@ -256,16 +257,20 @@ if (toggle) {
 
 const leverHeading = document.getElementById("lever-heading");
 const mark = document.querySelector(".hero__mark");
+const outHeading = document.getElementById("out-heading");
 if (leverHeading && mark) {
   leverHeading.addEventListener("input", () => {
     mark.style.top = `${leverHeading.value}%`;
+    if (outHeading) outHeading.textContent = leverHeading.value;
   });
 }
 
 const leverArch = document.getElementById("lever-arch");
+const outArch = document.getElementById("out-arch");
 if (leverArch) {
   leverArch.addEventListener("input", () => {
     CFG.arch = parseFloat(leverArch.value);
+    if (outArch) outArch.textContent = leverArch.value;
     render();
   });
 }
