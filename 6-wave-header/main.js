@@ -297,16 +297,13 @@ if (scrollToParam) {
   window.addEventListener("load", () => window.scrollTo(0, +scrollToParam));
 }
 
-const toggle = document.getElementById("theme-toggle");
-if (toggle) {
-  toggle.addEventListener("click", () => {
-    const next =
-      root.getAttribute("data-theme") === "light" ? "dark" : "light";
-    root.setAttribute("data-theme", next);
-    localStorage.setItem("yarnitti-theme", next);
-    render();
-  });
+function toggleTheme() {
+  const next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+  root.setAttribute("data-theme", next);
+  localStorage.setItem("yarnitti-theme", next);
+  render();
 }
+document.getElementById("menu-theme")?.addEventListener("click", toggleTheme);
 // ---- temporary tuning levers (remove before launch) ----------------------
 
 const leverHeading = document.getElementById("lever-heading");
@@ -379,6 +376,35 @@ wireLever("lever-space", "out-space", (v) => {
 wireLever("lever-body", "out-body", (v) => {
   root.style.setProperty("--body-scale", v);
 }, (v) => parseFloat(v).toFixed(2));
+
+// hamburger menu: animate the button to an X and slide the menu panel and its
+// backdrop in and out together.
+const menuToggle = document.getElementById("menu-toggle");
+const menu = document.getElementById("menu");
+const menuBackdrop = document.getElementById("menu-backdrop");
+function setMenu(open) {
+  menuToggle?.classList.toggle("is-open", open);
+  menuToggle?.setAttribute("aria-expanded", String(open));
+  menuToggle?.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  menu?.classList.toggle("is-open", open);
+  menuBackdrop?.classList.toggle("is-open", open);
+}
+menuToggle?.addEventListener("click", () =>
+  setMenu(!menuToggle.classList.contains("is-open")));
+menuBackdrop?.addEventListener("click", () => setMenu(false));
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") setMenu(false);
+});
+menu?.querySelectorAll(".menu__link").forEach((a) =>
+  a.addEventListener("click", () => setMenu(false)));
+if (params.get("menu") === "1") setMenu(true); // prototyping: open on load
+
+// sound toggle (placeholder; no audio wired yet).
+const menuSound = document.getElementById("menu-sound");
+menuSound?.addEventListener("click", () => {
+  const on = menuSound.getAttribute("aria-pressed") !== "true";
+  menuSound.setAttribute("aria-pressed", String(on));
+});
 
 // guide toggle: show or hide the pink debug line.
 const guideBtn = document.getElementById("lever-guide");
