@@ -39,8 +39,9 @@ jobs:
             sed 's#<head>#<head><base href="../">#' index.html > "$r/index.html"
           done
           # 404.html is served for any unmatched path, at any depth, so give it
-          # an absolute base to the site root. (Change to "/" on a root domain.)
-          sed 's#<head>#<head><base href="/yarnitti/">#' index.html > 404.html
+          # an absolute base to the site root. On the apex domain yarnitti.org
+          # the site root is "/".
+          sed 's#<head>#<head><base href="/">#' index.html > 404.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: 6-wave-header
