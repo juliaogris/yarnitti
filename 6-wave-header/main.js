@@ -473,28 +473,38 @@ let dragVel = 0;
 let dragPrevVel = 0; // spin at the moment a drag takes over (for additive flicks)
 let pressOnBall = false; // the press started on the wool ball, so it toggles spin
 
-// Which mountain parameter a vertical scrub reshapes. Set by the footer picker
-// while prototyping; dragging up grows the value, dragging down shrinks it.
-let scrubMode = "height";
+let spinDir = 1; // which way the ridges drift; the Direction button flips it
+
+// Every adjustable parameter behind one model: a range, a getter and a setter.
+// The picker chooses which one is active; the slider and a vertical line-drag
+// both write to that same one, so there is a single, consistent way to set any
+// value. "speed" drives the steady spin rather than the static shape.
+const PARAMS = {
+  height: { min: 0.08, max: 0.52, step: 0.005,
+    get: () => liveArch, set: (v) => { liveArch = v; } },
+  jagged: { min: 3, max: 26, step: 0.1,
+    get: () => liveWobFreqBack,
+    set: (v) => { liveWobFreqBack = v; fbmOctaves = Math.round(clamp(2 + (v - 3) / 23 * 4, 1, 6)); } },
+  lines: { min: 8, max: 74, step: 1,
+    get: () => strandsF, set: (v) => { strandsF = v; strands = Math.round(v); } },
+  wobble: { min: 0.02, max: 0.24, step: 0.005,
+    get: () => liveWobAmp, set: (v) => { liveWobAmp = v; } },
+  speed: { min: 0, max: 6, step: 0.1,
+    get: () => Math.abs(steadyVel),
+    set: (v) => { steadyVel = spinDir * v; steady = v > 0.02; if (steady) braking = false; } },
+};
+let scrubMode = "height"; // the active parameter (set by the picker)
+
+// A vertical drag nudges the active parameter across its own range.
 function applyScrub(dy) {
-  const up = -dy; // up the screen grows the value
-  switch (scrubMode) {
-    case "jagged": // more, finer ripples + an extra noise octave near the top
-      liveWobFreqBack = clamp(liveWobFreqBack + up * 0.07, 3, 26);
-      fbmOctaves = Math.round(clamp(2 + (liveWobFreqBack - 3) / 23 * 4, 1, 6));
-      break;
-    case "height":
-      liveArch = clamp(liveArch + up * 0.001, 0.08, 0.52);
-      break;
-    case "lines":
-      strandsF = clamp(strandsF + up * 0.22, 8, 74);
-      strands = Math.round(strandsF);
-      break;
-    case "wobble": // height of the ripples without changing their count
-      liveWobAmp = clamp(liveWobAmp + up * 0.0007, 0.02, 0.24);
-      break;
-  }
-  if (animRAF === null) render(); // not spinning, so repaint now
+  const p = PARAMS[scrubMode];
+  const range = p.max - p.min;
+  let v = clamp(p.get() + (-dy) * range * 0.004, p.min, p.max);
+  if (p.step >= 1) v = Math.round(v);
+  p.set(v);
+  syncSlider();
+  if (scrubMode === "speed") updatePlayBtn();
+  if (animRAF === null) render();
 }
 
 // Is the pointer over the wool ball? The ball is HTML behind the full-screen
@@ -608,17 +618,20 @@ function setExperiment(on) {
   }
   if (animRAF === null) render(); // reflect the strand change if not animating
 }
-let spinDir = 1; // which way the ridges drift; the Direction button flips it
+const isSpinning = () => steady && Math.abs(steadyVel) > 0.02;
 function expPlay() {
   steady = true;
-  const speed = speedEl ? parseFloat(speedEl.value) : 2;
-  steadyVel = spinDir * (speed < 0.05 ? 2 : speed); // a sensible default if the slider is at rest
+  if (Math.abs(steadyVel) < 0.05) steadyVel = spinDir * 2; // default speed at rest
+  else steadyVel = spinDir * Math.abs(steadyVel);
   braking = false;
   if (animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
+  syncSlider();
+  updatePlayBtn();
 }
 function expPause() {
   steady = false;
   stopMotion();
+  updatePlayBtn();
 }
 function resetShape() {
   liveArch = CFG.arch;
@@ -627,6 +640,11 @@ function resetShape() {
   fbmOctaves = CFG.octaves;
   strandsF = CFG.strands;
   strands = CFG.strands;
+  steadyVel = 0; steady = false; spinDir = 1;
+  stopMotion();
+  syncSlider();
+  updatePlayBtn();
+  updateDirBtn();
   if (animRAF === null) render();
 }
 
@@ -675,39 +693,56 @@ if (yarnBall && "IntersectionObserver" in window) {
   ballVisible = true;
 }
 
-// Control panel: choose which parameter a vertical scrub drives.
-document.querySelectorAll(".scrub-pick__opt").forEach((btn) => {
+// Control panel. The chips preselect which parameter the single slider (and a
+// vertical line-drag) control, so every value is set the same way.
+const sliderEl = document.getElementById("exp-slider");
+const playBtn = document.getElementById("exp-playpause");
+const dirBtn = document.getElementById("exp-dir");
+function syncSlider() {
+  if (!sliderEl) return;
+  const p = PARAMS[scrubMode];
+  sliderEl.min = p.min;
+  sliderEl.max = p.max;
+  sliderEl.step = p.step;
+  sliderEl.value = p.get();
+}
+function updatePlayBtn() {
+  if (playBtn) playBtn.textContent = isSpinning() ? "⏸ Pause" : "▶ Play";
+}
+function updateDirBtn() {
+  if (dirBtn) dirBtn.textContent = spinDir === 1 ? "→" : "←";
+}
+document.querySelectorAll(".scrub-pick__opt[data-mode]").forEach((btn) => {
   btn.addEventListener("click", () => {
     scrubMode = btn.dataset.mode;
-    document.querySelectorAll(".scrub-pick__opt").forEach((b) => {
+    document.querySelectorAll(".scrub-pick__opt[data-mode]").forEach((b) => {
       const on = b === btn;
       b.classList.toggle("is-on", on);
       b.setAttribute("aria-checked", String(on));
     });
+    syncSlider();
   });
 });
-
-// Transport: Play, Pause, Direction, speed slider, Reset, Done.
-const speedEl = document.getElementById("exp-speed");
-const dirBtn = document.getElementById("exp-dir");
-document.getElementById("exp-play")?.addEventListener("click", expPlay);
-document.getElementById("exp-pause")?.addEventListener("click", expPause);
-document.getElementById("exp-reset")?.addEventListener("click", resetShape);
-document.getElementById("exp-done")?.addEventListener("click", exitSpin);
-speedEl?.addEventListener("input", () => {
-  steadyVel = spinDir * parseFloat(speedEl.value);
-  steady = true; // dragging the slider spins live
-  braking = false;
-  if (animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
+sliderEl?.addEventListener("input", () => {
+  PARAMS[scrubMode].set(parseFloat(sliderEl.value));
+  if (scrubMode === "speed") {
+    updatePlayBtn();
+    if (steady && animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
+  } else if (animRAF === null) {
+    render();
+  }
 });
+playBtn?.addEventListener("click", () => (isSpinning() ? expPause() : expPlay()));
 dirBtn?.addEventListener("click", () => {
   spinDir = -spinDir;
-  dirBtn.textContent = spinDir === 1 ? "⟳ Direction" : "⟲ Direction";
-  steadyVel = spinDir * Math.abs(steadyVel || (speedEl ? parseFloat(speedEl.value) : 2));
-  steady = true;
-  braking = false;
-  if (animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
+  updateDirBtn();
+  if (isSpinning()) steadyVel = spinDir * Math.abs(steadyVel); // reverse live
 });
+document.getElementById("exp-reset")?.addEventListener("click", resetShape);
+document.getElementById("exp-done")?.addEventListener("click", exitSpin);
+syncSlider();
+updatePlayBtn();
+updateDirBtn();
 
 // The floating exit ball closes play mode (returns to the previous route).
 document.getElementById("exp-exit")?.addEventListener("click", exitSpin);

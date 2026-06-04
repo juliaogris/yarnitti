@@ -540,18 +540,13 @@ body.experiment .scrub-pick {
   color: var(--bg);
   border-color: var(--ink);
 }
-.scrub-pick__transport { gap: 0.6rem 1rem; }
-.scrub-pick__speed {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-.scrub-pick__speed input[type="range"] {
+.scrub-pick__transport { gap: 0.6rem 0.8rem; }
+.scrub-pick__slider {
   accent-color: var(--ink);
-  width: 8rem;
+  width: min(46vw, 18rem);
 }
+/* The direction toggle is a single glyph, so keep it square-ish. */
+#exp-dir { min-width: 2.4rem; text-align: center; }
 
 /* While the experiment is open: lock the page to the mountains, fade the
    prose and wordmark out, and float the wool ball top-right as the way out. */
