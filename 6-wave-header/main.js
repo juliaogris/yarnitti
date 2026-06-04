@@ -352,6 +352,10 @@ const CLICK_BOOST = 1.6;  // target speed added per click (gentle, builds slowly
 const LOAD_BOOST = 1.9;   // a bit more kick on first load
 const VEL_MAX = 8;        // cap, reached at roughly five quick clicks
 const BRAKE_TAU = 0.22;   // seconds; gentle coast to a stop, never a hard cut
+const NUDGE_AT = 0.2;     // ridge speed at which the welcome nudge fires, while
+                          // the spin is still going but slow (a second or two
+                          // before it fully stops), not after it halts
+let peakedVel = false;    // the load spin has reached speed, so a later slowdown is the wind-down
 let vel = 0;              // current ridge-pattern speed
 let targetVel = 0;        // speed it is easing toward (clicks raise it, friction lowers it)
 let braking = false;      // a stop request: decelerate quickly to a halt
@@ -402,6 +406,14 @@ function animate(now) {
     vel += (targetVel - vel) * Math.min(1, ACCEL * dt); // ease the real speed toward it
   }
   tAnim += vel * dt;
+  // Fire the welcome nudge while the load spin is winding down but not yet
+  // stopped. Wait until it has actually picked up speed, so the ramp at the
+  // very start does not trip the threshold.
+  if (Math.abs(vel) > 0.6) peakedVel = true;
+  if (peakedVel && !braking && !introSettled && Math.abs(vel) < NUDGE_AT) {
+    introSettled = true;
+    maybeIntroNudge();
+  }
   render();
   if (Math.abs(vel) > 0.02 || Math.abs(targetVel) > 0.02) {
     animRAF = requestAnimationFrame(animate);
