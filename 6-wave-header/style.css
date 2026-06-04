@@ -1,0 +1,87 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink: #f3ead9;
+  --night: #0d1626;
+}
+
+body {
+  font-family: "Iowan Old Style", Palatino, Georgia, serif;
+  background: var(--night);
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* ---- hero / header ---- */
+.hero {
+  position: relative;
+  width: 100%;
+  /* Full viewport while we evaluate the bare visual. */
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+}
+
+.hero canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hero__mark {
+  position: absolute;
+  left: clamp(1.5rem, 6vw, 5rem);
+  top: clamp(1.5rem, 6vw, 4rem);
+  z-index: 2;
+  max-width: 28ch;
+  /* Lift the text off the lighter bands so it stays readable. */
+  text-shadow: 0 1px 18px rgba(7, 11, 20, 0.7);
+}
+
+.hero__tag {
+  font-size: 0.78rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #f4c95d;
+  opacity: 0.92;
+}
+
+.hero__title {
+  font-size: clamp(3rem, 13vw, 7rem);
+  line-height: 0.95;
+  margin: 0.3rem 0 0.6rem;
+  letter-spacing: -0.01em;
+}
+
+.hero__sub {
+  font-size: clamp(1rem, 2.6vw, 1.35rem);
+  opacity: 0.9;
+  max-width: 24ch;
+}
+
+.hero__hint {
+  position: absolute;
+  right: clamp(1rem, 4vw, 2.5rem);
+  bottom: clamp(0.9rem, 3vw, 1.6rem);
+  z-index: 2;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  transition: opacity 0.6s ease;
+}
+.hero__hint.is-faded { opacity: 0; }
+
+/* ---- placeholder page body ---- */
+.page {
+  max-width: 60ch;
+  margin: 0 auto;
+  padding: clamp(2rem, 6vw, 4rem) clamp(1.5rem, 6vw, 2rem);
+}
+.page p { margin-bottom: 1.1rem; opacity: 0.85; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__hint { display: none; }
+}
