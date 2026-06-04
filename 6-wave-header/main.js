@@ -317,15 +317,9 @@ function resize() {
 
 const root = document.documentElement;
 const saved = localStorage.getItem("yarnitti-theme");
-// Always set an explicit theme: follow a saved choice, otherwise the browser
-// preference, falling back to dark. Leaving it unset would drop the palette.
-if (saved) {
-  root.setAttribute("data-theme", saved);
-} else if (window.matchMedia("(prefers-color-scheme: light)").matches) {
-  root.setAttribute("data-theme", "light");
-} else {
-  root.setAttribute("data-theme", "dark");
-}
+// Follow a saved choice if there is one, otherwise default to dark. A manual
+// toggle is remembered, so a returning visitor keeps whatever they picked.
+root.setAttribute("data-theme", saved || "dark");
 
 // Prototyping overrides: ?theme=light&scrollto=N
 const params = new URLSearchParams(location.search);
@@ -641,7 +635,11 @@ document.addEventListener("pointermove", (e) => {
   // (or the other way) changes the spin; pushing slower in the same direction
   // never brakes it, so "keep pushing" keeps it going, like a roundabout. The
   // loop moves the pattern at this speed, so we don't shift it directly here.
-  const fv = Math.max(-VEL_MAX, Math.min(VEL_MAX, (-dx / dt) * SCRUB));
+  // A narrow screen has far fewer CSS pixels to drag across, so the same flick
+  // imparts less speed than on desktop. Scale sensitivity up as the viewport
+  // narrows (no change at desktop widths) so the scrub feels the same on mobile.
+  const wScale = Math.max(1, 1100 / window.innerWidth);
+  const fv = Math.max(-VEL_MAX, Math.min(VEL_MAX, (-dx / dt) * SCRUB * wScale));
   if (Math.sign(fv) !== Math.sign(vel) || Math.abs(fv) > Math.abs(vel)) {
     if (experiment && Math.abs(dx) > 2) steady = false; // a manual grab takes over Play
     vel = fv;
