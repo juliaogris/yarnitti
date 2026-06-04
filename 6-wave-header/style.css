@@ -107,7 +107,7 @@ body {
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 0;
+  right: -3px; /* nudge the wavy line onto the drawer edge (it sits ~3px in) */
   width: 8px;
   height: 100%;
   color: var(--ink);
@@ -188,6 +188,8 @@ body {
   transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 .menu-backdrop.is-open { opacity: 1; visibility: visible; }
+/* A lighter dim on the paper theme, where a heavy black overlay is jarring. */
+:root[data-theme="light"] .menu-backdrop { background: rgba(0, 0, 0, 0.4); }
 
 /* ---- hero / arch ---- */
 .hero {
@@ -631,7 +633,6 @@ body[data-route=""] .hero__mark { display: block; }
   padding: 1rem 1.2rem calc(1rem + env(safe-area-inset-bottom));
   background: color-mix(in srgb, var(--bg) 90%, transparent);
   backdrop-filter: blur(6px);
-  border-top: 1px solid var(--hair);
   font-family: "Coming Soon", cursive;
   transform: translateY(100%);
   transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.3, 1);
@@ -639,6 +640,18 @@ body[data-route=""] .hero__mark { display: block; }
 body.experiment .scrub-pick {
   display: flex;
   transform: translateY(0);
+}
+/* Wavy top edge matching the side menu's hand-drawn rule, sitting above the
+   collapse arrow so it never lines up beside a slider track. */
+.scrub-pick__rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  color: var(--ink);
+  opacity: 0.3;
+  pointer-events: none;
 }
 /* Collapse arrow: a hand-drawn chevron at the top of the panel. Clicking slides
    the controls down, leaving just the arrow (now pointing up) to bring them
@@ -648,7 +661,7 @@ body.experiment .scrub-pick {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: -0.4rem 0 -0.1rem;
+  margin: 0 0 -0.1rem;
   padding: 0.3rem 0;
   background: none;
   border: 0;
@@ -701,10 +714,13 @@ body.experiment .scrub-pick.is-collapsed {
   border-color: var(--ink);
 }
 /* Transport buttons share one width so the row reads as a set. */
-.scrub-pick__transport { gap: 0.6rem 0.8rem; }
+.scrub-pick__transport { gap: 0.6rem 1.5rem; }
 .scrub-pick__transport .scrub-pick__opt {
-  min-width: 7rem;
+  min-width: 8.5rem;
   text-align: center;
+  padding: 0.4rem 1.2rem;
+  border-width: 1.5px;
+  border-color: var(--muted);
 }
 /* One labelled slider per parameter, in two rows of three on desktop, with
    the labels all the same width so the sliders line up. */
@@ -790,6 +806,7 @@ body.experiment .scrub-pick.is-collapsed {
   }
   .scrub-pick__transport .scrub-pick__opt {
     flex: 0 0 auto;
+    min-width: 0; /* content-sized so the row keeps a margin from the screen edge */
     padding: 0.4rem 1rem;
     font-size: 0.85rem;
     border-width: 1.8px;

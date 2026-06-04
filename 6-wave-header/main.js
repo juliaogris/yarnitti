@@ -762,9 +762,23 @@ if (canHover) {
       if (overBall) nudgeBall();
     }
     // The canvas is pointer-events: none, so the cursor has to be set on the
-    // body (what the pointer actually lands on). Grab exactly over a line, and
-    // clear it otherwise so text keeps its own I-beam cursor.
-    document.body.style.cursor = overBall ? "pointer" : isOnLine(e) ? "grab" : "";
+    // body (what the pointer actually lands on). Let the control panel and menu
+    // keep their own cursors; show a grab while dragging; in spin mode the whole
+    // backdrop scrubs so grab everywhere; otherwise grab only over a line (and
+    // clear elsewhere so text keeps its I-beam).
+    let cursor;
+    if (e.target.closest(".scrub-pick, .menu, .menu-backdrop, .hamburger")) {
+      cursor = "";
+    } else if (pressing && canScrub && didDrag) {
+      cursor = "grabbing";
+    } else if (overBall) {
+      cursor = "pointer";
+    } else if (experiment || isOnLine(e)) {
+      cursor = "grab";
+    } else {
+      cursor = "";
+    }
+    document.body.style.cursor = cursor;
   });
 }
 

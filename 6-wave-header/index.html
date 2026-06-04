@@ -250,10 +250,14 @@
 
 <!-- Play-mode control panel: shown only while the "Spin" experiment is open. -->
 <footer class="scrub-pick" aria-label="Spin controls">
+  <svg class="scrub-pick__rule" viewBox="0 0 300 10" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 5 Q9 4.4 20 5.1 Q31 5.8 44 4.9 Q52 4.5 60 5.2 Q74 5.9 90 4.8 Q101 4.3 114 5.1 Q126 5.7 140 5 Q150 4.6 162 5.3 Q176 5.8 192 4.9 Q203 4.4 216 5.1 Q228 5.6 244 4.9 Q257 4.5 270 5.2 Q283 5.7 300 5"
+          fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+  </svg>
   <button type="button" id="scrub-collapse" class="scrub-pick__collapse" aria-label="Hide controls" aria-expanded="true">
     <svg class="scrub-pick__chev" viewBox="0 0 24 12" width="24" height="12" fill="none"
          stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M3 4 Q12 10 21 4" vector-effect="non-scaling-stroke"/>
+      <path d="M3 3.5 Q8 5 12 9 Q16 5 21 3.5" vector-effect="non-scaling-stroke"/>
     </svg>
   </button>
   <div class="scrub-pick__sliders">
