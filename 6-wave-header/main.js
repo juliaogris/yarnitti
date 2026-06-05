@@ -48,7 +48,7 @@ const hero = document.getElementById("hero");
 
 // Foot line of the arc, as a fraction of hero height. Drives where the
 // mountains sit and where the content fade lands. The arc-y lever moves it.
-let ARC_Y = 0.38; // around the bottom of the top third
+const ARC_Y = 0.38; // around the bottom of the top third
 
 // Where the scrolling body text dissolves into the arch, as fractions of hero
 // height. Fed into --foot-pct / --gone-pct (see resize), which drive the fade
@@ -374,8 +374,7 @@ soundButtons.forEach((b) =>
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const TAU = 1.5;          // seconds; how long the spin coasts (long, like a roundabout)
 const ACCEL = 1.0;        // how fast actual speed chases the target (lower = gentler ramp)
-const CLICK_BOOST = 1.6;  // target speed added per click (gentle, builds slowly)
-const LOAD_BOOST = 1.9;   // a bit more kick on first load
+const LOAD_BOOST = 1.9;   // kick added on first load and on each click
 const VEL_MAX = 8;        // cap, reached at roughly five quick clicks
 const BRAKE_TAU = 0.22;   // seconds; gentle coast to a stop, never a hard cut
 const NUDGE_AT = 0.2;     // ridge speed at which the welcome nudge fires, while
@@ -499,8 +498,6 @@ let pressOnUI = false; // the press started on the menu/controls
 let dragLastX = 0;
 let dragLastY = 0;
 let dragLastT = 0;
-let dragVel = 0;
-let dragPrevVel = 0; // spin at the moment a drag takes over (for additive flicks)
 let pressOnBall = false; // the press started on the wool ball, so it toggles spin
 let pressOnLine = false; // the press landed on a drawn line, so it drives the spin
 let pressInBand = false; // the press landed anywhere on the arch band
