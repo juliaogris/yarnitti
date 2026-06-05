@@ -206,6 +206,34 @@ body {
 .defs { position: absolute; }
 .yarn-ball,
 .menu__icon svg { filter: url(#wonky); }
+/* Close button for spin mode: mirrors the hamburger on the right, shown only
+   while the experiment is open so it stays reachable even when the control
+   panel is collapsed. Hidden at and above the super-wide breakpoint (1600px),
+   where the permanent top nav stays visible and a nav link handles the exit. */
+.spin-close {
+  position: fixed;
+  top: clamp(0.9rem, 2vw, 1.4rem);
+  /* Corner on narrow screens, but pulled in to the centred band's right edge on
+     wide ones so it stays near the controls rather than off in the corner. */
+  right: max(clamp(0.9rem, 2vw, 1.4rem), calc(50% - var(--stage-max) / 2));
+  z-index: 36;
+  display: none;
+  padding: 0.3rem;
+  background: none;
+  border: 0;
+  color: var(--ink);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body.experiment .spin-close { display: block; }
+.spin-close:hover { opacity: 1; transform: scale(1.12); }
+.spin-close svg { filter: url(#wonky); }
+/* Super-wide: drop the close X; the top nav is the way out of spin there. */
+@media (min-width: 1600px) {
+  body.experiment .spin-close { display: none; }
+}
 /* Permanent top nav for wide screens, where a corner hamburger opening a drawer
    from the edge felt detached from the centred content. Hidden by default; the
    media query below swaps it in for the hamburger. */

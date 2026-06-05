@@ -28,6 +28,16 @@
   </svg>
 </button>
 
+<!-- Close button for spin mode; mirrors the hamburger, top-right. Shown only
+     below the super-wide breakpoint, where the top nav handles exit instead. -->
+<button id="spin-close" class="spin-close" type="button" aria-label="Close spin">
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
+       stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+    <path d="M5 5 Q12 11 19 19" vector-effect="non-scaling-stroke"/>
+    <path d="M19 5 Q12 11 5 19" vector-effect="non-scaling-stroke"/>
+  </svg>
+</button>
+
 <!-- Permanent top nav, shown only on wide screens (the hamburger hides there). -->
 <header class="topnav" aria-label="Site navigation">
   <nav class="topnav__links">

@@ -107,7 +107,6 @@ let tAnim = 0;            // animated noise offset (load / click intro motion)
 let lineScale = 1;        // thins every stroke on narrow screens (set in resize)
 let archScale = 1;        // flattens the arch on narrow screens (set in resize)
 let wobScale = 1;         // more ridge ripples on narrow screens (set in resize)
-let strandScale = 1;      // shortens the dangling foot strands in spin mode
 let lineWidthMul = 1;     // scales every ridge stroke (the Thickness slider)
 let slideFrac = 0;        // how far the whole arch is dropped within the canvas
 let fbmOctaves = CFG.octaves; // more jagged detail on narrow screens
@@ -146,7 +145,14 @@ function render() {
   // On the normal site the wordmark sits in the arch opening, so cap the shown
   // height there to keep the arch above it; the spin playground shows the full
   // (kept) height. The stored value is untouched, so it returns intact in spin.
-  const archEff = experiment ? liveArch : Math.min(liveArch, LANDING_ARCH_MAX);
+  // Tie the landing<->spin difference to how far the arch has slid (0 on the
+  // landing page, 1 once fully dropped into spin), so both the capped height and
+  // the strand length ease across that span in step with the slide rather than
+  // snapping the instant spin mode toggles.
+  const spinProgress = SPIN_SLIDE > 0
+    ? clamp(slideFrac / SPIN_SLIDE, 0, 1)
+    : (experiment ? 1 : 0);
+  const archEff = lerp(Math.min(liveArch, LANDING_ARCH_MAX), liveArch, spinProgress);
   // The feet sit at their base height plus the spin-mode drop, but never so
   // high that the peak (bow + ripples) would clip at the canvas top: a tall
   // arch pushes the whole thing down just enough to stay on screen.
@@ -234,6 +240,8 @@ function render() {
 
   // Loose strands thinning out and fading from each foot: long on the left,
   // short on the right.
+  // Foot strands shorten as the arch drops into spin, easing with the slide.
+  const strandScale = lerp(1, 0.45, spinProgress);
   drawStrand(xL, footY, 0.4, ink, 0.46 * strandScale, 0.024);
   drawStrand(xR, footY, 2.1, ink, 0.13 * strandScale, 0.008);
 
@@ -713,7 +721,6 @@ function setExperiment(on) {
   // so touches land on the root element and its touch-action is what governs
   // whether the browser steals the gesture from the scrub.
   document.documentElement.classList.toggle("experiment", on);
-  strandScale = on ? 0.45 : 1; // shorter dangling strands while playing
   setSlide(on ? SPIN_SLIDE : 0); // drop the arch down within the canvas
   if (on) {
     setCollapsed(false);    // always open the panel expanded
@@ -793,7 +800,7 @@ if (canHover) {
     // mode the whole backdrop scrubs so grab everywhere; otherwise grab over the
     // arch band, and clear elsewhere so text keeps its I-beam.
     let cursor;
-    if (e.target.closest(".scrub-pick, .menu, .menu-backdrop, .hamburger, .topnav")) {
+    if (e.target.closest(".scrub-pick, .menu, .menu-backdrop, .hamburger, .topnav, .spin-close")) {
       cursor = "";
     } else if (pressing && canScrub && didDrag) {
       cursor = "grabbing";
@@ -863,6 +870,7 @@ rangeEls.forEach((el) => {
 document.getElementById("exp-stop")?.addEventListener("click", stopSpin);
 document.getElementById("exp-reset")?.addEventListener("click", resetShape);
 document.getElementById("exp-done")?.addEventListener("click", exitSpin);
+document.getElementById("spin-close")?.addEventListener("click", exitSpin);
 // Collapse arrow: slide the control panel down to just the chevron, and back.
 const scrubPick = document.querySelector(".scrub-pick");
 const scrubCollapse = document.getElementById("scrub-collapse");
