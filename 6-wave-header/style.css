@@ -234,11 +234,14 @@ body.experiment .spin-close { display: block; }
 @media (min-width: 1600px) {
   body.experiment .spin-close { display: none; }
 }
-/* Permanent top nav for wide screens, where a corner hamburger opening a drawer
-   from the edge felt detached from the centred content. Hidden by default; the
-   media query below swaps it in for the hamburger. */
+/* Permanent top nav for super-wide screens (1600px+), where a corner hamburger
+   opening a drawer from the edge felt detached from the centred content. Hidden
+   by default; the media query below swaps it in for the hamburger. This is the
+   same breakpoint that hides the spin close X, so the top nav and the X are
+   never shown together: below it the hamburger and the X exit spin, at and
+   above it a top-nav link does. */
 .topnav { display: none; }
-@media (min-width: 1100px) {
+@media (min-width: 1600px) {
   .hamburger { display: none; }
   /* Push everything below the header down so the mountains and content clear it.
      The extra selector weight (body >, html) beats the base .hero / body::before
