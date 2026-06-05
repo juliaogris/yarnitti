@@ -781,11 +781,13 @@ if (canHover) {
       ballHovering = overBall;
       if (overBall) nudgeBall();
     }
-    // The canvas is pointer-events: none, so the cursor has to be set on the
-    // body (what the pointer actually lands on). Let the control panel and menu
-    // keep their own cursors; show a grab while dragging; in spin mode the whole
-    // backdrop scrubs so grab everywhere; otherwise grab over the arch band (and
-    // clear elsewhere so text keeps its I-beam).
+    // The canvas is pointer-events: none and the body has no box over the
+    // mountains, so the hovered element there is the root <html>. Set the cursor
+    // on it (descendants inherit, and keep their own where it matters). This
+    // runs only on hover devices, so it never affects touch. Let the control
+    // panel and menu keep their own cursors; show a grab while dragging; in spin
+    // mode the whole backdrop scrubs so grab everywhere; otherwise grab over the
+    // arch band, and clear elsewhere so text keeps its I-beam.
     let cursor;
     if (e.target.closest(".scrub-pick, .menu, .menu-backdrop, .hamburger, .spin-close")) {
       cursor = "";
@@ -800,7 +802,7 @@ if (canHover) {
     } else {
       cursor = "";
     }
-    document.body.style.cursor = cursor;
+    document.documentElement.style.cursor = cursor;
   });
 }
 
