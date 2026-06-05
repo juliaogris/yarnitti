@@ -538,7 +538,7 @@ function applyScrub(dy) {
   const max = paramMax(p);
   const v = clamp(p.get() + (-dy) * (max - p.min) * 0.004, p.min, max);
   p.set(v);
-  syncSliders();
+  reflectSlider("height"); // cheap single-slider update, not a full syncSliders
   if (animRAF === null) render();
 }
 
@@ -648,14 +648,16 @@ document.addEventListener("pointermove", (e) => {
   const wScale = Math.max(1, 1100 / window.innerWidth);
   const fv = Math.max(-VEL_MAX, Math.min(VEL_MAX, (-dx / dt) * SCRUB * wScale));
   if (experiment) {
-    // In play mode a horizontal scrub sets the speed directly and the Speed
-    // slider follows. A near-vertical drag leaves the spin untouched so it can
-    // reshape the height without stopping.
+    // In play mode a horizontal scrub sets the speed and the Speed slider
+    // follows. Low-pass the target so frame-to-frame jitter in fv does not make
+    // the slider (or spin) jumpy, and drive vel directly so it stays responsive
+    // rather than easing in slowly. A near-vertical drag leaves the spin
+    // untouched so it can reshape the height without stopping.
     if (Math.abs(dx) > 2) {
-      vel = fv;
-      steady = true;        // hold the scrubbed speed
-      steadyVel = vel;
-      syncSliders();        // Speed slider tracks the scrub
+      steadyVel += (fv - steadyVel) * 0.4;
+      vel = steadyVel;
+      steady = true;        // hold the scrubbed speed after release
+      reflectSlider("speed"); // cheap single-slider update, no per-move syncSliders
     }
   } else if (Math.sign(fv) !== Math.sign(vel) || Math.abs(fv) > Math.abs(vel)) {
     vel = fv; // flywheel: a push only ever adds speed on the normal site
@@ -816,6 +818,15 @@ if (yarnBall && "IntersectionObserver" in window) {
 
 // Control panel: one labelled slider per parameter, plus the transport.
 const rangeEls = document.querySelectorAll(".exp-range");
+const sliderByParam = {};
+rangeEls.forEach((el) => { sliderByParam[el.dataset.param] = el; });
+// Update a single slider's position cheaply (one DOM write). Use this during a
+// scrub instead of syncSliders, which rewrites every slider's min/max/step/value
+// each move and janks the drag on mobile.
+function reflectSlider(param) {
+  const el = sliderByParam[param];
+  if (el) el.value = PARAMS[param].get();
+}
 // Push the model values out to every slider (ranges and current positions).
 function syncSliders() {
   rangeEls.forEach((el) => {
