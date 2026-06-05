@@ -938,13 +938,14 @@ function openLightbox(i) {
   if (!lightbox) return;
   showPhoto(i);
   lightbox.classList.add("is-open");
-  lightbox.setAttribute("aria-hidden", "false");
+  lightbox.inert = false; // allow focus in; inert (not aria-hidden) avoids
+                          // hiding the focused close button from assistive tech
   document.body.classList.add("lb-open");
 }
 function closeLightbox() {
   if (!lightbox) return;
   lightbox.classList.remove("is-open");
-  lightbox.setAttribute("aria-hidden", "true");
+  lightbox.inert = true; // moves focus off the close button as it hides
   document.body.classList.remove("lb-open");
 }
 const lightboxOpen = () => lightbox?.classList.contains("is-open");
