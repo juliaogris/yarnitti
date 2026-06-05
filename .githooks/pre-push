@@ -1,0 +1,6 @@
+#!/bin/sh
+# Pre-push quality gate. Runs the linters (JS/CSS via Biome, Python via Ruff,
+# the GitHub workflow via actionlint) and aborts the push if any fail.
+#
+# Enable once per clone with `make hooks` (sets core.hooksPath to .githooks).
+exec make lint
