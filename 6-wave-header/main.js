@@ -294,6 +294,11 @@ function resize() {
   // retina/phone screens. 2x stays crisp enough.
   dpr = Math.min(window.devicePixelRatio || 1, 2);
   const r = hero.getBoundingClientRect();
+  // A layout thrash (toggling overflow on route change, the mobile URL bar
+  // animating, or a device-mode viewport recalculation) can hand back a
+  // transient near-zero rect. Keep the last good size rather than rendering the
+  // arch into a tiny top-left corner; the next real resize corrects it.
+  if (r.width < 50 || r.height < 50) return;
   W = r.width;
   H = r.height;
   canvas.width = Math.round(W * dpr);
@@ -989,6 +994,10 @@ lightbox?.addEventListener("touchend", (e) => {
 }, { passive: true });
 
 window.addEventListener("resize", resize);
+// On mobile the visual viewport (URL bar show/hide, pinch-zoom) is the reliable
+// resize signal; the window resize event can lag behind or miss it, leaving the
+// canvas sized to a stale viewport.
+window.visualViewport?.addEventListener("resize", resize);
 resize();
 startAnim(LOAD_BOOST);
 showRoute(routeFromPath()); // render the subpage for the URL we loaded on
