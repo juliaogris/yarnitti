@@ -66,9 +66,7 @@ body {
 .hamburger {
   position: fixed;
   top: clamp(0.9rem, 2vw, 1.4rem);
-  /* Align to the arch band's left edge on wide screens (so it sits near the
-     left foot), but never closer to the edge than the corner inset. */
-  left: max(clamp(0.9rem, 2vw, 1.4rem), calc(50% - var(--stage-max) / 2 + 0.4rem));
+  left: clamp(0.9rem, 2vw, 1.4rem);
   z-index: 35;
   width: 2.2rem;
   height: 2.2rem;
@@ -116,11 +114,7 @@ body {
   transform: translateX(-100%);
   transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
-/* Open at the stage's left edge (aligned with the hamburger and the arch's
-   left foot) rather than the far viewport edge, so on wide screens the drawer
-   belongs to the centred band instead of launching from the corner. The dimmed
-   backdrop fills the empty margins. */
-.menu.is-open { transform: translateX(max(0px, calc(50vw - var(--stage-max) / 2))); }
+.menu.is-open { transform: translateX(0); }
 /* Wonky hand-drawn vertical line along the menu's right edge. */
 .menu__edge {
   position: absolute;
@@ -203,8 +197,7 @@ body {
 .spin-close {
   position: fixed;
   top: clamp(0.9rem, 2vw, 1.4rem);
-  /* Mirror the hamburger: align to the arch band's right edge on wide screens. */
-  right: max(clamp(0.9rem, 2vw, 1.4rem), calc(50% - var(--stage-max) / 2 + 0.4rem));
+  right: clamp(0.9rem, 2vw, 1.4rem);
   z-index: 36;
   display: none;
   padding: 0.3rem;
@@ -219,6 +212,51 @@ body {
 body.experiment .spin-close { display: block; }
 .spin-close:hover { opacity: 1; transform: scale(1.12); }
 .spin-close svg { filter: url(#wonky); }
+/* Permanent top nav for wide screens, where a corner hamburger opening a drawer
+   from the edge felt detached from the centred content. Hidden by default; the
+   media query below swaps it in for the hamburger. */
+.topnav { display: none; }
+@media (min-width: 1100px) {
+  .hamburger { display: none; }
+  .topnav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 35;
+    padding: clamp(0.8rem, 1.6vw, 1.3rem) clamp(1rem, 3vw, 2rem);
+    pointer-events: none; /* clicks fall through to the arch, except on the links/icons */
+  }
+  .topnav__links {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2.4vw, 2.2rem);
+    pointer-events: auto;
+  }
+  .topnav__link {
+    font-family: "Coming Soon", cursive;
+    font-size: 1.05rem;
+    color: var(--ink);
+    text-decoration: none;
+    opacity: 0.78;
+    transition: opacity 0.15s ease;
+  }
+  .topnav__link:hover,
+  .topnav__link.is-current { opacity: 1; }
+  .topnav__icons {
+    position: absolute;
+    right: clamp(1rem, 3vw, 2rem);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    pointer-events: auto;
+  }
+  /* Spin mode is immersive: hide the header and let the close X handle exit. */
+  body.experiment .topnav { display: none; }
+}
 .menu-backdrop {
   position: fixed;
   inset: 0;
@@ -366,16 +404,21 @@ body::before {
   width: 100%;
   max-width: 440px;
   line-height: 0;
+  /* Crop a few pixels off the top and bottom to hide the light-grey scan
+     frame baked into the photo. The image overflows the box by --shot-crop
+     at each edge and the overflow is clipped away. */
+  --shot-crop: 5px;
+  overflow: hidden;
 }
 .shot__img img {
   display: block;
   width: 100%;
   height: auto;
+  margin-top: calc(-1 * var(--shot-crop));
+  margin-bottom: calc(-1 * var(--shot-crop));
 }
 /* Vignette drawn in the page background colour. It fades the photo into the
-   near-black dark theme nicely, but on the light paper it just turns the grey
-   sky and ground edges into a muddy halo, so drop it there and let the photo
-   keep clean edges. */
+   near-black dark theme. */
 .shot__img::after {
   content: "";
   position: absolute;
@@ -387,7 +430,18 @@ body::before {
     var(--bg) 78%
   );
 }
-:root[data-theme="light"] .shot__img::after { display: none; }
+/* On the light paper the same gradient turns the grey sky and ground edges
+   into a muddy halo, so feather only the very edges into the paper and lighten
+   the whole effect. With the scan frame cropped away, this keeps clean edges
+   while still settling the photo onto the page. */
+:root[data-theme="light"] .shot__img::after {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    var(--bg) 96%
+  );
+  opacity: 0.6;
+}
 .shot figcaption {
   margin-top: 0.7rem;
   font-family: var(--body-font);

@@ -337,7 +337,9 @@ function toggleTheme() {
   localStorage.setItem("yarnitti-theme", next);
   render();
 }
-document.getElementById("menu-theme")?.addEventListener("click", toggleTheme);
+// Wire every theme toggle (the drawer's and the wide-screen header's).
+document.querySelectorAll(".js-theme").forEach((b) =>
+  b.addEventListener("click", toggleTheme));
 
 // hamburger menu: animate the button to an X and slide the menu panel and its
 // backdrop in and out together.
@@ -362,12 +364,14 @@ menu?.querySelectorAll(".menu__link").forEach((a) =>
   a.addEventListener("click", () => setMenu(false)));
 if (params.get("menu") === "1") setMenu(true); // prototyping: open on load
 
-// sound toggle (placeholder; no audio wired yet).
-const menuSound = document.getElementById("menu-sound");
-menuSound?.addEventListener("click", () => {
-  const on = menuSound.getAttribute("aria-pressed") !== "true";
-  menuSound.setAttribute("aria-pressed", String(on));
-});
+// sound toggle (placeholder; no audio wired yet). Keep every sound button (the
+// drawer's and the header's) in sync.
+const soundButtons = document.querySelectorAll(".js-sound");
+soundButtons.forEach((b) =>
+  b.addEventListener("click", () => {
+    const on = b.getAttribute("aria-pressed") !== "true";
+    soundButtons.forEach((x) => x.setAttribute("aria-pressed", String(on)));
+  }));
 
 // ---- intro motion -----------------------------------------------------------
 // On load (and on every click on the mountains) the ridges undulate, then
