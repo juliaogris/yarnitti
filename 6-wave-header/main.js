@@ -793,7 +793,7 @@ if (canHover) {
     // mode the whole backdrop scrubs so grab everywhere; otherwise grab over the
     // arch band, and clear elsewhere so text keeps its I-beam.
     let cursor;
-    if (e.target.closest(".scrub-pick, .menu, .menu-backdrop, .hamburger, .spin-close")) {
+    if (e.target.closest(".scrub-pick, .menu, .menu-backdrop, .hamburger, .topnav")) {
       cursor = "";
     } else if (pressing && canScrub && didDrag) {
       cursor = "grabbing";
@@ -863,7 +863,6 @@ rangeEls.forEach((el) => {
 document.getElementById("exp-stop")?.addEventListener("click", stopSpin);
 document.getElementById("exp-reset")?.addEventListener("click", resetShape);
 document.getElementById("exp-done")?.addEventListener("click", exitSpin);
-document.getElementById("spin-close")?.addEventListener("click", exitSpin);
 // Collapse arrow: slide the control panel down to just the chevron, and back.
 const scrubPick = document.querySelector(".scrub-pick");
 const scrubCollapse = document.getElementById("scrub-collapse");
