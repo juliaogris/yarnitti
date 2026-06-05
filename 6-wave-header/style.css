@@ -258,9 +258,11 @@ body.experiment .spin-close { display: block; }
   .topnav__icons {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
     pointer-events: auto;
   }
+  /* A touch more padding so the icons have breathing room and a larger target. */
+  .topnav__icons .menu__icon { padding: 0.35rem; }
   /* Spin mode is immersive: hide the header, drop the push, let the X exit. */
   body.experiment { padding-top: 0; }
   body.experiment .hero { top: 0; }
