@@ -1,11 +1,16 @@
 /*
- * yarnitti — wave header (horseshoe, b&w, static)
+ * yarnitti — animated wave header and single-page app
  *
- * A horseshoe arch of woven strands. Each strand runs from a sharp point at
- * the left foot, up and over in a wavy ridge, down to a sharp point at the
- * right foot. Wobble falls to zero at the feet so every strand converges to
- * the same two points. Uniform thin white lines on black. Static, no motion
- * (that comes later).
+ * A horseshoe arch of woven strands drawn on a canvas. Each strand runs from a
+ * sharp point at the left foot, up and over in a wavy ridge, down to a sharp
+ * point at the right foot. Wobble falls to zero at the feet so every strand
+ * converges to the same two points. Thin lines that invert with the page
+ * theme.
+ *
+ * The arch animates: it spins on load and on clicks, and the /spin route opens
+ * a play mode where sliders and drags reshape it. This file also holds the
+ * path-based router, the theme toggle, the slide-out menu, and the gallery
+ * lightbox.
  *
  * No dependencies. Hand-rolled seeded value noise.
  */
@@ -15,7 +20,6 @@ const CFG = {
   strands: 34,        // line count, from the panel
   steps: 300,         // samples along each arch
 
-  footY: 0.54,        // height of the two feet, fraction of canvas height
   footL: 0.10,        // left foot x, fraction of width
   footR: 0.90,        // right foot x
 
@@ -46,14 +50,12 @@ const hero = document.getElementById("hero");
 // mountains sit and where the content fade lands. The arc-y lever moves it.
 let ARC_Y = 0.38; // around the bottom of the top third
 
-// Two debug guides framing the content fade (remove before launch). The lower
-// guide is where body content starts fading; the upper guide is where it is
-// completely gone. Each has its own lever; both hide with one toggle (or
-// ?guide=0). Pink so they read as scaffolding.
-let GUIDE_Y = 0.37;  // lower line: fade starts here
-let GUIDE2_Y = 0.29; // upper line: content fully gone above here
-let SHOW_GUIDE = new URLSearchParams(location.search).get("guide") === "1";
-const GUIDE_COLOR = "#ff2d8e";
+// Where the scrolling body text dissolves into the arch, as fractions of hero
+// height. Fed into --foot-pct / --gone-pct (see resize), which drive the fade
+// gradient in style.css: the text starts fading at FADE_START and is fully
+// gone by FADE_END above it.
+const FADE_START = 0.37; // body content starts fading here
+const FADE_END = 0.29;   // content fully gone above here
 
 // ---- seeded value noise ---------------------------------------------------
 
@@ -102,7 +104,7 @@ function fbm(x, y) {
 
 let W = 0, H = 0, dpr = 1;
 let strands = CFG.strands, steps = CFG.steps;
-let footLfrac = CFG.footL, footRfrac = CFG.footR, footYfrac = CFG.footY;
+let footLfrac = CFG.footL, footRfrac = CFG.footR;
 let tAnim = 0;            // animated noise offset (load / click intro motion)
 let lineScale = 1;        // thins every stroke on narrow screens (set in resize)
 let archScale = 1;        // flattens the arch on narrow screens (set in resize)
@@ -156,7 +158,7 @@ function render() {
   // The feet sit at their base height plus the spin-mode drop, but never so
   // high that the peak (bow + ripples) would clip at the canvas top: a tall
   // arch pushes the whole thing down just enough to stay on screen.
-  const baseFoot = footYfrac + slideFrac;
+  const baseFoot = ARC_Y + slideFrac;
   const fitFoot = archEff + liveWobAmp + 0.04;
   const footY = H * Math.max(baseFoot, fitFoot);
   const xL = W * footLfrac;
@@ -244,24 +246,6 @@ function render() {
   const strandScale = lerp(1, 0.45, spinProgress);
   drawStrand(xL, footY, 0.4, ink, 0.46 * strandScale, 0.024);
   drawStrand(xR, footY, 2.1, ink, 0.13 * strandScale, 0.008);
-
-  // Debug-only guides (remove before launch). Draw on top so they are always
-  // visible; each sits at its own height, independent of the arc.
-  if (SHOW_GUIDE) {
-    ctx.save();
-    ctx.setLineDash([6, 6]);
-    ctx.strokeStyle = GUIDE_COLOR;
-    ctx.lineWidth = 1;
-    ctx.globalAlpha = 1;
-    for (const frac of [GUIDE_Y, GUIDE2_Y]) {
-      const y = H * frac;
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(W, y);
-      ctx.stroke();
-    }
-    ctx.restore();
-  }
 }
 
 // A loose strand dropping from a foot, tapering and fading as it falls.
@@ -312,17 +296,16 @@ function resize() {
   const small = W < 640;
   footLfrac = small ? 0.04 : CFG.footL;
   footRfrac = small ? 0.96 : CFG.footR;
-  footYfrac = ARC_Y;
   lineScale = small ? 0.6 : 1;
   archScale = 1;
   wobScale = 1;
   strands = Math.round(strandsF); // keep any scrubbed line count across resizes
   steps = Math.max(360, Math.round(0.85 * W));
 
-  // Frame the content fade with the two pink guides: it starts at the lower
-  // line and is fully gone at the upper one.
-  root.style.setProperty("--foot-pct", (GUIDE_Y * 100).toFixed(1) + "%");
-  root.style.setProperty("--gone-pct", (GUIDE2_Y * 100).toFixed(1) + "%");
+  // Drive the body-text fade gradient: it starts fading at FADE_START and is
+  // fully gone by FADE_END above it.
+  root.style.setProperty("--foot-pct", (FADE_START * 100).toFixed(1) + "%");
+  root.style.setProperty("--gone-pct", (FADE_END * 100).toFixed(1) + "%");
   render();
 }
 
@@ -336,7 +319,6 @@ root.setAttribute("data-theme", saved || "dark");
 
 // Prototyping overrides: ?theme=light&scrollto=N
 const params = new URLSearchParams(location.search);
-const isMobile = window.matchMedia("(max-width: 640px)").matches;
 const themeParam = params.get("theme");
 if (themeParam) root.setAttribute("data-theme", themeParam);
 const scrollToParam = params.get("scrollto");
@@ -365,7 +347,6 @@ function setMenu(open) {
   menuToggle?.setAttribute("aria-label", open ? "Close menu" : "Open menu");
   menu?.classList.toggle("is-open", open);
   menuBackdrop?.classList.toggle("is-open", open);
-  document.getElementById("levers")?.classList.toggle("is-hidden", open);
 }
 menuToggle?.addEventListener("click", () =>
   setMenu(!menuToggle.classList.contains("is-open")));
@@ -638,7 +619,7 @@ document.addEventListener("pointerdown", (e) => {
   // Menu, controls, and any interactive content (links, buttons, the gallery
   // grid, the lightbox) own their own clicks; the spin never steals them.
   pressOnUI = !!e.target.closest(
-    ".menu, .menu-backdrop, .hamburger, .levers, .scrub-pick, " +
+    ".menu, .menu-backdrop, .hamburger, .scrub-pick, " +
     ".gallery-grid, .lightbox, a, button, input, label, select, textarea");
   pressOnLine = !pressOnBall && !pressOnUI && isOnLine(e);
   // While the arch is already drifting, a click anywhere on the band stops it
@@ -897,6 +878,9 @@ syncSliders();
 // Path-based routes, all served by this one page (the deploy copies index.html
 // into each route folder). Clicks on internal links push history and swap the
 // visible subpage without a reload; back/forward and direct loads both work.
+// Keep this list in sync with serve.py (ROUTES) and .github/workflows/pages.yml
+// (the fan-out loop); a new route must be added in all three or its deep link
+// 404s in one environment but not another.
 const ROUTES = ["", "apricity", "about", "spin", "hunt", "gallery"];
 const BASE = new URL(".", document.currentScript?.src || location.href).pathname;
 let prevRoute = "";

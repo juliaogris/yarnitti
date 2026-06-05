@@ -34,6 +34,7 @@ jobs:
           cd 6-wave-header
           # Each route is one folder deep, so inject <base href="../"> into the
           # copy to resolve main.js, style.css and images back to the root.
+          # Keep this list in sync with ROUTES in main.js and serve.py.
           for r in apricity about spin hunt gallery; do
             mkdir -p "$r"
             sed 's#<head>#<head><base href="../">#' index.html > "$r/index.html"

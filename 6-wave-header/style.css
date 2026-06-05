@@ -4,7 +4,6 @@
    Dark is the default (white lines on black). The toggle flips to a warm
    light theme (dark ink on paper), echoing the daytime "resplendent canvas"
    reference. The canvas reads --bg / --ink from here and re-renders. */
-:root,
 /* Dark is the base palette so the variables are always defined, even before
    the theme script runs or if data-theme is never set. Light overrides it. */
 :root,
@@ -27,12 +26,11 @@
 
 :root {
   --display-font: "Over the Rainbow", cursive; /* wordmark only */
-  --body-font: "Coming Soon", Georgia, serif; /* body font picker */
-  --tag-font: "Hanken Grotesk", system-ui, sans-serif;
-  --body-scale: 1;     /* body size lever */
-  --hero-h: 70vh;        /* fold lever (fixed arch layer height) */
-  --heading-top: 28vh;   /* heading lever (wordmark rest position) */
-  --body-gap: 9rem;      /* space lever (gap below tagline) */
+  --body-font: "Coming Soon", Georgia, serif; /* body and menu text */
+  --body-scale: 1;       /* body text size multiplier */
+  --hero-h: 70vh;        /* fixed arch layer height */
+  --heading-top: 28vh;   /* wordmark rest position */
+  --body-gap: 9rem;      /* gap below the tagline */
   /* Widest the arch (and the top-corner buttons) spread. On wide screens the
      mountains stop stretching edge to edge, so the dangly feet sit nearer the
      centred body, and the hamburger / close button align to this band's edges
@@ -137,11 +135,6 @@ body {
   opacity: 0.3;
   flex-shrink: 0; /* in landscape the short drawer must not squash the wavy rule */
 }
-/* A wavy separator used inline between menu items (above Spin). The 1.1rem flex
-   gap plus this margin lands the same ~1.8rem breathing room the top rule has
-   above the Home item. */
-.menu__rule-li { display: block; }
-.menu__rule--inline { height: 8px; margin: 0.7rem 0; }
 /* Foot rule: sits just above the icon row. The links area above flex-grows to
    push it (and the icons) to the bottom of the drawer. */
 .menu__rule--foot { height: 8px; margin: 0.8rem 0 1.2rem; }
@@ -623,7 +616,6 @@ body.lb-open { overflow: hidden; } /* freeze page scroll behind the viewer */
 /* Wordmark only on the home route. */
 .hero__mark { display: none; }
 body[data-route=""] .hero__mark { display: block; }
-/* A little gap above the Spin item so it reads as an action, not a page. */
 /* Inline text link inside body copy. */
 .textlink {
   color: var(--ink);
@@ -665,90 +657,6 @@ body[data-route=""] .hero__mark { display: block; }
   font-size: calc(clamp(1.08rem, 2.1vw, 1.18rem) * var(--body-scale));
   line-height: 1.65;
 }
-
-/* ---- scroll cue ---- */
-.hero__scroll {
-  position: absolute;
-  left: 50%;
-  bottom: clamp(3rem, 7vh, 4.5rem);
-  transform: translateX(-50%);
-  z-index: 3;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.55rem;
-  color: var(--muted);
-  text-decoration: none;
-  font-family: "Space Grotesk", system-ui, sans-serif;
-  font-size: 0.7rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  transition: color 0.2s ease;
-}
-.hero__scroll:hover { color: var(--ink); }
-.hero__chev {
-  width: 0.6rem;
-  height: 0.6rem;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: rotate(45deg);
-  animation: chevBounce 1.9s ease-in-out infinite;
-}
-@keyframes chevBounce {
-  0%, 100% { transform: rotate(45deg) translate(-2px, -2px); opacity: 0.4; }
-  50% { transform: rotate(45deg) translate(2px, 2px); opacity: 1; }
-}
-
-
-/* ---- temporary tuning levers (remove before launch) ---- */
-.levers {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 20;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.2rem;
-  padding: 0.6rem 0.9rem;
-  background: color-mix(in srgb, var(--bg) 84%, transparent);
-  backdrop-filter: blur(8px);
-  font-family: "Space Grotesk", system-ui, sans-serif;
-  font-size: 0.66rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted);
-  max-width: 100%;
-  overflow-x: hidden;
-}
-.levers label {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.levers input[type="range"] { accent-color: var(--ink); width: 9rem; }
-.levers.is-hidden { display: none; } /* hidden while the menu is open */
-
-/* Hide the whole tuning bar on mobile; defaults still apply. The controls
-   remain available on desktop. Placed after the .levers rules so it wins. */
-@media (max-width: 640px) {
-  .levers { display: none; }
-}
-.levers__reset {
-  border: 1px solid var(--hair);
-  background: transparent;
-  color: var(--ink);
-  font: inherit;
-  letter-spacing: inherit;
-  text-transform: inherit;
-  padding: 0.3rem 0.7rem;
-  border-radius: 0.3rem;
-  cursor: pointer;
-  opacity: 0.8;
-}
-.levers__reset:hover { opacity: 1; border-color: var(--ink); }
-.levers__step { padding: 0.2rem 0.5rem; }
-#out-tagfont, #out-bodyfont { min-width: 9rem; text-transform: none; letter-spacing: 0; }
 
 /* Play-mode ("Spin") control panel, pinned to the bottom. Hidden until the
    experiment is open, then shown prominently. */
@@ -822,15 +730,6 @@ body.experiment .scrub-pick.is-collapsed {
   justify-content: center;
   gap: 0.5rem 0.8rem;
 }
-.scrub-pick__label {
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-.scrub-pick__opts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
 .scrub-pick__opt {
   font-family: inherit;
   font-size: 0.95rem;
@@ -844,12 +743,6 @@ body.experiment .scrub-pick.is-collapsed {
   transition: opacity 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }
 .scrub-pick__opt:hover { opacity: 1; border-color: var(--muted); }
-.scrub-pick__opt.is-on {
-  opacity: 1;
-  background: var(--ink);
-  color: var(--bg);
-  border-color: var(--ink);
-}
 /* Transport buttons share one width so the row reads as a set. */
 .scrub-pick__transport { gap: 0.6rem 1.5rem; }
 .scrub-pick__transport .scrub-pick__opt {
@@ -955,7 +848,7 @@ body.experiment .scrub-pick.is-collapsed {
 
 /* While the experiment is open: lock the page to the mountains, fade the
    prose and wordmark out, and float the wool ball top-right as the way out. */
-.hero__mark, .lead, .shot, .prose, .hero__chev, .yarn-divider {
+.hero__mark, .lead, .shot, .prose, .yarn-divider {
   transition: opacity 0.4s ease;
 }
 /* In spin mode the page does not scroll, so hand every touch gesture to the
@@ -970,7 +863,6 @@ body.experiment .hero__mark,
 body.experiment .lead,
 body.experiment .shot,
 body.experiment .prose,
-body.experiment .hero__chev,
 body.experiment .yarn-divider {
   opacity: 0;
   pointer-events: none;
@@ -982,5 +874,5 @@ body.experiment .hero canvas { touch-action: none; }
      menu, hamburger, and fades stop sliding too. */
   body, .menu, .menu-backdrop, .hamburger__line,
   .menu__link, .menu__icon { transition: none; }
-  .hero__chev, .yarn-ball, .yarn-divider, .hamburger { animation: none; }
+  .yarn-ball, .yarn-divider, .hamburger { animation: none; }
 }

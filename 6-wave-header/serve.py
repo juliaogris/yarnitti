@@ -15,6 +15,8 @@ import os
 import socketserver
 
 PORT = 8765
+# Keep in sync with ROUTES in main.js and the fan-out loop in
+# .github/workflows/pages.yml.
 ROUTES = {"apricity", "about", "spin", "hunt", "gallery"}
 
 
