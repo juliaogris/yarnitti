@@ -647,9 +647,18 @@ document.addEventListener("pointermove", (e) => {
   // narrows (no change at desktop widths) so the scrub feels the same on mobile.
   const wScale = Math.max(1, 1100 / window.innerWidth);
   const fv = Math.max(-VEL_MAX, Math.min(VEL_MAX, (-dx / dt) * SCRUB * wScale));
-  if (Math.sign(fv) !== Math.sign(vel) || Math.abs(fv) > Math.abs(vel)) {
-    if (experiment && Math.abs(dx) > 2) steady = false; // a manual grab takes over Play
-    vel = fv;
+  if (experiment) {
+    // In play mode a horizontal scrub sets the speed directly and the Speed
+    // slider follows. A near-vertical drag leaves the spin untouched so it can
+    // reshape the height without stopping.
+    if (Math.abs(dx) > 2) {
+      vel = fv;
+      steady = true;        // hold the scrubbed speed
+      steadyVel = vel;
+      syncSliders();        // Speed slider tracks the scrub
+    }
+  } else if (Math.sign(fv) !== Math.sign(vel) || Math.abs(fv) > Math.abs(vel)) {
+    vel = fv; // flywheel: a push only ever adds speed on the normal site
   }
   targetVel = vel;
   // Vertical drag reshapes the mountains, but only inside the experiment.
@@ -704,8 +713,13 @@ function setExperiment(on) {
     syncSliders();          // reflect the speed (and shape) on the panel
     if (animRAF === null) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
   } else {
-    steady = false;     // drop the held speed
-    stopMotion();       // coast gently to a stop, keeping the new shape
+    // Leave spin mode still drifting: release the held speed but do not brake,
+    // so the arch keeps its current speed and coasts down on the long natural
+    // friction (TAU) rather than stopping short.
+    steady = false;
+    braking = false;
+    targetVel = vel;
+    if (animRAF === null && vel !== 0) { lastFrame = null; animRAF = requestAnimationFrame(animate); }
   }
   if (animRAF === null) render(); // reflect the strand change if not animating
 }
@@ -764,16 +778,18 @@ if (canHover) {
     // The canvas is pointer-events: none, so the cursor has to be set on the
     // body (what the pointer actually lands on). Let the control panel and menu
     // keep their own cursors; show a grab while dragging; in spin mode the whole
-    // backdrop scrubs so grab everywhere; otherwise grab only over a line (and
+    // backdrop scrubs so grab everywhere; otherwise grab over the arch band (and
     // clear elsewhere so text keeps its I-beam).
     let cursor;
-    if (e.target.closest(".scrub-pick, .menu, .menu-backdrop, .hamburger")) {
+    if (e.target.closest(".scrub-pick, .menu, .menu-backdrop, .hamburger, .spin-close")) {
       cursor = "";
     } else if (pressing && canScrub && didDrag) {
       cursor = "grabbing";
     } else if (overBall) {
       cursor = "pointer";
-    } else if (experiment || isOnLine(e)) {
+    } else if (experiment || isInBand(e)) {
+      // isInBand is a cheap geometric test; avoid the per-move getImageData that
+      // isOnLine would do, which made dragging laggy.
       cursor = "grab";
     } else {
       cursor = "";
@@ -826,6 +842,7 @@ rangeEls.forEach((el) => {
 document.getElementById("exp-stop")?.addEventListener("click", stopSpin);
 document.getElementById("exp-reset")?.addEventListener("click", resetShape);
 document.getElementById("exp-done")?.addEventListener("click", exitSpin);
+document.getElementById("spin-close")?.addEventListener("click", exitSpin);
 // Collapse arrow: slide the control panel down to just the chevron, and back.
 const scrubPick = document.querySelector(".scrub-pick");
 const scrubCollapse = document.getElementById("scrub-collapse");

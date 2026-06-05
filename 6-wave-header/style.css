@@ -178,6 +178,27 @@ body {
 .defs { position: absolute; }
 .yarn-ball,
 .menu__icon svg { filter: url(#wonky); }
+/* Close button for spin mode: mirrors the hamburger on the right, shown only
+   while the experiment is open so it stays reachable even when the control
+   panel is collapsed. */
+.spin-close {
+  position: fixed;
+  top: clamp(0.9rem, 2vw, 1.4rem);
+  right: clamp(0.9rem, 2vw, 1.4rem);
+  z-index: 36;
+  display: none;
+  padding: 0.3rem;
+  background: none;
+  border: 0;
+  color: var(--ink);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+body.experiment .spin-close { display: block; }
+.spin-close:hover { opacity: 1; transform: scale(1.12); }
+.spin-close svg { filter: url(#wonky); }
 .menu-backdrop {
   position: fixed;
   inset: 0;
@@ -329,8 +350,10 @@ body::before {
   width: 100%;
   height: auto;
 }
-/* Vignette drawn in the page background colour, so it fades to black in the
-   dark theme and to paper in the light theme. */
+/* Vignette drawn in the page background colour. It fades the photo into the
+   near-black dark theme nicely, but on the light paper it just turns the grey
+   sky and ground edges into a muddy halo, so drop it there and let the photo
+   keep clean edges. */
 .shot__img::after {
   content: "";
   position: absolute;
@@ -342,6 +365,7 @@ body::before {
     var(--bg) 78%
   );
 }
+:root[data-theme="light"] .shot__img::after { display: none; }
 .shot figcaption {
   margin-top: 0.7rem;
   font-family: var(--body-font);
@@ -661,8 +685,8 @@ body.experiment .scrub-pick {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 0 -0.1rem;
-  padding: 0.3rem 0;
+  margin: -0.15rem 0 -0.3rem;
+  padding: 0.15rem 0;
   background: none;
   border: 0;
   cursor: pointer;
@@ -795,8 +819,9 @@ body.experiment .scrub-pick.is-collapsed {
   }
   .slider-unit span { width: auto; }
   .exp-range { padding: 0.3rem 0; } /* a little taller touch target */
-  /* Speed is the main control, so float it to the top row on mobile. */
-  .slider-unit:has(.exp-range--speed) { order: -1; }
+  /* Put Speed last in the left column (just above Stop): push Thickness to the
+     final cell so Speed takes the bottom-left slot. */
+  .slider-unit:has([data-param="thickness"]) { order: 1; }
   /* Stop, Reset and Done on one row, a touch wider with a bit more space
      between and a slightly heavier outline. */
   .scrub-pick__transport {
