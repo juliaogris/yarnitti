@@ -81,12 +81,8 @@ body {
   cursor: pointer;
   opacity: 0.75;
   transform-origin: center;
-  transition: opacity 0.2s ease, transform 0.2s ease,
-    left 0.4s cubic-bezier(0.2, 0.7, 0.3, 1);
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
-/* When the menu opens, slide back to the corner so the close X sits over the
-   drawer (which is only 320px wide), coordinated with the drawer's slide. */
-.hamburger.is-open { left: clamp(0.9rem, 2vw, 1.4rem); }
 .hamburger:hover { opacity: 1; transform: scale(1.18); }
 /* One welcoming nudge once the intro spin settles (set by JS), matching
    the wool ball. */
@@ -120,7 +116,11 @@ body {
   transform: translateX(-100%);
   transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
-.menu.is-open { transform: translateX(0); }
+/* Open at the stage's left edge (aligned with the hamburger and the arch's
+   left foot) rather than the far viewport edge, so on wide screens the drawer
+   belongs to the centred band instead of launching from the corner. The dimmed
+   backdrop fills the empty margins. */
+.menu.is-open { transform: translateX(max(0px, calc(50vw - var(--stage-max) / 2))); }
 /* Wonky hand-drawn vertical line along the menu's right edge. */
 .menu__edge {
   position: absolute;
