@@ -705,6 +705,10 @@ function setExperiment(on) {
   if (experiment === on) return;
   experiment = on;
   document.body.classList.toggle("experiment", on);
+  // Mirror the class on <html> too: in spin mode the body has no flow content,
+  // so touches land on the root element and its touch-action is what governs
+  // whether the browser steals the gesture from the scrub.
+  document.documentElement.classList.toggle("experiment", on);
   strandScale = on ? 0.45 : 1; // shorter dangling strands while playing
   setSlide(on ? SPIN_SLIDE : 0); // drop the arch down within the canvas
   if (on) {

@@ -35,7 +35,15 @@
   --body-gap: 9rem;      /* space lever (gap below tagline) */
 }
 
-html { background: var(--bg); overflow-x: hidden; }
+html {
+  background: var(--bg);
+  overflow-x: hidden;
+  /* In spin mode the body has no flow content, so touches on the mountains land
+     on this root element; its touch-action is what decides whether the browser
+     scrolls or the scrub gets the gesture. Reserve horizontal for the scrub,
+     keep vertical scroll and pinch-zoom. */
+  touch-action: pan-y pinch-zoom;
+}
 body {
   background: var(--bg);
   color: var(--ink);
@@ -850,7 +858,7 @@ body.experiment .scrub-pick.is-collapsed {
    cancels the pointer stream, and the spin never picks up speed. The canvas is
    pointer-events: none, so the gesture lands on the body; setting touch-action
    here is what reaches it. */
-body.experiment { overflow: hidden; touch-action: none; }
+html.experiment, body.experiment { overflow: hidden; touch-action: none; }
 /* The arch's downward slide in spin mode is done in JS (lowering the feet
    within the canvas) so a tall peak is never clipped at the canvas top. */
 body.experiment .hero__mark,
