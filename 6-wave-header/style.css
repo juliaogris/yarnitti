@@ -633,7 +633,7 @@ body[data-route=""] .hero__mark { display: block; }
   /* On mobile, size the frame insets in pixels rather than rem/em. With a large
      root font, rem-based insets blow up and push the hamburger well in from the
      corner; fixed pixels keep it tucked into the corner regardless of font size. */
-  .page { padding-left: 22px; padding-right: 22px; }
+  .page { padding-left: 28px; padding-right: 28px; }
   .hamburger { top: 14px; left: 14px; }
   .hero__mark { padding: 0 0.5rem; }
   .hero__title { font-size: clamp(3.4rem, 17vw, 5.6rem); }
