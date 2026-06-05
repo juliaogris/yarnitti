@@ -33,6 +33,11 @@
   --hero-h: 70vh;        /* fold lever (fixed arch layer height) */
   --heading-top: 28vh;   /* heading lever (wordmark rest position) */
   --body-gap: 9rem;      /* space lever (gap below tagline) */
+  /* Widest the arch (and the top-corner buttons) spread. On wide screens the
+     mountains stop stretching edge to edge, so the dangly feet sit nearer the
+     centred body, and the hamburger / close button align to this band's edges
+     rather than floating in the far viewport corners. */
+  --stage-max: 1040px;
 }
 
 html {
@@ -61,7 +66,9 @@ body {
 .hamburger {
   position: fixed;
   top: clamp(0.9rem, 2vw, 1.4rem);
-  left: clamp(0.9rem, 2vw, 1.4rem);
+  /* Align to the arch band's left edge on wide screens (so it sits near the
+     left foot), but never closer to the edge than the corner inset. */
+  left: max(clamp(0.9rem, 2vw, 1.4rem), calc(50% - var(--stage-max) / 2 + 0.4rem));
   z-index: 35;
   width: 2.2rem;
   height: 2.2rem;
@@ -74,8 +81,12 @@ body {
   cursor: pointer;
   opacity: 0.75;
   transform-origin: center;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.2s ease,
+    left 0.4s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
+/* When the menu opens, slide back to the corner so the close X sits over the
+   drawer (which is only 320px wide), coordinated with the drawer's slide. */
+.hamburger.is-open { left: clamp(0.9rem, 2vw, 1.4rem); }
 .hamburger:hover { opacity: 1; transform: scale(1.18); }
 /* One welcoming nudge once the intro spin settles (set by JS), matching
    the wool ball. */
@@ -192,7 +203,8 @@ body {
 .spin-close {
   position: fixed;
   top: clamp(0.9rem, 2vw, 1.4rem);
-  right: clamp(0.9rem, 2vw, 1.4rem);
+  /* Mirror the hamburger: align to the arch band's right edge on wide screens. */
+  right: max(clamp(0.9rem, 2vw, 1.4rem), calc(50% - var(--stage-max) / 2 + 0.4rem));
   z-index: 36;
   display: none;
   padding: 0.3rem;
@@ -224,8 +236,10 @@ body.experiment .spin-close { display: block; }
 .hero {
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--stage-max); /* stop the arch stretching edge to edge on wide screens */
   z-index: 3;
   height: var(--hero-h);
   overflow: hidden;
