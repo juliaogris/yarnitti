@@ -135,19 +135,28 @@ body {
   margin-bottom: 1.8rem;
   color: var(--ink);
   opacity: 0.3;
+  flex-shrink: 0; /* in landscape the short drawer must not squash the wavy rule */
 }
 /* A wavy separator used inline between menu items (above Spin). The 1.1rem flex
    gap plus this margin lands the same ~1.8rem breathing room the top rule has
    above the Home item. */
 .menu__rule-li { display: block; }
 .menu__rule--inline { height: 8px; margin: 0.7rem 0; }
-/* Foot rule: pinned to the bottom of the drawer, just above the icon row. */
-.menu__rule--foot { height: 8px; margin: auto 0 1.2rem; }
+/* Foot rule: sits just above the icon row. The links area above flex-grows to
+   push it (and the icons) to the bottom of the drawer. */
+.menu__rule--foot { height: 8px; margin: 0.8rem 0 1.2rem; }
 .menu__links {
   list-style: none;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  /* Take the space between the top and foot rules and scroll within it, so in
+     landscape the links scroll beneath the pinned top line while the foot rule
+     and icon row stay put. min-height:0 lets this flex child shrink to scroll. */
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .menu__link {
   display: flex;
@@ -171,7 +180,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2.1rem;
+  gap: 2.8rem;
+  flex-shrink: 0; /* keep the icon row at full size in the short landscape drawer */
 }
 /* Drawer icons a touch bigger than the header's. */
 .menu__icons .menu__icon { font-size: 1.65rem; }
@@ -597,12 +607,23 @@ body[data-route=""] .hero__mark { display: block; }
     --heading-top: 28vh; /* wordmark (and the body below it) sit a little lower on mobile */
     --body-gap: 7rem;    /* a little less space below the tagline on mobile */
   }
-  .page { padding-left: 2.5rem; padding-right: 2.5rem; }
+  /* On mobile, size the frame insets in pixels rather than rem/em. With a large
+     root font, rem-based insets blow up and push the hamburger well in from the
+     corner; fixed pixels keep it tucked into the corner regardless of font size. */
+  .page { padding-left: 22px; padding-right: 22px; }
+  .hamburger { top: 14px; left: 14px; }
   .hero__mark { padding: 0 0.5rem; }
   .hero__title { font-size: clamp(3.4rem, 17vw, 5.6rem); }
   .hero__tag { font-size: clamp(1.05rem, 4vw, 1.2rem); }
   .subpage__title { font-size: clamp(3.5rem, 15vw, 5.6rem); }
   .yarn-ball { width: 2rem; }
+}
+
+/* Landscape phones: the viewport is wide but short. Cap the body measure well
+   below the default 68ch so lines stay readable instead of stretching nearly
+   edge to edge. */
+@media (orientation: landscape) and (max-height: 540px) {
+  .page { max-width: 50ch; }
 }
 
 /* ---- lead line (opening of the letter, body-text format, above photo) ---- */
