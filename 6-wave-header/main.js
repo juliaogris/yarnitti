@@ -528,7 +528,12 @@ let pressInBand = false; // the press landed anywhere on the arch band
 // Each gets its own labelled slider; a vertical line-drag also nudges height.
 // "speed" drives the steady spin rather than the static shape.
 const SPIN_SLIDE = 0.22; // how far the arch drops within the canvas in spin mode
-const LANDING_ARCH_MAX = 0.28; // tallest arch shown on the normal site (clears the wordmark)
+// Tallest arch shown on the normal (non-spin) site. Keep it low enough that the
+// arch fits above ARC_Y without the fit-foot push lowering the feet onto the
+// wordmark: LANDING_ARCH_MAX + the default wobAmp + the 0.04 top margin must
+// stay at or below ARC_Y (0.25 + 0.09 + 0.04 = 0.38 = ARC_Y). A taller cap
+// pushes the feet past ARC_Y, and the arch covers the heading at desktop widths.
+const LANDING_ARCH_MAX = 0.25;
 const PARAMS = {
   height: { min: 0.18, max: 0.48, step: 0.005,
     get: () => liveArch, set: (v) => { liveArch = v; } },
