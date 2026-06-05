@@ -38,7 +38,7 @@
      centred body, and the hamburger / close button align to this band's edges
      rather than floating in the far viewport corners. */
   --stage-max: 1040px;
-  --topnav-h: 3.6rem; /* height of the wide-screen header; content clears it */
+  --topnav-h: 5.25rem; /* wide-screen header height plus breathing room below it */
 }
 
 html {
@@ -141,11 +141,13 @@ body {
    above the Home item. */
 .menu__rule-li { display: block; }
 .menu__rule--inline { height: 8px; margin: 0.7rem 0; }
+/* Foot rule: pinned to the bottom of the drawer, just above the icon row. */
+.menu__rule--foot { height: 8px; margin: auto 0 1.2rem; }
 .menu__links {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: 1.5rem;
 }
 .menu__link {
   display: flex;
@@ -166,12 +168,14 @@ body {
   opacity: 0.85;
 }
 .menu__icons {
-  margin-top: auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.9rem;
+  gap: 2.1rem;
 }
+/* Drawer icons a touch bigger than the header's. */
+.menu__icons .menu__icon { font-size: 1.65rem; }
+.menu__icons .menu__icon svg { width: 1.65rem; height: 1.65rem; }
 .menu__icon {
   display: inline-flex;
   align-items: center;
@@ -221,10 +225,12 @@ body.experiment .spin-close { display: block; }
 .topnav { display: none; }
 @media (min-width: 1100px) {
   .hamburger { display: none; }
-  /* Push everything below the header down so the mountains and content clear it. */
+  /* Push everything below the header down so the mountains and content clear it.
+     The extra selector weight (body >, html) beats the base .hero / body::before
+     rules, which sit later in the file. */
   body { padding-top: var(--topnav-h); }
-  .hero { top: var(--topnav-h); }
-  body::before { top: var(--topnav-h); }
+  body > .hero { top: var(--topnav-h); }
+  html body::before { top: var(--topnav-h); }
   .topnav {
     display: flex;
     align-items: center;
