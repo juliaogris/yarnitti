@@ -884,7 +884,9 @@ let prevRoute = "";
 function routeFromPath() {
   let r = decodeURIComponent(location.pathname);
   if (r.startsWith(BASE)) r = r.slice(BASE.length);
-  r = r.replace(/^\/+|\/+$/g, "");
+  // Lowercase so a printed QR code in any case (e.g. /APRICITY) resolves to the
+  // canonical lowercase route rather than falling through to the 404 subpage.
+  r = r.replace(/^\/+|\/+$/g, "").toLowerCase();
   if (r === "" || ROUTES.includes(r)) return r;
   return "404"; // unknown path: show the not-found subpage
 }

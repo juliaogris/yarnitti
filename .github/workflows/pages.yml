@@ -39,6 +39,11 @@ jobs:
             mkdir -p "$r"
             sed 's#<head>#<head><base href="../">#' index.html > "$r/index.html"
           done
+          # A printed QR code points at the all-caps /APRICITY, so serve a real
+          # 200 there too. The client router lowercases the path, so this folder
+          # shows the apricity page rather than the 404 fallback.
+          mkdir -p APRICITY
+          sed 's#<head>#<head><base href="../">#' index.html > APRICITY/index.html
           # 404.html is served for any unmatched path, at any depth, so give it
           # an absolute base to the site root. On the apex domain yarnitti.org
           # the site root is "/".
