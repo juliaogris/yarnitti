@@ -1161,6 +1161,7 @@ lightbox?.addEventListener(
 // Until the URL is set, the form falls back to the visitor's mail client.
 const CONTACT_ENDPOINT =
   "https://script.google.com/macros/s/AKfycbz_IJTCOBzFU4spy7l4xVIwBDQUUpnMFjOOH8fMjLLjCfkWi5aQAdUOej8oGVL4I2przg/exec";
+const contactForm = document.getElementById("contact-form");
 const contactStatus = document.getElementById("contact-status");
 contactForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
