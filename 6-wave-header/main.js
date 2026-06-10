@@ -1160,7 +1160,7 @@ lightbox?.addEventListener(
 // opaque response cannot be read; a completed request is treated as success.
 // Until the URL is set, the form falls back to the visitor's mail client.
 const CONTACT_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycbxDeTNsehAEiLvFab7qGq0ojL4CQzcIx2KWtJDmBE1YsukWeDYsQDiEIkqYyHcGg_WdkA/exec";
+  "https://script.google.com/macros/s/AKfycbz_IJTCOBzFU4spy7l4xVIwBDQUUpnMFjOOH8fMjLLjCfkWi5aQAdUOej8oGVL4I2przg/exec";
 const contactStatus = document.getElementById("contact-status");
 contactForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
