@@ -646,21 +646,21 @@ body[data-route=""] .hero__mark { display: block; }
   font-size: 0.95rem;
   color: var(--muted);
 }
-/* Underline-only inputs, in the body face, to keep the handmade feel rather
-   than boxy form fields. */
+/* Full-bordered inputs in the body face, with a soft radius to keep the
+   handmade feel rather than sharp boxy fields. */
 .field__input {
   width: 100%;
   font-family: var(--body-font);
   font-size: 1.05rem;
   color: var(--ink);
   background: transparent;
-  border: 0;
-  border-bottom: 1.5px solid var(--hair);
-  padding: 0.5rem 0.2rem;
+  border: 1.5px solid var(--hair);
+  border-radius: 8px;
+  padding: 0.6rem 0.7rem;
   transition: border-color 0.2s ease;
 }
 .field__input::placeholder { color: var(--muted); opacity: 0.6; }
-.field__input:focus { outline: none; border-bottom-color: var(--ink); }
+.field__input:focus { outline: none; border-color: var(--ink); }
 .field__area { resize: vertical; min-height: 6rem; line-height: 1.5; }
 /* Pill button matching the spin panel's transport buttons. */
 .contact-form__send {

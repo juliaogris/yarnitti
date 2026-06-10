@@ -82,7 +82,7 @@
       <svg class="menu__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><ellipse cx="12" cy="12" rx="8" ry="3" transform="rotate(30 12 12)"/><ellipse cx="12" cy="12" rx="8" ry="3" transform="rotate(90 12 12)"/><ellipse cx="12" cy="12" rx="8" ry="3" transform="rotate(150 12 12)"/></svg>
       <span>Spin</span></a></li>
     <li><a class="menu__link" data-route="contact" href="contact">
-      <svg class="menu__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M4 7.5l8 5.5 8-5.5"/></svg>
+      <svg class="menu__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2H9l-4 4v-4H5a2 2 0 01-2-2z"/></svg>
       <span>Say hello</span></a></li>
   </ul>
   <svg class="menu__rule menu__rule--foot" viewBox="0 0 300 10" preserveAspectRatio="none" aria-hidden="true">
@@ -220,36 +220,52 @@
 
   <!-- CONTACT (Say hello) -->
   <section class="subpage prose" data-route="contact">
-    <h1 class="subpage__title">Say hello</h1>
-    <p class="subpage__lede">A note finds its way to me.</p>
-    <div class="yarn-divider" aria-hidden="true">
-      <svg class="yarn-ball" viewBox="0 0 40 40" fill="none" stroke="currentColor"
-           stroke-width="2.4" stroke-linecap="round">
-        <circle cx="20" cy="20" r="16"/>
-        <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(30 20 20)"/>
-        <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(90 20 20)"/>
-        <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(150 20 20)"/>
-      </svg>
+    <div class="contact-intro" id="contact-intro">
+      <h1 class="subpage__title">Say hello</h1>
+      <p class="subpage__lede">A note finds its way to me.</p>
+      <div class="yarn-divider" aria-hidden="true">
+        <svg class="yarn-ball" viewBox="0 0 40 40" fill="none" stroke="currentColor"
+             stroke-width="2.4" stroke-linecap="round">
+          <circle cx="20" cy="20" r="16"/>
+          <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(30 20 20)"/>
+          <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(90 20 20)"/>
+          <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(150 20 20)"/>
+        </svg>
+      </div>
+      <p>
+        A piece made you smile, or you would like one taken down? I would love to
+        hear from you, or write to
+        <a class="textlink" href="mailto:hello@yarnitti.org">hello@yarnitti.org</a>.
+      </p>
+      <form class="contact-form" id="contact-form" method="post" action="" novalidate>
+        <label class="field">
+          <span class="field__label">Your email</span>
+          <input class="field__input" type="email" name="email"
+                 autocomplete="email" placeholder="you@example.com" required>
+        </label>
+        <label class="field">
+          <span class="field__label">Message</span>
+          <textarea class="field__input field__area" name="message" rows="5"
+                    placeholder="Say hello…" required></textarea>
+        </label>
+        <button class="contact-form__send" type="submit">Send</button>
+        <p class="contact-form__status" id="contact-status" role="status" aria-live="polite"></p>
+      </form>
     </div>
-    <p>
-      If a piece made you smile, or if one is unwelcome and you would like it
-      taken down, I would love to hear from you. Leave a line below, or write to
-      me at <a class="textlink" href="mailto:hello@yarnitti.org">hello@yarnitti.org</a>.
-    </p>
-    <form class="contact-form" id="contact-form" method="post" action="" novalidate>
-      <label class="field">
-        <span class="field__label">Your email</span>
-        <input class="field__input" type="email" name="email"
-               autocomplete="email" placeholder="you@example.com" required>
-      </label>
-      <label class="field">
-        <span class="field__label">Message</span>
-        <textarea class="field__input field__area" name="message" rows="5"
-                  placeholder="Say hello…" required></textarea>
-      </label>
-      <button class="contact-form__send" type="submit">Send</button>
-      <p class="contact-form__status" id="contact-status" role="status" aria-live="polite"></p>
-    </form>
+
+    <div class="contact-thanks" id="contact-thanks" hidden>
+      <h1 class="subpage__title">Thank you</h1>
+      <p class="subpage__lede">Your note is on its way.</p>
+      <div class="yarn-divider" aria-hidden="true">
+        <svg class="yarn-ball" viewBox="0 0 40 40" fill="none" stroke="currentColor"
+             stroke-width="2.4" stroke-linecap="round">
+          <circle cx="20" cy="20" r="16"/>
+          <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(30 20 20)"/>
+          <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(90 20 20)"/>
+          <ellipse cx="20" cy="20" rx="16" ry="6" transform="rotate(150 20 20)"/>
+        </svg>
+      </div>
+    </div>
   </section>
 
   <!-- NOT FOUND (shown for unknown paths, served via 404.html) -->

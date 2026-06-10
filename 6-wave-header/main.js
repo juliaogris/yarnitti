@@ -1038,6 +1038,7 @@ function showRoute(route) {
       a.classList.toggle("is-current", a.dataset.route === route),
     );
   setExperiment(route === "spin");
+  if (route === "contact") resetContact(); // start from a fresh form each visit
   if (route !== "spin") {
     prevRoute = route; // remember where to return when leaving /spin
     window.scrollTo(0, 0);
@@ -1163,6 +1164,22 @@ const CONTACT_ENDPOINT =
   "https://script.google.com/macros/s/AKfycbz_IJTCOBzFU4spy7l4xVIwBDQUUpnMFjOOH8fMjLLjCfkWi5aQAdUOej8oGVL4I2przg/exec";
 const contactForm = document.getElementById("contact-form");
 const contactStatus = document.getElementById("contact-status");
+const contactIntro = document.getElementById("contact-intro");
+const contactThanks = document.getElementById("contact-thanks");
+// On a sent note, replace the whole form with the thank-you block. resetContact
+// brings the form back, and showRoute calls it whenever the page is revisited so
+// a later visitor (or the same one) starts from a fresh form, not the thanks.
+function showContactThanks() {
+  if (contactIntro) contactIntro.hidden = true;
+  if (contactThanks) contactThanks.hidden = false;
+  window.scrollTo(0, 0);
+}
+function resetContact() {
+  if (contactIntro) contactIntro.hidden = false;
+  if (contactThanks) contactThanks.hidden = true;
+  if (contactStatus) contactStatus.textContent = "";
+  contactForm?.reset();
+}
 contactForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = contactForm.email.value.trim();
@@ -1193,7 +1210,7 @@ contactForm?.addEventListener("submit", async (e) => {
       body: data,
     });
     contactForm.reset();
-    contactStatus.textContent = "Thank you, your note is on its way.";
+    showContactThanks();
   } catch {
     contactStatus.textContent =
       "That did not send. Please write to hello@yarnitti.org instead.";
