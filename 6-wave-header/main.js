@@ -384,16 +384,6 @@ menu
   .forEach((a) => a.addEventListener("click", () => setMenu(false)));
 if (params.get("menu") === "1") setMenu(true); // prototyping: open on load
 
-// sound toggle (placeholder; no audio wired yet). Keep every sound button (the
-// drawer's and the header's) in sync.
-const soundButtons = document.querySelectorAll(".js-sound");
-soundButtons.forEach((b) =>
-  b.addEventListener("click", () => {
-    const on = b.getAttribute("aria-pressed") !== "true";
-    soundButtons.forEach((x) => x.setAttribute("aria-pressed", String(on)));
-  }),
-);
-
 // ---- intro motion -----------------------------------------------------------
 // On load (and on every click on the mountains) the ridges undulate, then
 // decelerate to a standstill within 7 seconds. Each run continues from the
