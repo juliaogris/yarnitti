@@ -470,10 +470,14 @@ body::before {
   line-height: 1.65;
   margin-bottom: 1.1rem;
 }
-/* A quiet aside: the take-down note sits softer than the body copy. */
-.prose p.note {
+/* A quiet aside: the take-down note sits softer than the body copy. Self
+   contained so it reads the same on the home letter (not .prose) as on the
+   prose subpages. */
+p.note {
   margin-top: 1.8rem;
+  font-family: var(--body-font);
   font-size: calc(clamp(0.95rem, 1.8vw, 1rem) * var(--body-scale));
+  line-height: 1.65;
   color: var(--muted);
 }
 
@@ -590,7 +594,7 @@ body.lb-open { overflow: hidden; } /* freeze page scroll behind the viewer */
   text-align: center;
   -webkit-text-stroke: 0.8px var(--bg);
   /* The display face has deep descenders (the "p" in Apricity, the "y" in
-     Treasure). Reserve room below the baseline so they never collide with the
+     Gallery). Reserve room below the baseline so they never collide with the
      tagline that follows. */
   padding-bottom: 0.32em;
   margin: 0 auto;
@@ -623,6 +627,65 @@ body[data-route=""] .hero__mark { display: block; }
   text-underline-offset: 0.2em;
 }
 .textlink:hover { opacity: 0.75; }
+
+/* ---- contact form ("Say hello") ---- */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  max-width: 32rem;
+  margin: 1.6rem auto 0;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.field__label {
+  font-family: var(--body-font);
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+/* Underline-only inputs, in the body face, to keep the handmade feel rather
+   than boxy form fields. */
+.field__input {
+  width: 100%;
+  font-family: var(--body-font);
+  font-size: 1.05rem;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1.5px solid var(--hair);
+  padding: 0.5rem 0.2rem;
+  transition: border-color 0.2s ease;
+}
+.field__input::placeholder { color: var(--muted); opacity: 0.6; }
+.field__input:focus { outline: none; border-bottom-color: var(--ink); }
+.field__area { resize: vertical; min-height: 6rem; line-height: 1.5; }
+/* Pill button matching the spin panel's transport buttons. */
+.contact-form__send {
+  align-self: flex-start;
+  font-family: "Coming Soon", cursive;
+  font-size: 1rem;
+  color: var(--ink);
+  background: transparent;
+  border: 1.5px solid var(--muted);
+  border-radius: 999px;
+  padding: 0.45rem 1.6rem;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.15s ease, background 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.contact-form__send:hover { opacity: 1; background: color-mix(in srgb, var(--ink) 8%, transparent); }
+.contact-form__send:disabled { opacity: 0.4; cursor: default; }
+.contact-form__status {
+  min-height: 1.3em;
+  margin: 0;
+  font-family: var(--body-font);
+  font-size: 0.95rem;
+  color: var(--muted);
+}
 
 /* ---- mobile: less side margin, wider + lower arch handled in JS ---- */
 @media (max-width: 640px) {

@@ -878,9 +878,28 @@ syncSliders();
 // Keep this list in sync with serve.py (ROUTES) and .github/workflows/pages.yml
 // (the fan-out loop); a new route must be added in all three or its deep link
 // 404s in one environment but not another.
-const ROUTES = ["", "apricity", "about", "spin", "hunt", "gallery"];
+const ROUTES = ["", "apricity", "about", "spin", "gallery", "contact"];
 const BASE = new URL(".", document.currentScript?.src || location.href).pathname;
 let prevRoute = "";
+let routeInited = false; // skip the nav nudge on the first (load-time) showRoute
+let navDir = 1;          // flips each switch so repeated navigation sways
+
+// A gentle sideways drift when moving between subpages, so the arch acknowledges
+// the change without the full load spin. Alternate the direction each switch so
+// back-and-forth navigation sways rather than building up one-way speed. Honour
+// reduced motion (the whole intro/spin system is already gated on it).
+const NAV_NUDGE = 1.2; // peak target speed of the per-switch drift
+function navNudge() {
+  if (reduceMotion) return;
+  navDir = -navDir;
+  braking = false;
+  steady = false;
+  targetVel = NAV_NUDGE * navDir; // friction (TAU) eases it back to a standstill
+  if (animRAF === null) {
+    lastFrame = null;
+    animRAF = requestAnimationFrame(animate);
+  }
+}
 function routeFromPath() {
   let r = decodeURIComponent(location.pathname);
   if (r.startsWith(BASE)) r = r.slice(BASE.length);
@@ -891,6 +910,7 @@ function routeFromPath() {
   return "404"; // unknown path: show the not-found subpage
 }
 function showRoute(route) {
+  const fromRoute = document.body.dataset.route || "";
   setMenu(false);
   document.body.dataset.route = route;
   document.querySelectorAll(".subpage").forEach((el) =>
@@ -902,6 +922,13 @@ function showRoute(route) {
     prevRoute = route;       // remember where to return when leaving /spin
     window.scrollTo(0, 0);
   }
+  // Nudge the mountains on a real switch between subpages. Skip the first paint
+  // (the load spin already runs), the /spin route (it drives its own motion),
+  // and leaving /spin (exitSpin keeps the arch coasting).
+  if (routeInited && route !== "spin" && fromRoute !== "spin" && route !== fromRoute) {
+    navNudge();
+  }
+  routeInited = true;
 }
 function navigate(route, push = true) {
   if (!ROUTES.includes(route)) route = "";
@@ -981,6 +1008,50 @@ lightbox?.addEventListener("touchend", (e) => {
     showPhoto(lightboxIndex + (dx < 0 ? 1 : -1));
   }
 }, { passive: true });
+
+// ---- contact form ("Say hello") --------------------------------------------
+// Posts {email, message} to CONTACT_ENDPOINT. The backend is yours to wire: a
+// Google Apps Script web app that appends a row to a Sheet and emails a
+// notification is the cheapest path (see design/contact-backend.md). Set its
+// "/exec" URL below. The POST is sent no-cors, so the row is written but the
+// opaque response cannot be read; a completed request is treated as success.
+// Until the URL is set, the form falls back to the visitor's mail client.
+const CONTACT_ENDPOINT = ""; // e.g. "https://script.google.com/macros/s/AKfy.../exec"
+const contactForm = document.getElementById("contact-form");
+const contactStatus = document.getElementById("contact-status");
+contactForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = contactForm.email.value.trim();
+  const message = contactForm.message.value.trim();
+  if (!email || !message) {
+    contactStatus.textContent = "A few words and your email, and it is on its way.";
+    return;
+  }
+  if (!CONTACT_ENDPOINT) {
+    // No backend yet: hand the note to the visitor's own mail client.
+    const body = encodeURIComponent(message + "\n\nFrom " + email);
+    const subject = encodeURIComponent("Hello from yarnitti.org");
+    window.location.href =
+      "mailto:hello@yarnitti.org?subject=" + subject + "&body=" + body;
+    return;
+  }
+  const send = contactForm.querySelector(".contact-form__send");
+  send.disabled = true;
+  contactStatus.textContent = "Sending…";
+  try {
+    const data = new FormData();
+    data.append("email", email);
+    data.append("message", message);
+    await fetch(CONTACT_ENDPOINT, { method: "POST", mode: "no-cors", body: data });
+    contactForm.reset();
+    contactStatus.textContent = "Thank you, your note is on its way.";
+  } catch {
+    contactStatus.textContent =
+      "That did not send. Please write to hello@yarnitti.org instead.";
+  } finally {
+    send.disabled = false;
+  }
+});
 
 window.addEventListener("resize", resize);
 // On mobile the visual viewport (URL bar show/hide, pinch-zoom) is the reliable
