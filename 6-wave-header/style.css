@@ -480,6 +480,14 @@ p.note {
   line-height: 1.65;
   color: var(--muted);
 }
+/* Hand-written sign-off at the foot of the About letter, in the wordmark face. */
+.signature {
+  margin-top: 1.2rem;
+  font-family: var(--display-font);
+  font-size: 2.4rem;
+  line-height: 1;
+  color: var(--ink);
+}
 
 /* ---- gallery grid ---- */
 .gallery-grid {
