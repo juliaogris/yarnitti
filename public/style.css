@@ -510,12 +510,16 @@ p.note {
   object-fit: cover;
 }
 
-/* Hand-written sign-off at the foot of the About letter, in the wordmark face. */
-.signature {
+/* Hand-written sign-off at the foot of the About letter, in the wordmark face
+   so "Julia" matches the "Yarnitti" and "About" headings. Scoped under .prose
+   so it beats `.prose p`, which would otherwise pull it back to the body font.
+   Centred to sit under the round portrait above it. */
+.prose .signature {
   margin-top: 0.8rem;
   font-family: var(--display-font);
-  font-size: 2.4rem;
+  font-size: 2.8rem;
   line-height: 1;
+  text-align: center;
   color: var(--ink);
 }
 
