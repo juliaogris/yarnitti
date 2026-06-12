@@ -1298,9 +1298,32 @@ function click() {
   src.stop(t + 0.09);
 }
 
+// A short, soft, muted blip that falls in pitch, played when sound is switched
+// off. Kept low and brief so it reads as "powering down" rather than a cue.
+function mutedBlip() {
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const t = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const lp = ctx.createBiquadFilter();
+  const g = ctx.createGain();
+  lp.type = "lowpass";
+  lp.frequency.value = 600;
+  osc.type = "triangle";
+  osc.frequency.setValueAtTime(330, t);
+  osc.frequency.exponentialRampToValueAtTime(170, t + 0.12);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(0.06, t + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
+  osc.connect(lp).connect(g).connect(masterGain);
+  osc.start(t);
+  osc.stop(t + 0.16);
+}
+
 // The cue API used around the app. Each is a no-op while sound is off.
 const sfx = {
   open: () => pluck(523.25), // C5: the menu opens, or sound is switched on
+  off: () => mutedBlip(), // a soft fall when sound is switched off
   tick: () => click(), // a navigation step
   chime: () => {
     // Two soft notes, a friendly little rise, on a sent note.
@@ -1465,6 +1488,9 @@ function stopSpinSound() {
 
 // Flip sound on or off, remember the choice, and reflect it on every toggle.
 function setSound(on) {
+  // Play the off cue while sound is still on, so the cue is not muted before it
+  // sounds. (sfx is a no-op once soundOn is false.)
+  if (!on) sfx.off();
   soundOn = on;
   localStorage.setItem(SOUND_KEY, on ? "on" : "off");
   document.querySelectorAll(".js-sound").forEach((b) => {

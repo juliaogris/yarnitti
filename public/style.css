@@ -148,7 +148,10 @@ body {
      and icon row stay put. min-height:0 lets this flex child shrink to scroll. */
   flex: 1 1 auto;
   min-height: 0;
-  overflow-y: auto;
+  /* Clip the x axis explicitly. With only overflow-y set, the browser computes
+     overflow-x as auto, so the 6px hover shift on a link spawns a horizontal
+     scrollbar along the bottom. */
+  overflow: hidden auto;
   overscroll-behavior: contain;
 }
 .menu__link {
@@ -199,11 +202,13 @@ body {
 .defs { position: absolute; }
 .yarn-ball,
 .menu__icon svg { filter: url(#wonky); }
-/* Speaker toggle: a crossed-out slash when sound is off, the sound wave when
-   on. The .is-on class is set from JS and mirrors aria-pressed. */
-.js-sound .snd-wave { display: none; }
-.js-sound.is-on .snd-wave { display: inline; }
-.js-sound.is-on .snd-slash { display: none; }
+/* Speaker toggle: the icon shows the action, not the current state. When sound
+   is off the button offers to turn it on, so it shows the wave; when sound is
+   on the button offers to mute, so it shows the crossed-out slash. The .is-on
+   class is set from JS and mirrors aria-pressed. */
+.js-sound .snd-slash { display: none; }
+.js-sound.is-on .snd-wave { display: none; }
+.js-sound.is-on .snd-slash { display: inline; }
 /* Close button for spin mode: mirrors the hamburger on the right, shown only
    while the experiment is open so it stays reachable even when the control
    panel is collapsed. Hidden at and above the super-wide breakpoint (1600px),
