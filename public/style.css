@@ -199,6 +199,11 @@ body {
 .defs { position: absolute; }
 .yarn-ball,
 .menu__icon svg { filter: url(#wonky); }
+/* Speaker toggle: a crossed-out slash when sound is off, the sound wave when
+   on. The .is-on class is set from JS and mirrors aria-pressed. */
+.js-sound .snd-wave { display: none; }
+.js-sound.is-on .snd-wave { display: inline; }
+.js-sound.is-on .snd-slash { display: none; }
 /* Close button for spin mode: mirrors the hamburger on the right, shown only
    while the experiment is open so it stays reachable even when the control
    panel is collapsed. Hidden at and above the super-wide breakpoint (1600px),
