@@ -480,9 +480,34 @@ p.note {
   line-height: 1.65;
   color: var(--muted);
 }
+/* Round portrait that sits above the sign-off on the About letter. The photo
+   is square, so a circular clip and a soft ring read as a hand-pinned snapshot
+   rather than a hard avatar tile. */
+.portrait {
+  margin-top: 2rem;
+  text-align: center;
+}
+.portrait__img {
+  display: inline-block;
+  width: clamp(96px, 28vw, 132px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  line-height: 0;
+  box-shadow:
+    0 0 0 4px var(--bg),
+    0 0 0 5px color-mix(in srgb, var(--ink) 18%, transparent);
+}
+.portrait__img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 /* Hand-written sign-off at the foot of the About letter, in the wordmark face. */
 .signature {
-  margin-top: 1.2rem;
+  margin-top: 0.8rem;
   font-family: var(--display-font);
   font-size: 2.4rem;
   line-height: 1;
