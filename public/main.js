@@ -353,6 +353,7 @@ function toggleTheme() {
   const next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
   root.setAttribute("data-theme", next);
   localStorage.setItem("yarnitti-theme", next);
+  sfx.theme(next === "light");
   render();
 }
 // Wire every theme toggle (the drawer's and the wide-screen header's).
@@ -365,15 +366,17 @@ document
 const menuToggle = document.getElementById("menu-toggle");
 const menu = document.getElementById("menu");
 const menuBackdrop = document.getElementById("menu-backdrop");
-function setMenu(open) {
+function setMenu(open, quiet) {
   // Sound only on a real change, so e.g. Escape with the menu already closed
-  // does not fire the close cue.
+  // does not fire the close cue. `quiet` skips the cue entirely, used when a
+  // nav link closes the menu (the navigation itself is the feedback).
   const wasOpen = menu?.classList.contains("is-open");
   menuToggle?.classList.toggle("is-open", open);
   menuToggle?.setAttribute("aria-expanded", String(open));
   menuToggle?.setAttribute("aria-label", open ? "Close menu" : "Open menu");
   menu?.classList.toggle("is-open", open);
   menuBackdrop?.classList.toggle("is-open", open);
+  if (quiet) return;
   if (open && !wasOpen) sfx.menuOpen();
   else if (!open && wasOpen) sfx.menuClose();
 }
@@ -386,7 +389,7 @@ document.addEventListener("keydown", (e) => {
 });
 menu
   ?.querySelectorAll(".menu__link")
-  .forEach((a) => a.addEventListener("click", () => setMenu(false)));
+  .forEach((a) => a.addEventListener("click", () => setMenu(false, true)));
 if (params.get("menu") === "1") setMenu(true); // prototyping: open on load
 
 // ---- intro motion -----------------------------------------------------------
@@ -1059,7 +1062,12 @@ function showRoute(route) {
 }
 function navigate(route, push = true) {
   if (!ROUTES.includes(route)) route = "";
-  if (push) history.pushState({ route }, "", BASE + route);
+  if (push) {
+    // A distinct cue for moving to a new page, except spin, which sounds its
+    // own flourish as it opens. Not on back/forward (those use showRoute).
+    if (route !== "spin") sfx.nav();
+    history.pushState({ route }, "", BASE + route);
+  }
   showRoute(route);
 }
 function exitSpin() {
@@ -1262,6 +1270,7 @@ function ensureAudio() {
 // other pitches come from re-tuning that note with the buffer's playbackRate.
 const CUE_GAIN = 0.9; // per-voice headroom; the master sets the overall level
 const sampleBuffers = {};
+let activeVoice = null; // the one note currently sounding, kept for monophony
 
 const NOTE_OFFSET = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
 function noteToMidi(name) {
@@ -1314,6 +1323,22 @@ function playNote(file, baseNote, note, opts) {
   } else {
     g.connect(masterGain);
   }
+  // Monophonic: fade and stop whatever is sounding so only one note is ever
+  // heard at once (no overlaps, no chords). The short fade avoids a click.
+  const t = ctx.currentTime;
+  if (activeVoice) {
+    try {
+      activeVoice.gain.gain.cancelScheduledValues(t);
+      activeVoice.gain.gain.setTargetAtTime(0, t, 0.012);
+      activeVoice.src.stop(t + 0.06);
+    } catch {
+      // already stopped
+    }
+  }
+  activeVoice = { src, gain: g };
+  src.onended = () => {
+    if (activeVoice && activeVoice.src === src) activeVoice = null;
+  };
   src.start();
 }
 
@@ -1329,6 +1354,8 @@ function phrase(file, baseNote, notes, gap, gain) {
 const GLOCK = "glockenspiel_C6";
 const KALIMBA = "kalimba_C4";
 const MUSIC_BOX = "music_box_C5";
+const CELESTA = "celesta_C5";
+const VIBE = "vibraphone_C4";
 const PIANO = "acoustic_grand_piano_C4";
 
 // The cue API used around the app. Each is a no-op while sound is off.
@@ -1337,6 +1364,10 @@ const sfx = {
   off: () => playNote(KALIMBA, "C4", "G3", { gain: 0.6 }), // a soft low fall
   menuOpen: () => playNote(GLOCK, "C6", "C6", { gain: 0.8 }),
   menuClose: () => playNote(KALIMBA, "C4", "C4", { gain: 0.85 }),
+  nav: () => playNote(CELESTA, "C5", "C5", { gain: 0.7 }), // move to a new page
+  theme: (toLight) =>
+    playNote(VIBE, "C4", toLight ? "G4" : "C4", { gain: 0.6 }), // light vs dark
+
   ball: () => phrase(GLOCK, "C6", ["C6", "E6", "G6"], 110, 0.8), // enter spin
   galleryOpen: () => playNote(MUSIC_BOX, "C5", "C5", { gain: 0.7 }),
   galleryMove: () => playNote(KALIMBA, "C4", "G4", { gain: 0.55 }),
@@ -1346,11 +1377,12 @@ const sfx = {
 
 // ---- spin soundscape -------------------------------------------------------
 // While the Spin playground is open and sound is on, a piano arpeggio tracks
-// the landscape. Every slider maps onto the music: speed sets the note rate
-// (and the direction of spin both runs the scale up or down and pans the notes
-// across the stereo field), height the register, line count the chord
-// fullness, jaggedness the timing and pitch scatter, thickness the loudness and
-// a bass-octave double, and ripple a small pitch waver. A still spin is silent.
+// the landscape, one note at a time (playback is monophonic). Every slider maps
+// onto the music: speed sets the note rate (and the direction of spin both runs
+// the scale up or down and pans the notes across the stereo field), height the
+// register, line count how many octaves the melody roams, jaggedness the timing
+// and pitch scatter, thickness the volume, and ripple a small pitch waver. The
+// arpeggio waits a beat before it starts, and a still spin is silent.
 let spin = null; // the running arpeggio scheduler, or null when not playing
 const PENTA = [0, 2, 4, 7, 9]; // major pentatonic: every note sits well together
 const NAMES = ["C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B"];
@@ -1362,7 +1394,9 @@ function startSpinSound() {
   const ctx = ensureAudio();
   if (!ctx || spin) return;
   loadSample(PIANO); // warm the buffer so the first notes are not dropped
-  spin = { next: ctx.currentTime + 0.12, step: 0, raf: null };
+  // Wait a moment before the arpeggio begins, so the glockenspiel flourish that
+  // opens the spin is heard on its own first.
+  spin = { next: ctx.currentTime + 0.9, step: 0, raf: null };
   updateSpinSound();
 }
 
@@ -1386,30 +1420,21 @@ function updateSpinSound() {
 
   while (spin.next < now + 0.15) {
     if (spd > 0.04) {
-      // Walk the scale in the spin's direction, with the odd jagged jump.
+      // One note at a time (the playback is monophonic). Walk the scale in the
+      // spin's direction, with the odd jagged jump. Line count widens how many
+      // octaves the melody roams over, rather than stacking chords.
+      const octaves = 1 + Math.round(ln * 2); // lines -> 1..3 octave range
+      const total = PENTA.length * octaves;
       spin.step +=
         dir + (Math.random() < jag ? (Math.random() < 0.5 ? 1 : -1) : 0);
-      const idx = ((spin.step % PENTA.length) + PENTA.length) % PENTA.length;
-      const octave =
-        Math.random() < jag * 0.5 ? (Math.random() < 0.5 ? 12 : -12) : 0;
+      const idx = ((spin.step % total) + total) % total;
       const root = 48 + Math.round(h * 24); // C3..C5 by height
-      const m = root + PENTA[idx] + octave;
+      const m =
+        root + 12 * Math.floor(idx / PENTA.length) + PENTA[idx % PENTA.length];
       const pan = dir * spd * 0.7; // direction places the note in the field
-      const gain = 0.3 + thick * 0.4; // thickness -> volume
+      const gain = 0.16 + thick * 0.22; // thickness -> volume (kept low)
       const detune = (Math.random() * 2 - 1) * wob * 45; // ripple -> waver
       playNote(PIANO, "C4", midiToName(m), { gain, pan, detune });
-      // Lines -> stack a harmony note, then a higher one when there are many.
-      if (Math.random() < ln) {
-        const fifth = Math.random() < 0.5 ? 7 : 4;
-        playNote(PIANO, "C4", midiToName(m + fifth), { gain: gain * 0.6, pan });
-      }
-      if (ln > 0.6 && Math.random() < ln - 0.3) {
-        playNote(PIANO, "C4", midiToName(m + 12), { gain: gain * 0.4, pan });
-      }
-      // Thickness -> a bass octave underneath for body.
-      if (thick > 0.4) {
-        playNote(PIANO, "C4", midiToName(m - 12), { gain: gain * 0.5 * thick, pan });
-      }
     }
     const swing = jag * (Math.random() * 2 - 1) * interval * 0.4; // jagged timing
     spin.next += interval + swing;
