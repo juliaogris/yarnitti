@@ -1,5 +1,11 @@
 # Cleanup review — public site
 
+> STATUS (2026-06-12): Archived. Every item below has been addressed in the
+> code (the two launch-blocker bugs, the font-request trim, the scratch font
+> pages, and all the dead CSS/JS for levers, scroll cue, spin panel, and debug
+> guides). The route list now carries cross-reference comments in all three
+> files. Kept for the record only; do not treat as an open to-do list.
+
 A read-through of `public/` (`index.html`, `main.js`, `style.css`,
 `serve.py`) plus the deploy workflow. Grouped by priority. Nothing here is
 urgent for it to work; it works. This is about shedding the prototyping

@@ -105,7 +105,7 @@ body {
   left: 0;
   bottom: 0;
   width: min(82vw, 320px);
-  z-index: 34; /* above the spin levers bar; below the hamburger so the X stays on top */
+  z-index: 34; /* above the spin controls bar; below the hamburger so the X stays on top */
   background: var(--bg);
   display: flex;
   flex-direction: column;
@@ -311,7 +311,7 @@ body.experiment .spin-close { display: block; }
   z-index: 3;
   height: var(--hero-h);
   overflow: hidden;
-  pointer-events: none; /* let scroll and the levers through */
+  pointer-events: none; /* let scroll and the controls through */
   background: transparent;
 }
 /* Dissolve scrolling body text into the arch: opaque page colour over the
