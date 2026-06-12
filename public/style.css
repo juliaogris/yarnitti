@@ -488,14 +488,20 @@ p.note {
 /* Round portrait that sits above the sign-off on the About letter. The photo
    is square, so a circular clip and a soft ring read as a hand-pinned snapshot
    rather than a hard avatar tile. */
-.portrait {
-  margin-top: 2rem;
-  text-align: center;
+/* Sign-off at the foot of the About letter: the round portrait and the
+   hand-written name sit side by side, centred as one unit. */
+.signoff {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-top: 2.2rem;
 }
 .portrait__img {
   display: inline-block;
-  width: clamp(96px, 28vw, 132px);
+  width: clamp(84px, 22vw, 108px);
   aspect-ratio: 1;
+  flex: none;
   border-radius: 50%;
   overflow: hidden;
   line-height: 0;
@@ -509,17 +515,14 @@ p.note {
   height: 100%;
   object-fit: cover;
 }
-
-/* Hand-written sign-off at the foot of the About letter, in the wordmark face
-   so "Julia" matches the "Yarnitti" and "About" headings. Scoped under .prose
-   so it beats `.prose p`, which would otherwise pull it back to the body font.
-   Centred to sit under the round portrait above it. */
+/* "Julia" in the wordmark face so it matches the "Yarnitti" and "About"
+   headings. Scoped under .prose so it beats `.prose p`, which would otherwise
+   pull it back to the body font. */
 .prose .signature {
-  margin-top: 0.8rem;
+  margin: 0;
   font-family: var(--display-font);
   font-size: 2.8rem;
   line-height: 1;
-  text-align: center;
   color: var(--ink);
 }
 
