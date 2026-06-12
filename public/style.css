@@ -521,8 +521,8 @@ p.note {
    pull it back to the body font. */
 .prose .signature {
   margin: 0;
-  /* Lift the name a touch off the lower edge, toward the portrait's middle. */
-  transform: translateY(-0.7rem);
+  /* Lift the name toward the portrait's vertical middle. */
+  transform: translateY(-1.2rem);
   font-family: var(--display-font);
   font-size: 2.8rem;
   line-height: 1;
