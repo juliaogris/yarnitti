@@ -1,7 +1,7 @@
 # Contact form backend - hello@yarnitti.org
 
 The "Say hello" page (`/contact`) posts `{email, message}` to a single URL set
-as `CONTACT_ENDPOINT` in `6-wave-header/main.js`. This doc covers the cheapest,
+as `CONTACT_ENDPOINT` in `public/main.js`. This doc covers the cheapest,
 lowest-maintenance way to receive those notes: a **Google Apps Script web app**
 that writes each one straight into a **Google Sheet** and emails you.
 
@@ -92,7 +92,7 @@ send mail as you), and copy the **Web app URL**. It ends in `/exec`.
 
 ### Step 4 - Wire the front end
 
-In `6-wave-header/main.js`, set:
+In `public/main.js`, set:
 
 ```javascript
 const CONTACT_ENDPOINT = "https://script.google.com/macros/s/AKfy.../exec";

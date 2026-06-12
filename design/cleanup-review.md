@@ -1,6 +1,6 @@
-# Cleanup review — 6-wave-header site
+# Cleanup review — public site
 
-A read-through of `6-wave-header/` (`index.html`, `main.js`, `style.css`,
+A read-through of `public/` (`index.html`, `main.js`, `style.css`,
 `serve.py`) plus the deploy workflow. Grouped by priority. Nothing here is
 urgent for it to work; it works. This is about shedding the prototyping
 scaffolding before launch and removing a couple of real bugs.
@@ -34,7 +34,7 @@ Note: at the time of writing there are uncommitted edits in `index.html`,
 ## 2. Prototyping scaffolding to remove before launch
 
 ### Scratch font-picker pages
-- `6-wave-header/_bodyfonts.html` and `_tagfonts.html` are font comparison
+- `public/_bodyfonts.html` and `_tagfonts.html` are font comparison
   pages, both headed "Delete before launch."
 - **Action:** delete both (or move to an `archive/` dir if you want to keep
   them around).

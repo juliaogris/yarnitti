@@ -10,10 +10,10 @@
 
 BIOME := npx --yes @biomejs/biome@2.4.16
 RUFF  := uvx ruff
-JS    := 6-wave-header/main.js
-CSS   := 6-wave-header/style.css
-PY    := 6-wave-header/serve.py
-HTML  := 6-wave-header/index.html
+JS    := public/main.js
+CSS   := public/style.css
+PY    := public/serve.py
+HTML  := public/index.html
 
 .PHONY: lint fmt hooks
 

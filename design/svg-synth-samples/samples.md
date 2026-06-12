@@ -13,4 +13,4 @@ parameters or seed, so these are geometry references, not reproducible state.
 | `slopes-dense-dark.svg`       | "sublime treasure"   | Very dense field (14k paths), white on black.         |
 | `slopes-horizontal-light.svg` | "resplendent canvas" | Sparse horizontal slopes (62 paths), black on white.  |
 
-The header prototype lives in the repo root at `6-wave-header/`.
+The header prototype lives in the repo root at `public/`.

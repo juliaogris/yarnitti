@@ -31,7 +31,7 @@ jobs:
       # refresh, shared links) returns the app with a 200 instead of a 404.
       - name: Fan out SPA routes
         run: |
-          cd 6-wave-header
+          cd public
           # Each route is one folder deep, so inject <base href="../"> into the
           # copy to resolve main.js, style.css and images back to the root.
           # Keep this list in sync with ROUTES in main.js and serve.py.
@@ -50,6 +50,6 @@ jobs:
           sed 's#<head>#<head><base href="/">#' index.html > 404.html
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: 6-wave-header
+          path: public
       - id: deployment
         uses: actions/deploy-pages@v4
