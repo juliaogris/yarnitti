@@ -492,7 +492,7 @@ p.note {
    hand-written name sit side by side, centred as one unit. */
 .signoff {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: flex-start;
   gap: 2.2rem;
   margin-top: 2.2rem;
@@ -500,7 +500,7 @@ p.note {
 }
 .portrait__img {
   display: inline-block;
-  width: clamp(84px, 22vw, 108px);
+  width: clamp(72px, 18vw, 92px);
   aspect-ratio: 1;
   flex: none;
   border-radius: 50%;
@@ -521,8 +521,6 @@ p.note {
    pull it back to the body font. */
 .prose .signature {
   margin: 0;
-  /* Lift the name toward the portrait's vertical middle. */
-  transform: translateY(-1.2rem);
   font-family: var(--display-font);
   font-size: 2.8rem;
   line-height: 1;
