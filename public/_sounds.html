@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yarnitti — sound audition (temporary)</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Coming+Soon&family=Over+the+Rainbow&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0a07;
+    --ink: #f4f1ea;
+    --muted: rgba(244, 241, 234, 0.66);
+    --hair: rgba(244, 241, 234, 0.18);
+    --accent: #d98c5f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 2rem 1.2rem 5rem;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Coming Soon", Georgia, serif;
+    line-height: 1.5;
+    max-width: 880px;
+    margin-inline: auto;
+  }
+  h1 {
+    font-family: "Over the Rainbow", cursive;
+    font-weight: 400;
+    font-size: clamp(2.2rem, 7vw, 3.4rem);
+    margin: 0 0 0.2rem;
+  }
+  h2 {
+    font-weight: 400;
+    font-size: 1.3rem;
+    margin: 2.4rem 0 0.3rem;
+    color: var(--accent);
+  }
+  .note { color: var(--muted); font-size: 0.95rem; margin: 0 0 0.6rem; }
+  .banner {
+    border: 1.5px dashed var(--accent);
+    border-radius: 12px;
+    padding: 0.7rem 1rem;
+    margin: 1rem 0 0;
+    color: var(--accent);
+    font-size: 0.95rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.6rem;
+    margin-top: 0.6rem;
+  }
+  button.snd {
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--hair);
+    border-radius: 999px;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.12s ease, background 0.12s ease;
+  }
+  button.snd:hover { border-color: var(--accent); }
+  button.snd:active { background: rgba(217, 140, 95, 0.14); }
+  button.snd small { display: block; color: var(--muted); font-size: 0.78rem; }
+  .row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; margin-top: 0.6rem; }
+  .pill {
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: transparent;
+    border: 1.5px solid var(--muted);
+    border-radius: 999px;
+    padding: 0.45rem 1.1rem;
+    cursor: pointer;
+  }
+  .pill.is-active { background: var(--accent); border-color: var(--accent); color: #1a160e; }
+  .sliders { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem 1.4rem; max-width: 560px; margin-top: 0.8rem; }
+  .sld { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; color: var(--muted); }
+  .sld span { width: 5.5rem; text-align: right; flex: none; }
+  .sld input { flex: 1; accent-color: var(--accent); min-width: 0; }
+  code { background: rgba(244,241,234,0.08); padding: 0.1rem 0.35rem; border-radius: 5px; }
+</style>
+</head>
+<body>
+
+<h1>Sound audition</h1>
+<p class="note">A temporary workbench for picking the sounds. Nothing here is wired into the site yet.</p>
+<div class="banner">Delete before launch. This page is not linked from anywhere and is here only to choose a palette.</div>
+
+<p class="note" id="hint" style="margin-top:1rem">Tap any button to start (browsers need one tap before they make sound).</p>
+
+<h2>One-shot palette</h2>
+<p class="note">Soft, short cues. The plucked strings and the music box are the least "computery"; the wood and felt are foley-style. Press each a few times — they vary slightly so repeats never sound identical.</p>
+<div class="grid" id="oneshots"></div>
+
+<h2>Hear it as a navigation step</h2>
+<p class="note">A cue fires on every page move, so it has to survive repetition. This plays your highlighted one four times quickly.</p>
+<div class="row">
+  <button class="pill" id="repeat-btn">Play x4</button>
+  <span class="note" id="repeat-name">highlighted: plucked string — soft</span>
+</div>
+
+<h2>Spin soundscape</h2>
+<p class="note">The evolving sound while the Spin playground is open. Two organic styles to compare. Drag the sliders (same meaning as the spin panel) and the sound follows. Speed at zero is near silent.</p>
+<div class="row">
+  <button class="pill is-active" data-style="arp">Music-box arpeggio</button>
+  <button class="pill" data-style="pad">Warm pad</button>
+  <button class="pill" id="drone-toggle" style="margin-left:auto">Start</button>
+</div>
+<div class="sliders" id="drone-sliders"></div>
+
+<h2>When you've picked</h2>
+<p class="note">Tell me which one-shot for each of: <code>menu open</code>, <code>nav step</code>, <code>sent note (chime)</code>, <code>ball opens spin</code>, <code>gallery open</code>, <code>gallery move</code>, <code>gallery close</code> — and which spin style. I'll wire those in and bin this page.</p>
+
+<script>
+// Everything here is throwaway. One shared context, built on the first gesture.
+let ctx = null;
+let master = null;
+function audio() {
+  if (!ctx) {
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    master = ctx.createGain();
+    master.gain.value = 0.5;
+    master.connect(ctx.destination);
+  }
+  if (ctx.state === "suspended") ctx.resume();
+  const hint = document.getElementById("hint");
+  if (hint) hint.style.display = "none";
+  return ctx;
+}
+
+const rnd = (a, b) => a + Math.random() * (b - a);
+const jitter = (cents) => Math.pow(2, rnd(-cents, cents) / 1200);
+
+function noiseBuf(sec) {
+  const len = Math.floor(ctx.sampleRate * sec);
+  const b = ctx.createBuffer(1, len, ctx.sampleRate);
+  const ch = b.getChannelData(0);
+  for (let i = 0; i < len; i++) ch[i] = Math.random() * 2 - 1;
+  return b;
+}
+
+// Karplus-Strong: a real plucked-string model. A short noise burst is run
+// through a tuned delay with light averaging, computed straight into a buffer.
+function ksBuffer(freq, dur, stretch) {
+  const sr = ctx.sampleRate;
+  const N = Math.max(2, Math.floor(sr / freq));
+  const len = Math.floor(sr * dur);
+  const b = ctx.createBuffer(1, len, sr);
+  const y = b.getChannelData(0);
+  for (let i = 0; i < N; i++) y[i] = Math.random() * 2 - 1;
+  for (let i = N; i < len; i++) {
+    y[i] = stretch * 0.5 * (y[i - N] + y[i - N + 1]);
+  }
+  return b;
+}
+function pluck(freq, opts) {
+  const o = opts || {};
+  audio();
+  const t = ctx.currentTime;
+  const src = ctx.createBufferSource();
+  src.buffer = ksBuffer(freq * jitter(o.jit || 18), o.dur || 1.4, o.stretch || 0.498);
+  const lp = ctx.createBiquadFilter();
+  lp.type = "lowpass";
+  lp.frequency.value = o.bright || 3200;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(o.gain || 0.45, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + (o.dur || 1.4));
+  src.connect(lp).connect(g).connect(master);
+  src.start(t);
+}
+
+// Inharmonic bell / music box: a few decaying sine partials.
+function bell(freq, opts) {
+  const o = opts || {};
+  audio();
+  const t = ctx.currentTime;
+  const ratios = o.ratios || [1, 2.0, 3.01, 4.3];
+  const decays = o.decays || [1.4, 1.0, 0.6, 0.4];
+  const f = freq * jitter(o.jit || 12);
+  ratios.forEach((r, i) => {
+    const osc = ctx.createOscillator();
+    osc.type = "sine";
+    osc.frequency.value = f * r;
+    const g = ctx.createGain();
+    const peak = (o.gain || 0.4) / (i + 1);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(peak, t + 0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + decays[i]);
+    osc.connect(g).connect(master);
+    osc.start(t);
+    osc.stop(t + decays[i] + 0.05);
+  });
+}
+
+// Marimba / soft mallet: sine fundamental plus a quiet 4th partial, quick decay.
+function mallet(freq) {
+  audio();
+  const t = ctx.currentTime;
+  const f = freq * jitter(14);
+  [[1, 1], [4, 0.25]].forEach(([r, a]) => {
+    const osc = ctx.createOscillator();
+    osc.type = "sine";
+    osc.frequency.value = f * r;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.45 * a, t + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
+    osc.connect(g).connect(master);
+    osc.start(t);
+    osc.stop(t + 0.5);
+  });
+}
+
+// Wood tap: a band-passed noise click over a short damped body resonance.
+function wood(opts) {
+  const o = opts || {};
+  audio();
+  const t = ctx.currentTime;
+  const tone = (o.tone || 850) * jitter(60);
+  const src = ctx.createBufferSource();
+  src.buffer = noiseBuf(0.12);
+  const bp = ctx.createBiquadFilter();
+  bp.type = "bandpass";
+  bp.frequency.value = tone;
+  bp.Q.value = 4;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(o.gain || 0.5, t + 0.002);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+  src.connect(bp).connect(g).connect(master);
+  src.start(t);
+  const osc = ctx.createOscillator();
+  osc.type = "sine";
+  osc.frequency.value = tone * 0.32;
+  const g2 = ctx.createGain();
+  g2.gain.setValueAtTime((o.gain || 0.5) * 0.4, t);
+  g2.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+  osc.connect(g2).connect(master);
+  osc.start(t);
+  osc.stop(t + 0.14);
+}
+
+// Felt / soft pop: a low-passed noise blip with a soft thump under it.
+function felt() {
+  audio();
+  const t = ctx.currentTime;
+  const src = ctx.createBufferSource();
+  src.buffer = noiseBuf(0.1);
+  const lp = ctx.createBiquadFilter();
+  lp.type = "lowpass";
+  lp.frequency.value = 480;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(0.4, t + 0.005);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+  src.connect(lp).connect(g).connect(master);
+  src.start(t);
+}
+
+// The named palette. Each entry has a label, a sub-note and a play function.
+const PALETTE = [
+  { name: "Plucked string — soft", sub: "warm harp", fn: () => pluck(330, { bright: 2600, dur: 1.6 }) },
+  { name: "Plucked string — bright", sub: "nylon string", fn: () => pluck(523.25, { bright: 4200, dur: 1.2 }) },
+  { name: "Plucked string — low", sub: "deep, gentle", fn: () => pluck(196, { bright: 2000, dur: 1.8 }) },
+  { name: "Harp rise (3 notes)", sub: "a little flourish", fn: () => { pluck(392, { dur: 1.2 }); setTimeout(() => pluck(523.25, { dur: 1.2 }), 90); setTimeout(() => pluck(659.25, { dur: 1.4 }), 180); } },
+  { name: "Music box note", sub: "high, sweet", fn: () => bell(1046.5, { ratios: [1, 2, 3, 4.2], decays: [1.6, 1.0, 0.6, 0.4], gain: 0.34 }) },
+  { name: "Bell — soft", sub: "rounded, inharmonic", fn: () => bell(660, { gain: 0.34 }) },
+  { name: "Glass ping", sub: "bright, short", fn: () => bell(1318.5, { ratios: [1, 2.7], decays: [0.5, 0.3], gain: 0.3 }) },
+  { name: "Marimba mallet", sub: "woody, mellow", fn: () => mallet(440) },
+  { name: "Wood tap — soft", sub: "knitting needle", fn: () => wood({ tone: 900, gain: 0.4 }) },
+  { name: "Wood knock — firm", sub: "heavier tap", fn: () => wood({ tone: 520, gain: 0.6 }) },
+  { name: "Felt pop", sub: "soft, muted", fn: () => felt() },
+  { name: "Chime up (2 notes)", sub: "friendly rise", fn: () => { bell(659.25, { gain: 0.32 }); setTimeout(() => bell(987.77, { gain: 0.32 }), 120); } },
+];
+
+let highlighted = PALETTE[0];
+const grid = document.getElementById("oneshots");
+PALETTE.forEach((p) => {
+  const b = document.createElement("button");
+  b.className = "snd";
+  b.innerHTML = p.name + "<small>" + p.sub + "</small>";
+  b.addEventListener("click", () => {
+    p.fn();
+    highlighted = p;
+    document.getElementById("repeat-name").textContent = "highlighted: " + p.name;
+  });
+  grid.appendChild(b);
+});
+
+document.getElementById("repeat-btn").addEventListener("click", () => {
+  for (let i = 0; i < 4; i++) setTimeout(() => highlighted.fn(), i * 220);
+});
+
+// ---- spin soundscape audition ----------------------------------------------
+const SPIN_PARAMS = [
+  { key: "height", label: "Height" },
+  { key: "jagged", label: "Jaggedness" },
+  { key: "lines", label: "Lines" },
+  { key: "ripple", label: "Ripple" },
+  { key: "thickness", label: "Thickness" },
+  { key: "speed", label: "Speed" },
+];
+const sp = { height: 0.4, jagged: 0.3, lines: 0.4, ripple: 0.3, thickness: 0.5, speed: 0.45 };
+const slidersEl = document.getElementById("drone-sliders");
+SPIN_PARAMS.forEach((p) => {
+  const wrap = document.createElement("label");
+  wrap.className = "sld";
+  const span = document.createElement("span");
+  span.textContent = p.label;
+  const input = document.createElement("input");
+  input.type = "range";
+  input.min = "0";
+  input.max = "1";
+  input.step = "0.01";
+  input.value = String(sp[p.key]);
+  input.addEventListener("input", () => { sp[p.key] = parseFloat(input.value); });
+  wrap.appendChild(span);
+  wrap.appendChild(input);
+  slidersEl.appendChild(wrap);
+});
+
+let droneStyle = "arp";
+document.querySelectorAll("[data-style]").forEach((b) => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll("[data-style]").forEach((x) => x.classList.remove("is-active"));
+    b.classList.add("is-active");
+    const wasOn = drone.on;
+    stopDrone();
+    droneStyle = b.dataset.style;
+    if (wasOn) startDrone();
+  });
+});
+
+const drone = { on: false, nodes: null, raf: null, nextNote: 0 };
+const PENTA = [0, 2, 4, 7, 9]; // major pentatonic, cheerful
+function midiToFreq(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+
+// Warm pad: detuned triangles through a moving lowpass, with a breath of noise
+// and a gentle vibrato. Level and brightness follow the spin params.
+function startPad() {
+  const t = ctx.currentTime;
+  const oscs = [0, 7, -7].map((det) => {
+    const o = ctx.createOscillator();
+    o.type = "triangle";
+    o.detune.value = det;
+    return o;
+  });
+  const sum = ctx.createGain();
+  sum.gain.value = 0.08;
+  const lp = ctx.createBiquadFilter();
+  lp.type = "lowpass";
+  lp.frequency.value = 700;
+  const out = ctx.createGain();
+  out.gain.value = 0.0001;
+  const breath = ctx.createBufferSource();
+  breath.buffer = noiseBuf(2);
+  breath.loop = true;
+  const bbp = ctx.createBiquadFilter();
+  bbp.type = "bandpass";
+  bbp.frequency.value = 1600;
+  const bg = ctx.createGain();
+  bg.gain.value = 0;
+  const vib = ctx.createOscillator();
+  const vibg = ctx.createGain();
+  vib.frequency.value = 5;
+  vibg.gain.value = 0;
+  oscs.forEach((o) => { vibg.connect(o.detune); o.connect(sum); o.start(t); });
+  vib.connect(vibg);
+  sum.connect(lp).connect(out).connect(master);
+  breath.connect(bbp).connect(bg).connect(out);
+  breath.start(t);
+  vib.start(t);
+  drone.nodes = { oscs, lp, out, bg, vib, vibg };
+}
+function updatePad() {
+  const t = ctx.currentTime;
+  const n = drone.nodes;
+  const base = midiToFreq(40 + sp.height * 24);
+  n.oscs.forEach((o) => o.frequency.setTargetAtTime(base, t, 0.08));
+  n.lp.frequency.setTargetAtTime(300 + sp.thickness * 2400, t, 0.1);
+  n.vibg.gain.setTargetAtTime(sp.ripple * 22, t, 0.1);
+  n.bg.gain.setTargetAtTime(sp.jagged * 0.05, t, 0.1);
+  n.out.gain.setTargetAtTime(0.0001 + sp.speed * 0.22, t, 0.1);
+}
+
+// Music-box arpeggio: pluck notes from a pentatonic scale. Speed sets the rate,
+// height the register, lines the chance of a stacked note, jaggedness the
+// timing/pitch scatter. Feels handcrafted rather than droning.
+function startArp() {
+  drone.nextNote = ctx.currentTime + 0.1;
+  drone.nodes = {};
+}
+function updateArp() {
+  const now = ctx.currentTime;
+  const rate = 0.6 + sp.speed * 7; // notes per second
+  const interval = 1 / rate;
+  while (drone.nextNote < now + 0.1) {
+    if (sp.speed > 0.03) {
+      const root = 52 + Math.round(sp.height * 12);
+      const scatter = Math.random() < sp.jagged ? Math.floor(rnd(-1, 2)) : 0;
+      const deg = PENTA[Math.floor(Math.random() * PENTA.length)];
+      const oct = 12 * Math.floor(rnd(0, 2));
+      const note = root + deg + oct + scatter * 12;
+      const bright = 2000 + sp.thickness * 3000;
+      pluck(midiToFreq(note), { dur: 1.2 + sp.thickness, bright, gain: 0.3, jit: 6 + sp.ripple * 30 });
+      if (Math.random() < sp.lines) {
+        pluck(midiToFreq(note + 7), { dur: 1.2, bright, gain: 0.18, jit: 6 });
+      }
+    }
+    const swing = sp.jagged * rnd(-interval * 0.3, interval * 0.3);
+    drone.nextNote += interval + swing;
+  }
+}
+function tickDrone() {
+  if (!drone.on) return;
+  if (droneStyle === "pad") updatePad();
+  else updateArp();
+  drone.raf = requestAnimationFrame(tickDrone);
+}
+function startDrone() {
+  audio();
+  if (drone.on) return;
+  drone.on = true;
+  if (droneStyle === "pad") startPad();
+  else startArp();
+  tickDrone();
+}
+function stopDrone() {
+  if (!drone.on) return;
+  drone.on = false;
+  if (drone.raf) cancelAnimationFrame(drone.raf);
+  const n = drone.nodes;
+  if (n && n.out) {
+    const t = ctx.currentTime;
+    n.out.gain.setTargetAtTime(0.0001, t, 0.15);
+    setTimeout(() => {
+      n.oscs.forEach((o) => { try { o.stop(); } catch (e) {} });
+      try { n.vib.stop(); } catch (e) {}
+    }, 600);
+  }
+  drone.nodes = null;
+}
+document.getElementById("drone-toggle").addEventListener("click", (e) => {
+  if (drone.on) { stopDrone(); e.target.textContent = "Start"; }
+  else { startDrone(); e.target.textContent = "Stop"; }
+});
+</script>
+</body>
+</html>
