@@ -366,12 +366,16 @@ const menuToggle = document.getElementById("menu-toggle");
 const menu = document.getElementById("menu");
 const menuBackdrop = document.getElementById("menu-backdrop");
 function setMenu(open) {
+  // Sound only on a real change, so e.g. Escape with the menu already closed
+  // does not fire the close cue.
+  const wasOpen = menu?.classList.contains("is-open");
   menuToggle?.classList.toggle("is-open", open);
   menuToggle?.setAttribute("aria-expanded", String(open));
   menuToggle?.setAttribute("aria-label", open ? "Close menu" : "Open menu");
   menu?.classList.toggle("is-open", open);
   menuBackdrop?.classList.toggle("is-open", open);
-  if (open) sfx.open();
+  if (open && !wasOpen) sfx.menuOpen();
+  else if (!open && wasOpen) sfx.menuClose();
 }
 menuToggle?.addEventListener("click", () =>
   setMenu(!menuToggle.classList.contains("is-open")),
@@ -810,8 +814,12 @@ function setExperiment(on) {
     }
   }
   if (animRAF === null) render(); // reflect the strand change if not animating
-  if (on) startSpinSound();
-  else stopSpinSound();
+  if (on) {
+    sfx.ball(); // a little glockenspiel flourish as the spin opens
+    startSpinSound();
+  } else {
+    stopSpinSound();
+  }
 }
 // Ease the arch's drop in and out. Done in JS (re-rendering) rather than a CSS
 // transform so the peak is drawn within the canvas and never clipped at the
@@ -1051,10 +1059,7 @@ function showRoute(route) {
 }
 function navigate(route, push = true) {
   if (!ROUTES.includes(route)) route = "";
-  if (push) {
-    sfx.tick(); // a soft step on a deliberate navigation, not on back/forward
-    history.pushState({ route }, "", BASE + route);
-  }
+  if (push) history.pushState({ route }, "", BASE + route);
   showRoute(route);
 }
 function exitSpin() {
@@ -1095,12 +1100,20 @@ function openLightbox(i) {
   lightbox.inert = false; // allow focus in; inert (not aria-hidden) avoids
   // hiding the focused close button from assistive tech
   document.body.classList.add("lb-open");
+  sfx.galleryOpen();
 }
 function closeLightbox() {
   if (!lightbox) return;
   lightbox.classList.remove("is-open");
   lightbox.inert = true; // moves focus off the close button as it hides
   document.body.classList.remove("lb-open");
+  sfx.galleryClose();
+}
+// Step to another photo and sound the move cue. Used by the arrows, the
+// keyboard and swipes (openLightbox calls showPhoto directly, with its own cue).
+function stepPhoto(i) {
+  showPhoto(i);
+  sfx.galleryMove();
 }
 const lightboxOpen = () => lightbox?.classList.contains("is-open");
 
@@ -1112,10 +1125,10 @@ document
   ?.addEventListener("click", closeLightbox);
 document
   .getElementById("lightbox-prev")
-  ?.addEventListener("click", () => showPhoto(lightboxIndex - 1));
+  ?.addEventListener("click", () => stepPhoto(lightboxIndex - 1));
 document
   .getElementById("lightbox-next")
-  ?.addEventListener("click", () => showPhoto(lightboxIndex + 1));
+  ?.addEventListener("click", () => stepPhoto(lightboxIndex + 1));
 // A click on the dark backdrop (not the image or a button) closes the viewer.
 lightbox?.addEventListener("click", (e) => {
   if (e.target === lightbox) closeLightbox();
@@ -1123,8 +1136,8 @@ lightbox?.addEventListener("click", (e) => {
 document.addEventListener("keydown", (e) => {
   if (!lightboxOpen()) return;
   if (e.key === "Escape") closeLightbox();
-  else if (e.key === "ArrowLeft") showPhoto(lightboxIndex - 1);
-  else if (e.key === "ArrowRight") showPhoto(lightboxIndex + 1);
+  else if (e.key === "ArrowLeft") stepPhoto(lightboxIndex - 1);
+  else if (e.key === "ArrowRight") stepPhoto(lightboxIndex + 1);
 });
 // Horizontal swipe to page between photos; ignore mostly-vertical drags.
 let touchX = 0;
@@ -1143,7 +1156,7 @@ lightbox?.addEventListener(
     const dx = e.changedTouches[0].clientX - touchX;
     const dy = e.changedTouches[0].clientY - touchY;
     if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
-      showPhoto(lightboxIndex + (dx < 0 ? 1 : -1));
+      stepPhoto(lightboxIndex + (dx < 0 ? 1 : -1));
     }
   },
   { passive: true },
@@ -1217,12 +1230,11 @@ contactForm?.addEventListener("submit", async (e) => {
 });
 
 // ---- sound -----------------------------------------------------------------
-// Every sound is synthesised with the Web Audio API rather than played from a
-// file, so there is nothing to ship or license and the tones suit the
-// hand-drawn, generative feel of the canvas. Sound is off by default and
-// opt-in, remembered like the theme. A browser will not start audio without a
-// user gesture, so the context is built lazily the first time it is needed
-// after sound is switched on (the toggle click is itself that gesture).
+// Cues play real instrument samples (FluidR3 GM soundfont) through the Web
+// Audio API. Sound is off by default and opt-in, remembered like the theme. A
+// browser will not start audio without a user gesture, so the context is built
+// lazily the first time it is needed after sound is switched on (the toggle
+// click is itself that gesture).
 const SOUND_KEY = "yarnitti-sound";
 let soundOn = localStorage.getItem(SOUND_KEY) === "on";
 let audioCtx = null;
@@ -1237,253 +1249,179 @@ function ensureAudio() {
     if (!AC) return null;
     audioCtx = new AC();
     masterGain = audioCtx.createGain();
-    masterGain.gain.value = 0.5; // headroom; individual voices stay quiet
+    masterGain.gain.value = 0.85; // overall level; samples are pre-normalised
     masterGain.connect(audioCtx.destination);
   }
   if (audioCtx.state === "suspended") audioCtx.resume();
   return audioCtx;
 }
 
-// A shared white-noise buffer, reused by the percussive cues and the spin
-// grit layer so the samples are generated only once.
-let noiseBuffer = null;
-function getNoise(ctx) {
-  if (!noiseBuffer) {
-    const len = Math.floor(ctx.sampleRate * 1.5);
-    noiseBuffer = ctx.createBuffer(1, len, ctx.sampleRate);
-    const ch = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < len; i++) ch[i] = Math.random() * 2 - 1;
-  }
-  return noiseBuffer;
+// ---- sample playback -------------------------------------------------------
+// Cues are real instrument recordings (FluidR3 GM soundfont) under sounds/,
+// chosen because synthesised tones read as computery. Each file holds one note;
+// other pitches come from re-tuning that note with the buffer's playbackRate.
+const CUE_GAIN = 0.9; // per-voice headroom; the master sets the overall level
+const sampleBuffers = {};
+
+const NOTE_OFFSET = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+function noteToMidi(name) {
+  const m = name.match(/^([A-G])(s?)(\d)$/);
+  return 12 * (parseInt(m[3], 10) + 1) + NOTE_OFFSET[m[1]] + (m[2] ? 1 : 0);
 }
 
-// A small random detune (in cents) so repeated cues never sound identical.
-const jitter = (cents) => 1 + ((Math.random() * 2 - 1) * cents) / 1200;
-
-// A soft plucked note: a triangle tone with a quick attack and gentle decay.
-function pluck(freq, dur = 0.18, peak = 0.12) {
+// Fetch and decode a sample once, then cache the buffer. Returns null while
+// sound is off or while the file is still loading; the next trigger catches it.
+function loadSample(file) {
   const ctx = ensureAudio();
-  if (!ctx) return;
-  const t = ctx.currentTime;
-  const osc = ctx.createOscillator();
-  const g = ctx.createGain();
-  osc.type = "triangle";
-  osc.frequency.value = freq * jitter(20);
-  g.gain.setValueAtTime(0.0001, t);
-  g.gain.exponentialRampToValueAtTime(peak, t + 0.012);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  osc.connect(g).connect(masterGain);
-  osc.start(t);
-  osc.stop(t + dur + 0.02);
+  if (!ctx) return null;
+  if (sampleBuffers[file] !== undefined) return sampleBuffers[file];
+  sampleBuffers[file] = null; // mark in-flight so the fetch runs only once
+  fetch("sounds/" + file + ".mp3")
+    .then((r) => r.arrayBuffer())
+    .then((b) => ctx.decodeAudioData(b))
+    .then((buf) => {
+      sampleBuffers[file] = buf;
+    })
+    .catch(() => {
+      delete sampleBuffers[file]; // allow a later retry
+    });
+  return sampleBuffers[file];
 }
 
-// A muted wooden click: a very short band-passed noise burst, like a knitting
-// needle tapping. Used for a navigation step.
-function click() {
+// Play one note. The file's own pitch is `baseNote`; `note` is the pitch to
+// sound, reached by re-tuning. `pan` places it across the stereo field and
+// `detune` adds a small waver in cents.
+function playNote(file, baseNote, note, opts) {
+  const o = opts || {};
   const ctx = ensureAudio();
   if (!ctx) return;
-  const t = ctx.currentTime;
+  const buf = loadSample(file);
+  if (!buf) return; // not decoded yet
   const src = ctx.createBufferSource();
-  src.buffer = getNoise(ctx);
-  const bp = ctx.createBiquadFilter();
-  bp.type = "bandpass";
-  bp.frequency.value = 1500 * jitter(140);
-  bp.Q.value = 0.8;
+  src.buffer = buf;
+  src.playbackRate.value = Math.pow(
+    2,
+    (noteToMidi(note) - noteToMidi(baseNote)) / 12,
+  );
+  if (o.detune) src.detune.value = o.detune;
   const g = ctx.createGain();
-  g.gain.setValueAtTime(0.0001, t);
-  g.gain.exponentialRampToValueAtTime(0.08, t + 0.004);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
-  src.connect(bp).connect(g).connect(masterGain);
-  src.start(t);
-  src.stop(t + 0.09);
+  g.gain.value = o.gain == null ? CUE_GAIN : o.gain;
+  src.connect(g);
+  if (o.pan && ctx.createStereoPanner) {
+    const p = ctx.createStereoPanner();
+    p.pan.value = clamp(o.pan, -1, 1);
+    g.connect(p).connect(masterGain);
+  } else {
+    g.connect(masterGain);
+  }
+  src.start();
 }
 
-// A short, soft, muted blip that falls in pitch, played when sound is switched
-// off. Kept low and brief so it reads as "powering down" rather than a cue.
-function mutedBlip() {
-  const ctx = ensureAudio();
-  if (!ctx) return;
-  const t = ctx.currentTime;
-  const osc = ctx.createOscillator();
-  const lp = ctx.createBiquadFilter();
-  const g = ctx.createGain();
-  lp.type = "lowpass";
-  lp.frequency.value = 600;
-  osc.type = "triangle";
-  osc.frequency.setValueAtTime(330, t);
-  osc.frequency.exponentialRampToValueAtTime(170, t + 0.12);
-  g.gain.setValueAtTime(0.0001, t);
-  g.gain.exponentialRampToValueAtTime(0.06, t + 0.01);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.14);
-  osc.connect(lp).connect(g).connect(masterGain);
-  osc.start(t);
-  osc.stop(t + 0.16);
+// Play a short phrase from one instrument, the notes spaced `gap` ms apart.
+function phrase(file, baseNote, notes, gap, gain) {
+  notes.forEach((n, i) =>
+    setTimeout(() => playNote(file, baseNote, n, { gain }), i * gap),
+  );
 }
+
+// Which instrument sounds each cue, kept in one place so swapping an instrument
+// is a one-line change. Each constant is a file under sounds/.
+const GLOCK = "glockenspiel_C6";
+const KALIMBA = "kalimba_C4";
+const MUSIC_BOX = "music_box_C5";
+const PIANO = "acoustic_grand_piano_C4";
 
 // The cue API used around the app. Each is a no-op while sound is off.
 const sfx = {
-  open: () => pluck(523.25), // C5: the menu opens, or sound is switched on
-  off: () => mutedBlip(), // a soft fall when sound is switched off
-  tick: () => click(), // a navigation step
-  chime: () => {
-    // Two soft notes, a friendly little rise, on a sent note.
-    pluck(659.25, 0.22, 0.1); // E5
-    setTimeout(() => pluck(987.77, 0.34, 0.1), 110); // B5
-  },
+  on: () => playNote(GLOCK, "C6", "C6", { gain: 0.8 }), // sound switched on
+  off: () => playNote(KALIMBA, "C4", "G3", { gain: 0.6 }), // a soft low fall
+  menuOpen: () => playNote(GLOCK, "C6", "C6", { gain: 0.8 }),
+  menuClose: () => playNote(KALIMBA, "C4", "C4", { gain: 0.85 }),
+  ball: () => phrase(GLOCK, "C6", ["C6", "E6", "G6"], 110, 0.8), // enter spin
+  galleryOpen: () => playNote(MUSIC_BOX, "C5", "C5", { gain: 0.7 }),
+  galleryMove: () => playNote(KALIMBA, "C4", "G4", { gain: 0.55 }),
+  galleryClose: () => playNote(KALIMBA, "C4", "C4", { gain: 0.5 }),
+  chime: () => phrase(MUSIC_BOX, "C5", ["C5", "E5", "G5"], 110, 0.7), // sent note
 };
 
 // ---- spin soundscape -------------------------------------------------------
-// While the Spin playground is open and sound is on, a soft evolving drone
-// tracks the landscape: the ridge's shape and speed map onto pitch, timbre and
-// movement. It is deliberately quiet and slow-moving, a background texture
-// rather than a tune, and it fades to near silence when the spin is still.
-let spin = null; // the live audio graph, or null when not playing
+// While the Spin playground is open and sound is on, a piano arpeggio tracks
+// the landscape. Every slider maps onto the music: speed sets the note rate
+// (and the direction of spin both runs the scale up or down and pans the notes
+// across the stereo field), height the register, line count the chord
+// fullness, jaggedness the timing and pitch scatter, thickness the loudness and
+// a bass-octave double, and ripple a small pitch waver. A still spin is silent.
+let spin = null; // the running arpeggio scheduler, or null when not playing
+const PENTA = [0, 2, 4, 7, 9]; // major pentatonic: every note sits well together
+const NAMES = ["C", "Cs", "D", "Ds", "E", "F", "Fs", "G", "Gs", "A", "As", "B"];
+function midiToName(m) {
+  return NAMES[((m % 12) + 12) % 12] + (Math.floor(m / 12) - 1);
+}
 
 function startSpinSound() {
   const ctx = ensureAudio();
   if (!ctx || spin) return;
-  const t = ctx.currentTime;
-  // Two slightly detuned saws for body, a sine an octave up for the "lines"
-  // shimmer, and a band of noise for "jagged" grit. All sum into a lowpass
-  // ("thickness"), then a tremolo gain whose level and pulse follow the speed.
-  const oscA = ctx.createOscillator();
-  const oscB = ctx.createOscillator();
-  const shimmer = ctx.createOscillator();
-  oscA.type = "sawtooth";
-  oscB.type = "sawtooth";
-  shimmer.type = "sine";
-  oscB.detune.value = 7; // a gentle chorus between the two body voices
-
-  const oscGain = ctx.createGain();
-  const shimGain = ctx.createGain();
-  shimGain.gain.value = 0;
-  const noiseSrc = ctx.createBufferSource();
-  noiseSrc.buffer = getNoise(ctx);
-  noiseSrc.loop = true;
-  const noiseBp = ctx.createBiquadFilter();
-  noiseBp.type = "bandpass";
-  noiseBp.frequency.value = 1800;
-  noiseBp.Q.value = 0.6;
-  const noiseGain = ctx.createGain();
-  noiseGain.gain.value = 0;
-
-  const lowpass = ctx.createBiquadFilter();
-  lowpass.type = "lowpass";
-  lowpass.frequency.value = 700;
-
-  const tremolo = ctx.createGain(); // overall level, driven by speed
-  tremolo.gain.value = 0.0001;
-
-  // A vibrato LFO bends the pitch a touch ("ripple"), and a tremolo LFO pulses
-  // the level; the pulse rate rises with the spin speed.
-  const vibrato = ctx.createOscillator();
-  const vibratoGain = ctx.createGain();
-  vibrato.frequency.value = 5;
-  vibratoGain.gain.value = 0;
-  vibrato.connect(vibratoGain);
-  vibratoGain.connect(oscA.detune);
-  vibratoGain.connect(oscB.detune);
-
-  const tremLfo = ctx.createOscillator();
-  const tremDepth = ctx.createGain();
-  tremLfo.frequency.value = 2;
-  tremDepth.gain.value = 0;
-  tremLfo.connect(tremDepth).connect(tremolo.gain);
-
-  oscA.connect(oscGain);
-  oscB.connect(oscGain);
-  oscGain.connect(lowpass);
-  shimmer.connect(shimGain).connect(lowpass);
-  noiseSrc.connect(noiseBp).connect(noiseGain).connect(lowpass);
-  lowpass.connect(tremolo).connect(masterGain);
-
-  oscA.start(t);
-  oscB.start(t);
-  shimmer.start(t);
-  noiseSrc.start(t);
-  vibrato.start(t);
-  tremLfo.start(t);
-
-  spin = {
-    ctx,
-    oscA,
-    oscB,
-    shimmer,
-    oscGain,
-    shimGain,
-    noiseSrc,
-    noiseGain,
-    lowpass,
-    tremolo,
-    vibrato,
-    vibratoGain,
-    tremLfo,
-    tremDepth,
-    raf: null,
-  };
+  loadSample(PIANO); // warm the buffer so the first notes are not dropped
+  spin = { next: ctx.currentTime + 0.12, step: 0, raf: null };
   updateSpinSound();
 }
 
-// Map the live landscape onto the drone every frame, easing each parameter so
-// nothing clicks or jumps. Reads the same globals the canvas draws from.
+// The scheduler: a frame loop that queues the next notes a little ahead of time
+// so the rhythm stays steady. Reads the same live globals the canvas draws from.
 function updateSpinSound() {
   if (!spin) return;
-  const ctx = spin.ctx;
-  const t = ctx.currentTime;
-  const ease = 0.08; // time constant for setTargetAtTime, ~80ms glide
-
+  const ctx = audioCtx;
+  const now = ctx.currentTime;
   const norm = (v, lo, hi) => clamp((v - lo) / (hi - lo), 0, 1);
-  const h = norm(liveArch, 0.18, 0.48); // height
-  const jag = norm(liveWobFreqBack, 3, 26); // jaggedness
-  const ln = norm(strandsF, 8, 74); // line count
-  const wob = norm(liveWobAmp, 0.02, 0.24); // ripple
-  const thick = norm(lineWidthMul, 0.3, 2.6); // thickness
-  const spd = clamp(Math.abs(vel) / 6, 0, 1); // live spin speed
+  const h = norm(liveArch, 0.18, 0.48); // height -> register
+  const jag = norm(liveWobFreqBack, 3, 26); // jaggedness -> scatter
+  const ln = norm(strandsF, 8, 74); // lines -> chord fullness
+  const wob = norm(liveWobAmp, 0.02, 0.24); // ripple -> pitch waver
+  const thick = norm(lineWidthMul, 0.3, 2.6); // thickness -> body and volume
+  const spd = clamp(Math.abs(vel) / 6, 0, 1); // speed -> note rate
+  const dir = vel >= 0 ? 1 : -1; // direction -> run up or down, and stereo side
 
-  const base = 70 + h * 90; // taller arch, higher fundamental (~70..160 Hz)
-  spin.oscA.frequency.setTargetAtTime(base, t, ease);
-  spin.oscB.frequency.setTargetAtTime(base, t, ease);
-  spin.shimmer.frequency.setTargetAtTime(base * 2, t, ease);
+  const rate = 0.6 + spd * 7; // notes per second
+  const interval = 1 / rate;
 
-  spin.oscGain.gain.setTargetAtTime(0.06, t, ease);
-  spin.shimGain.gain.setTargetAtTime(0.02 + ln * 0.06, t, ease); // lines sparkle
-  spin.noiseGain.gain.setTargetAtTime(jag * 0.05, t, ease); // jagged grit
-  spin.lowpass.frequency.setTargetAtTime(300 + thick * 2200, t, ease); // warmth
-  spin.vibratoGain.gain.setTargetAtTime(wob * 22, t, ease); // ripple vibrato
-
-  const level = 0.0001 + spd * 0.18; // still spin is near silent
-  spin.tremolo.gain.setTargetAtTime(level, t, ease);
-  spin.tremDepth.gain.setTargetAtTime(spd * level * 0.6, t, ease);
-  spin.tremLfo.frequency.setTargetAtTime(0.6 + spd * 6, t, ease);
-
+  while (spin.next < now + 0.15) {
+    if (spd > 0.04) {
+      // Walk the scale in the spin's direction, with the odd jagged jump.
+      spin.step +=
+        dir + (Math.random() < jag ? (Math.random() < 0.5 ? 1 : -1) : 0);
+      const idx = ((spin.step % PENTA.length) + PENTA.length) % PENTA.length;
+      const octave =
+        Math.random() < jag * 0.5 ? (Math.random() < 0.5 ? 12 : -12) : 0;
+      const root = 48 + Math.round(h * 24); // C3..C5 by height
+      const m = root + PENTA[idx] + octave;
+      const pan = dir * spd * 0.7; // direction places the note in the field
+      const gain = 0.3 + thick * 0.4; // thickness -> volume
+      const detune = (Math.random() * 2 - 1) * wob * 45; // ripple -> waver
+      playNote(PIANO, "C4", midiToName(m), { gain, pan, detune });
+      // Lines -> stack a harmony note, then a higher one when there are many.
+      if (Math.random() < ln) {
+        const fifth = Math.random() < 0.5 ? 7 : 4;
+        playNote(PIANO, "C4", midiToName(m + fifth), { gain: gain * 0.6, pan });
+      }
+      if (ln > 0.6 && Math.random() < ln - 0.3) {
+        playNote(PIANO, "C4", midiToName(m + 12), { gain: gain * 0.4, pan });
+      }
+      // Thickness -> a bass octave underneath for body.
+      if (thick > 0.4) {
+        playNote(PIANO, "C4", midiToName(m - 12), { gain: gain * 0.5 * thick, pan });
+      }
+    }
+    const swing = jag * (Math.random() * 2 - 1) * interval * 0.4; // jagged timing
+    spin.next += interval + swing;
+  }
   spin.raf = requestAnimationFrame(updateSpinSound);
 }
 
-// Fade the drone out, then stop and drop the nodes.
+// Stop scheduling. Notes already started ring out on their own.
 function stopSpinSound() {
   if (!spin) return;
-  const nodes = spin;
+  if (spin.raf) cancelAnimationFrame(spin.raf);
   spin = null;
-  if (nodes.raf) cancelAnimationFrame(nodes.raf);
-  const t = nodes.ctx.currentTime;
-  nodes.tremolo.gain.cancelScheduledValues(t);
-  nodes.tremolo.gain.setTargetAtTime(0.0001, t, 0.12);
-  setTimeout(() => {
-    for (const n of [
-      nodes.oscA,
-      nodes.oscB,
-      nodes.shimmer,
-      nodes.noiseSrc,
-      nodes.vibrato,
-      nodes.tremLfo,
-    ]) {
-      try {
-        n.stop();
-      } catch {
-        // already stopped
-      }
-    }
-  }, 500);
 }
 
 // Flip sound on or off, remember the choice, and reflect it on every toggle.
@@ -1499,7 +1437,7 @@ function setSound(on) {
   });
   if (on) {
     ensureAudio();
-    sfx.open(); // a tiny confirmation that sound is now on
+    sfx.on(); // a tiny confirmation that sound is now on
     if (experiment) startSpinSound();
   } else {
     stopSpinSound();
