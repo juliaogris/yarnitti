@@ -832,6 +832,10 @@ body.experiment .scrub-pick.is-collapsed {
   gap: 0.5rem 0.8rem;
 }
 .scrub-pick__opt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   font-family: inherit;
   font-size: 0.95rem;
   color: var(--ink);
@@ -843,6 +847,9 @@ body.experiment .scrub-pick.is-collapsed {
   opacity: 0.75;
   transition: opacity 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }
+/* The speaker icon rides at the same size as the glyph icons on the other
+   transport buttons. */
+.scrub-pick__ico svg { width: 1.05rem; height: 1.05rem; display: block; }
 .scrub-pick__opt:hover { opacity: 1; border-color: var(--muted); }
 /* Transport buttons share one width so the row reads as a set. */
 .scrub-pick__transport { gap: 0.6rem 1.5rem; }
@@ -944,6 +951,20 @@ body.experiment .scrub-pick.is-collapsed {
     border-width: 1.8px;
     border-color: var(--muted);
     white-space: nowrap;
+  }
+}
+/* Below this width the four-button transport no longer fits as labelled pills,
+   so drop the words and keep the icons. The buttons become equal-sized round
+   targets; each keeps its aria-label, so the accessible name is unaffected. */
+@media (max-width: 460px) {
+  .scrub-pick__lbl { display: none; }
+  .scrub-pick__transport { gap: 1rem; }
+  .scrub-pick__transport .scrub-pick__opt {
+    width: 2.6rem;
+    height: 2.6rem;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 1.1rem; /* the lone glyph icons a touch larger */
   }
 }
 
