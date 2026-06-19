@@ -252,6 +252,22 @@ body.experiment .spin-close { display: block; }
   body { padding-top: var(--topnav-h); }
   body > .hero { top: var(--topnav-h); }
   html body::before { top: var(--topnav-h); }
+  /* The fade mask above starts at the top-nav height, so the strip behind the
+     transparent nav is unmasked and body text scrolled up into it reappears
+     above the arch. The arch sits entirely below this strip, so a solid bar in
+     the page colour here hides that text without ever covering the mountains.
+     It sits below the nav (z 35) so the links stay visible. */
+  html body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--topnav-h);
+    z-index: 2;
+    pointer-events: none;
+    background: var(--bg);
+  }
   .topnav {
     display: flex;
     align-items: center;
@@ -296,6 +312,8 @@ body.experiment .spin-close { display: block; }
      there) so the canvas fills from the top. */
   body.experiment { padding-top: 0; }
   body.experiment .hero { top: 0; }
+  /* Spin fills the canvas from the top, so drop the masking strip there. */
+  body.experiment::after { display: none; }
 }
 .menu-backdrop {
   position: fixed;
