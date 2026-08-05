@@ -1489,8 +1489,8 @@ const sfx = {
 // the landscape, one note at a time (playback is monophonic). Every slider maps
 // onto the music: speed sets the note rate (and the direction of spin both runs
 // the scale up or down and pans the notes across the stereo field), height the
-// register and the size of the reverb hall, line count how many octaves the
-// melody roams, jaggedness the timing
+// register and the size of the reverb hall, line count how simple or complex
+// the melody is (how many notes it may visit), jaggedness the timing
 // and pitch scatter, thickness the volume, and ripple a small pitch waver. The
 // arpeggio waits a beat before it starts, and a still spin is silent.
 let spin = null; // the running arpeggio scheduler, or null when not playing
@@ -1519,7 +1519,7 @@ function updateSpinSound() {
   const norm = (v, lo, hi) => clamp((v - lo) / (hi - lo), 0, 1);
   const h = norm(liveArch, 0.18, 0.48); // height -> register
   const jag = norm(liveWobFreqBack, 3, 26); // jaggedness -> scatter
-  const ln = norm(strandsF, 8, 74); // lines -> chord fullness
+  const ln = norm(strandsF, 8, 74); // lines -> melodic complexity
   const wob = norm(liveWobAmp, 0.02, 0.24); // ripple -> pitch waver
   const thick = norm(lineWidthMul, 0.3, 2.6); // thickness -> body and volume
   const spd = clamp(Math.abs(vel) / 6, 0, 1); // speed -> note rate
@@ -1539,10 +1539,10 @@ function updateSpinSound() {
   while (spin.next < now + 0.15) {
     if (spd > 0.04) {
       // One note at a time (the playback is monophonic). Walk the scale in the
-      // spin's direction, with the odd jagged jump. Line count widens how many
-      // octaves the melody roams over, rather than stacking chords.
-      const octaves = 1 + Math.round(ln * 2); // lines -> 1..3 octave range
-      const total = PENTA.length * octaves;
+      // spin's direction, with the odd jagged jump. Line count sets how many
+      // notes the melody may visit: two make a simple call-and-answer, fifteen
+      // roam three octaves of the scale.
+      const total = 2 + Math.round(ln * 13);
       spin.step +=
         dir + (Math.random() < jag ? (Math.random() < 0.5 ? 1 : -1) : 0);
       const idx = ((spin.step % total) + total) % total;
