@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yarnitti — gallery picker (local tool)</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Coming+Soon&family=Over+the+Rainbow&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0a07;
+    --ink: #f4f1ea;
+    --muted: rgba(244, 241, 234, 0.66);
+    --hair: rgba(244, 241, 234, 0.18);
+    --accent: #d98c5f;
+    --good: #8fbf7f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto;
+    padding: 2rem 1.2rem 6rem;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Coming Soon", Georgia, serif;
+    line-height: 1.5;
+    max-width: 1100px;
+  }
+  h1 { font-family: "Over the Rainbow", cursive; font-weight: 400; font-size: clamp(2.2rem, 7vw, 3.4rem); margin: 0 0 0.2rem; }
+  h2 { font-weight: 400; font-size: 1.3rem; margin: 2.2rem 0 0.3rem; color: var(--accent); }
+  .note { color: var(--muted); font-size: 0.95rem; margin: 0 0 0.6rem; }
+  .banner { border: 1.5px dashed var(--accent); border-radius: 12px; padding: 0.7rem 1rem; margin: 1rem 0 0; color: var(--accent); font-size: 0.95rem; display: none; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.7rem; margin-top: 0.7rem; }
+  .card {
+    border: 1px solid var(--hair);
+    border-radius: 12px;
+    padding: 0.55rem;
+    background: transparent;
+  }
+  .card.dragging { opacity: 0.4; }
+  .card img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: grab;
+  }
+  #picked .card { border-color: rgba(217, 140, 95, 0.55); }
+  .card .name { font-size: 0.72rem; color: var(--muted); margin: 0.4rem 0 0.2rem; word-break: break-all; }
+  .card .ord { color: var(--accent); font-size: 0.8rem; }
+  .card input[type="text"] {
+    width: 100%;
+    font-family: inherit;
+    font-size: 0.78rem;
+    color: var(--ink);
+    background: rgba(244, 241, 234, 0.06);
+    border: 1px solid var(--hair);
+    border-radius: 6px;
+    padding: 0.25rem 0.4rem;
+    margin-top: 0.25rem;
+  }
+  .card label.flag { display: block; font-size: 0.72rem; color: var(--muted); margin-top: 0.25rem; }
+  .card .actions { margin-top: 0.35rem; display: flex; justify-content: space-between; align-items: center; }
+  button.small {
+    font-family: inherit;
+    font-size: 0.8rem;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--hair);
+    border-radius: 999px;
+    padding: 0.2rem 0.7rem;
+    cursor: pointer;
+  }
+  button.small:hover { border-color: var(--accent); }
+  .bar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: rgba(13, 10, 7, 0.94);
+    border-top: 1px solid var(--hair);
+    padding: 0.7rem 1.2rem;
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .bar button {
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--bg);
+    background: var(--accent);
+    border: 0;
+    border-radius: 999px;
+    padding: 0.5rem 1.4rem;
+    cursor: pointer;
+  }
+  .bar button.quiet { background: transparent; color: var(--ink); border: 1px solid var(--hair); }
+  #status { font-size: 0.9rem; color: var(--muted); min-width: 12ch; }
+  #status.good { color: var(--good); }
+  #status.bad { color: #e08080; }
+  #count { color: var(--accent); }
+</style>
+</head>
+<body>
+<h1>Gallery picker</h1>
+<p class="note">
+  A local tool: it needs <code>python3 public/serve.py</code> running and
+  writes <code>design/gallery.txt</code>, then regenerates the gallery
+  images and page. Drag cards to reorder. The grid shows 3 columns on
+  desktop and 2 on phones, so counts that fill both are 6, 12, 18; 15
+  fills desktop exactly and phones hide the cards marked
+  “desktop&nbsp;only”.
+</p>
+<div class="banner" id="banner"></div>
+
+<h2>In the gallery <span id="count"></span></h2>
+<p class="note">Drag to reorder. The text box is the photo's alt text.</p>
+<div class="grid" id="picked"></div>
+
+<h2>Not in the gallery</h2>
+<div class="grid" id="bench"></div>
+
+<div class="bar">
+  <span id="status"></span>
+  <button id="save" type="button">Save &amp; rebuild gallery</button>
+  <button id="copy" type="button" class="quiet">Copy gallery.txt</button>
+  <a href="gallery" style="color: var(--muted); font-size: 0.9rem;">view gallery →</a>
+</div>
+
+<script>
+  // The model mirrors gallery.txt: an ordered list of entries, each a
+  // source filename, its alt text, and its flags. Everything on this page
+  // edits that list; Save posts it back and the server rebuilds the site
+  // gallery from it.
+  let picked = []; // {file, alt, flags: Set}
+  let bench = []; // filenames not currently in the gallery
+  let header = ""; // the comment block at the top of gallery.txt, kept as is
+
+  const el = (id) => document.getElementById(id);
+
+  function parseManifest(text) {
+    const lines = text.split("\n");
+    const head = [];
+    const entries = [];
+    for (const line of lines) {
+      const t = line.trim();
+      if (!t) continue;
+      if (t.startsWith("#")) {
+        if (entries.length === 0) head.push(line);
+        continue;
+      }
+      const parts = t.split("|").map((p) => p.trim());
+      entries.push({
+        file: parts[0],
+        alt: parts[1] || "",
+        flags: new Set(parts[2] ? parts[2].split(",").map((f) => f.trim()) : []),
+      });
+    }
+    header = head.join("\n");
+    return entries;
+  }
+
+  function manifestText() {
+    const lines = picked.map((e) => {
+      const flags = [...e.flags].join(",");
+      return e.file + " | " + e.alt + (flags ? " | " + flags : "");
+    });
+    return header + "\n" + lines.join("\n") + "\n";
+  }
+
+  function photoCard(entry, i) {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.draggable = true;
+    card.dataset.index = i;
+    const wide = entry.flags.has("wide-only");
+    card.innerHTML =
+      '<img src="design-photos/' + entry.file + '" loading="lazy" alt="">' +
+      '<div class="name"><span class="ord">' + (i + 1) + "</span> · " + entry.file + "</div>" +
+      '<input type="text" value="' + entry.alt.replaceAll('"', "&quot;") + '" aria-label="Alt text">' +
+      '<label class="flag"><input type="checkbox"' + (wide ? " checked" : "") + "> desktop only</label>" +
+      '<div class="actions"><button class="small" type="button">remove</button></div>';
+    card.querySelector('input[type="text"]').addEventListener("input", (ev) => {
+      entry.alt = ev.target.value;
+    });
+    card.querySelector('input[type="checkbox"]').addEventListener("change", (ev) => {
+      if (ev.target.checked) entry.flags.add("wide-only");
+      else entry.flags.delete("wide-only");
+    });
+    card.querySelector("button").addEventListener("click", () => {
+      picked.splice(i, 1);
+      bench.push(entry.file);
+      render();
+    });
+    card.addEventListener("dragstart", (ev) => {
+      ev.dataTransfer.setData("text/plain", String(i));
+      card.classList.add("dragging");
+    });
+    card.addEventListener("dragend", () => card.classList.remove("dragging"));
+    card.addEventListener("dragover", (ev) => ev.preventDefault());
+    card.addEventListener("drop", (ev) => {
+      ev.preventDefault();
+      const from = parseInt(ev.dataTransfer.getData("text/plain"), 10);
+      if (Number.isNaN(from) || from === i) return;
+      const [moved] = picked.splice(from, 1);
+      picked.splice(i, 0, moved);
+      render();
+    });
+    return card;
+  }
+
+  function benchCard(file) {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML =
+      '<img src="design-photos/' + file + '" loading="lazy" alt="">' +
+      '<div class="name">' + file + "</div>" +
+      '<div class="actions"><button class="small" type="button">add</button></div>';
+    card.querySelector("button").addEventListener("click", () => {
+      picked.push({ file, alt: "", flags: new Set() });
+      bench = bench.filter((f) => f !== file);
+      render();
+    });
+    return card;
+  }
+
+  function render() {
+    const p = el("picked");
+    p.replaceChildren(...picked.map(photoCard));
+    el("bench").replaceChildren(...bench.map(benchCard));
+    el("count").textContent = "(" + picked.length + ")";
+  }
+
+  async function load() {
+    try {
+      const [photos, manifest] = await Promise.all([
+        fetch("api/photos").then((r) => r.json()),
+        fetch("api/gallery").then((r) => r.text()),
+      ]);
+      picked = parseManifest(manifest);
+      const used = new Set(picked.map((e) => e.file));
+      bench = photos.filter((f) => !used.has(f));
+      render();
+    } catch {
+      const b = el("banner");
+      b.style.display = "block";
+      b.textContent =
+        "Could not reach the dev server APIs. This page only works " +
+        "locally with `python3 public/serve.py` running.";
+    }
+  }
+
+  el("save").addEventListener("click", async () => {
+    const s = el("status");
+    s.className = "";
+    s.textContent = "rebuilding…";
+    try {
+      const res = await fetch("api/gallery", {
+        method: "POST",
+        body: manifestText(),
+      }).then((r) => r.json());
+      s.className = res.ok ? "good" : "bad";
+      s.textContent = res.ok ? "saved ✓ " + res.output.split("\n").pop() : res.output;
+    } catch (err) {
+      s.className = "bad";
+      s.textContent = "save failed: " + err;
+    }
+  });
+
+  el("copy").addEventListener("click", () => {
+    navigator.clipboard.writeText(manifestText());
+    el("status").textContent = "copied";
+  });
+
+  load();
+</script>
+</body>
+</html>

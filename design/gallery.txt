@@ -1,0 +1,28 @@
+# Gallery manifest. One photo per line, in gallery order. Fields are
+# separated by " | ":
+#
+#   source file in design/photos | alt text | flags
+#
+# Flags are comma-separated and optional:
+#   wide-only   hide this cell on narrow screens (the grid drops from
+#               15 cells to 12 there)
+#   crop=east   pull the thumbnail crop towards one edge instead of the
+#               centre (east, west, north, south)
+#
+# Regenerate the site gallery from this file with `make gallery`, or use
+# the visual picker at /_curate.html while the dev server runs.
+fence-mirror-reflection.jpg | The fence piece and its mirror reflection
+squares-laid-out-floor.jpg | Granny squares for the fence piece laid out on the floor
+pole-wrap-selfie.jpg | Selfie with a freshly wrapped pole
+fence-moonrise-dusk.jpg | The fence piece at dusk under an early moon
+fence-closeup-square.jpg | Close-up of the squares on the fence
+hanging-squares-red-jacket.jpg | Wiring the squares to the beach fence at dusk
+portrait-pole-wrap-notebook.jpg | Taking notes beside a yarn-wrapped pole
+pole-wrap-electricity-street.jpg | A yarn-wrapped electricity pole on a street corner | wide-only
+fence-sea-view-bins.jpg | The fence piece with the sea behind | crop=east
+fence-installation-night.jpg | The fence piece glowing at night
+crochet-qr-blue.jpg | A blue crochet QR code square
+granny-squares-layout.jpg | Granny squares arranged on the floor | wide-only
+wooden-qr-tile.jpg | A wooden QR code tile | wide-only
+fence-installation-morning-wide.jpg | The finished fence piece in morning light | crop=east
+hanging-squares-dusk-beanie.jpg | Hanging the squares on the fence at dusk 

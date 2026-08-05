@@ -12,10 +12,10 @@ BIOME := npx --yes @biomejs/biome@2.4.16
 RUFF  := uvx ruff
 JS    := public/main.js
 CSS   := public/style.css
-PY    := public/serve.py
+PY    := public/serve.py design/gallery.py
 HTML  := public/index.html
 
-.PHONY: lint fmt hooks
+.PHONY: lint fmt hooks gallery
 
 # Block a push on any lint or workflow error.
 lint:
@@ -28,6 +28,10 @@ fmt:
 	$(BIOME) format --write $(JS) $(CSS)
 	$(RUFF) format $(PY)
 	prettier --write $(HTML) 'design/**/*.md'
+
+# Rebuild the gallery images and page from design/gallery.txt.
+gallery:
+	python3 design/gallery.py
 
 # Point git at the versioned hooks directory (run once per clone).
 hooks:
