@@ -559,6 +559,11 @@ p.note {
 @media (min-width: 560px) {
   .gallery-grid { grid-template-columns: repeat(3, 1fr); }
 }
+/* Trim the grid to 12 cells (6 rows of 2) on narrow screens; the three
+   hidden photos remain reachable by swiping through the lightbox. */
+@media (max-width: 559px) {
+  .gallery-cell.gallery-cell--wide-only { display: none; }
+}
 .gallery-cell {
   display: block;
   padding: 0;
@@ -709,6 +714,16 @@ body[data-route=""] .hero__mark { display: block; }
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+}
+/* Honeypot field: moved off-canvas so no person sees or reaches it (it is also
+   aria-hidden and out of the tab order), left in the form for bots to fill.
+   The submit handler drops any submission that carries a value here. */
+.field--hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 .field__label {
   font-family: var(--body-font);
