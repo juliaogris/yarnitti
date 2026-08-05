@@ -18,7 +18,7 @@
 const CFG = {
   seed: 36170, // from the tinkersynth Slopes panel
   strands: 34, // line count, from the panel
-  steps: 300, // samples along each arch
+  steps: 360, // samples along each arch (a floor; resize scales up with width)
 
   footL: 0.1, // left foot x, fraction of width
   footR: 0.9, // right foot x
@@ -47,7 +47,7 @@ const ctx = canvas.getContext("2d", { alpha: true, willReadFrequently: true });
 const hero = document.getElementById("hero");
 
 // Foot line of the arc, as a fraction of hero height. Drives where the
-// mountains sit and where the content fade lands. The arc-y lever moves it.
+// mountains sit and where the content fade lands.
 const ARC_Y = 0.38; // around the bottom of the top third
 
 // Where the scrolling body text dissolves into the arch, as fractions of hero
@@ -133,6 +133,21 @@ let bandTop = null,
   bandSteps = 0,
   bandFootY = 0;
 
+// Per-column scratch buffers for render, reallocated only when a resize
+// changes the step count. render runs every animation frame, and allocating
+// them there churned the garbage collector.
+let colX = new Float32Array(steps + 1);
+let horizon = new Float32Array(steps + 1);
+let ys = new Float32Array(steps + 1);
+let xs = new Float32Array(steps + 1);
+function sizeBuffers() {
+  if (colX.length === steps + 1) return;
+  colX = new Float32Array(steps + 1);
+  horizon = new Float32Array(steps + 1);
+  ys = new Float32Array(steps + 1);
+  xs = new Float32Array(steps + 1);
+}
+
 // Live, scrub-adjustable copies of the ridge parameters. Vertical drags over
 // the lines change whichever one the footer picker has selected, so the
 // mountains can be reshaped by hand while prototyping.
@@ -142,13 +157,19 @@ let liveWobFreqBack = CFG.wobFreqBack; // ripple count (jaggedness)
 let strandsF = CFG.strands; // fractional line count, rounded into `strands`
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
-// Read the live theme colours so the canvas inverts with the page.
+// Read the live theme colours so the canvas inverts with the page. Cached
+// because render calls this every animation frame and getComputedStyle is not
+// free; toggleTheme clears the cache when the palette actually changes.
+let themeCache = null;
 function themeColors() {
-  const cs = getComputedStyle(document.documentElement);
-  return {
-    bg: cs.getPropertyValue("--bg").trim() || "#000",
-    ink: cs.getPropertyValue("--ink").trim() || "#fff",
-  };
+  if (!themeCache) {
+    const cs = getComputedStyle(document.documentElement);
+    themeCache = {
+      bg: cs.getPropertyValue("--bg").trim() || "#000",
+      ink: cs.getPropertyValue("--ink").trim() || "#fff",
+    };
+  }
+  return themeCache;
 }
 
 function render() {
@@ -191,13 +212,11 @@ function render() {
 
   // x is the same for every strand at a given step, so each step is one
   // screen column: an upper-silhouette per column gives hidden-line removal.
-  const colX = new Float32Array(steps + 1);
+  sizeBuffers(); // no-op unless a resize changed the step count
   for (let s = 0; s <= steps; s++) {
     colX[s] = cx - a * Math.cos((Math.PI * s) / steps);
   }
-  const horizon = new Float32Array(steps + 1).fill(Infinity);
-  const ys = new Float32Array(steps + 1);
-  const xs = new Float32Array(steps + 1);
+  horizon.fill(Infinity);
 
   // Draw front (low bow) to back (high bow). A back point is drawn only where
   // it rises above every nearer ridge, so front hills occlude the ones behind.
@@ -323,7 +342,7 @@ function resize() {
   archScale = 1;
   wobScale = 1;
   strands = Math.round(strandsF); // keep any scrubbed line count across resizes
-  steps = Math.max(360, Math.round(0.85 * W));
+  steps = Math.max(CFG.steps, Math.round(0.85 * W));
 
   // Drive the body-text fade gradient: it starts fading at FADE_START and is
   // fully gone by FADE_END above it.
@@ -353,6 +372,7 @@ function toggleTheme() {
   const next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
   root.setAttribute("data-theme", next);
   localStorage.setItem("yarnitti-theme", next);
+  themeCache = null; // the canvas re-reads --bg/--ink on the next render
   sfx.theme(next === "light");
   render();
 }
@@ -376,10 +396,35 @@ function setMenu(open, quiet) {
   menuToggle?.setAttribute("aria-label", open ? "Close menu" : "Open menu");
   menu?.classList.toggle("is-open", open);
   menuBackdrop?.classList.toggle("is-open", open);
+  // Keyboard flow: entering the drawer moves focus to its first link; closing
+  // it returns focus to the hamburger, but only when focus was actually inside
+  // the drawer, so a mouse user is never yanked (setMenu(false) also runs on
+  // every route change).
+  if (open && !wasOpen) {
+    menu?.querySelector(".menu__link")?.focus();
+  } else if (!open && wasOpen && menu?.contains(document.activeElement)) {
+    menuToggle?.focus();
+  }
   if (quiet) return;
   if (open && !wasOpen) sfx.menuOpen();
   else if (!open && wasOpen) sfx.menuClose();
 }
+// Hold Tab inside the open drawer: past the last control wraps to the first
+// link, and Shift-Tab off the first wraps to the last. Escape (the document
+// keydown below) closes the drawer.
+menu?.addEventListener("keydown", (e) => {
+  if (e.key !== "Tab" || !menu.classList.contains("is-open")) return;
+  const items = menu.querySelectorAll("a[href], button");
+  const first = items[0];
+  const last = items[items.length - 1];
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault();
+    first.focus();
+  }
+});
 menuToggle?.addEventListener("click", () =>
   setMenu(!menuToggle.classList.contains("is-open")),
 );
@@ -539,13 +584,20 @@ let pressInBand = false; // the press landed anywhere on the arch band
 // Every adjustable parameter behind one model: a range, a getter and a setter.
 // Each gets its own labelled slider; a vertical line-drag also nudges height.
 // "speed" drives the steady spin rather than the static shape.
-const SPIN_SLIDE = 0.22; // how far the arch drops within the canvas in spin mode
+const SPIN_SLIDE = 0.28; // how far the arch drops within the canvas in spin mode
 // Tallest arch shown on the normal (non-spin) site. Keep it low enough that the
 // arch fits above ARC_Y without the fit-foot push lowering the feet onto the
 // wordmark: LANDING_ARCH_MAX + the default wobAmp + the 0.04 top margin must
 // stay at or below ARC_Y (0.25 + 0.09 + 0.04 = 0.38 = ARC_Y). A taller cap
 // pushes the feet past ARC_Y, and the arch covers the heading at desktop widths.
 const LANDING_ARCH_MAX = 0.25;
+// Reverb follows the arch height: a taller arch is a bigger room, so the
+// spin soundscape opens the hall as the arch grows (see updateSpinSound).
+// The mix is the wet-path gain of the graph built in ensureAudio; it never
+// drops to fully dry.
+let reverbWet = null;
+let reverbMix = 0.45;
+
 const PARAMS = {
   height: {
     min: 0.18,
@@ -607,13 +659,11 @@ const PARAMS = {
     },
   },
 };
-const paramMax = (p) => (typeof p.max === "function" ? p.max() : p.max);
-
 // A vertical drag on the lines nudges the arch height (the most natural drag),
 // and the Height slider follows.
 function applyScrub(dy) {
   const p = PARAMS.height;
-  const max = paramMax(p);
+  const max = p.max;
   const v = clamp(p.get() + -dy * (max - p.min) * 0.004, p.min, max);
   p.set(v);
   reflectSlider("height"); // cheap single-slider update, not a full syncSliders
@@ -737,7 +787,11 @@ document.addEventListener("pointermove", (e) => {
     // rather than easing in slowly. A near-vertical drag leaves the spin
     // untouched so it can reshape the height without stopping.
     if (Math.abs(dx) > 2) {
-      steadyVel += (fv - steadyVel) * 0.4;
+      // Keep the scrubbed speed within the Speed slider's range (fv alone can
+      // reach VEL_MAX), so the knob always reflects the real speed instead of
+      // pegging at its end while the spin runs faster.
+      const spMax = PARAMS.speed.max;
+      steadyVel = clamp(steadyVel + (fv - steadyVel) * 0.4, -spMax, spMax);
       vel = steadyVel;
       steady = true; // hold the scrubbed speed after release
       reflectSlider("speed"); // cheap single-slider update, no per-move syncSliders
@@ -797,10 +851,13 @@ function setExperiment(on) {
   if (on) {
     setCollapsed(false); // always open the panel expanded
     nudgeBall();
-    PARAMS.speed.set(-1.2); // start with a slow drift to the left
+    // Honour reduced motion: the playground still opens, but nothing moves
+    // until a slider or drag explicitly asks for it. Everyone else gets the
+    // slow welcome drift.
+    if (!reduceMotion) PARAMS.speed.set(-1.2); // start with a slow drift to the left
     braking = false;
     syncSliders(); // reflect the speed (and shape) on the panel
-    if (animRAF === null) {
+    if (!reduceMotion && animRAF === null) {
       lastFrame = null;
       animRAF = requestAnimationFrame(animate);
     }
@@ -842,10 +899,13 @@ function tweenSlide() {
 }
 function setSlide(target) {
   slideTarget = target;
-  if (firstPaint) {
+  // Snap rather than slide on the very first paint (a direct load of /spin
+  // shows the arch already dropped) and under reduced motion.
+  if (firstPaint || reduceMotion) {
     slideFrac = target;
+    if (!firstPaint && animRAF === null) render();
     return;
-  } // no slide on initial load
+  }
   if (slideRAF === null) slideRAF = requestAnimationFrame(tweenSlide);
 }
 // Stop drifting and return the speed slider to its centre.
@@ -947,7 +1007,7 @@ function syncSliders() {
   rangeEls.forEach((el) => {
     const p = PARAMS[el.dataset.param];
     el.min = p.min;
-    el.max = paramMax(p);
+    el.max = p.max;
     el.step = p.step;
     el.value = p.get();
   });
@@ -1095,7 +1155,9 @@ const galleryCells = Array.from(document.querySelectorAll(".gallery-cell"));
 const gallerySrcs = galleryCells.map((c) => c.dataset.full);
 const lightbox = document.getElementById("lightbox");
 const lightboxImg = document.getElementById("lightbox-img");
+const lightboxClose = document.getElementById("lightbox-close");
 let lightboxIndex = 0;
+let lightboxReturnFocus = null; // the thumbnail to refocus when the viewer closes
 
 function showPhoto(i) {
   lightboxIndex = (i + gallerySrcs.length) % gallerySrcs.length;
@@ -1108,6 +1170,10 @@ function openLightbox(i) {
   lightbox.inert = false; // allow focus in; inert (not aria-hidden) avoids
   // hiding the focused close button from assistive tech
   document.body.classList.add("lb-open");
+  // Move focus into the dialog so keyboard and screen-reader context follows
+  // it, remembering the thumbnail to hand focus back to on close.
+  lightboxReturnFocus = document.activeElement;
+  lightboxClose?.focus();
   sfx.galleryOpen();
 }
 function closeLightbox() {
@@ -1115,6 +1181,9 @@ function closeLightbox() {
   lightbox.classList.remove("is-open");
   lightbox.inert = true; // moves focus off the close button as it hides
   document.body.classList.remove("lb-open");
+  // Land back on the thumbnail that opened the viewer, not the top of the page.
+  if (lightboxReturnFocus?.isConnected) lightboxReturnFocus.focus();
+  lightboxReturnFocus = null;
   sfx.galleryClose();
 }
 // Step to another photo and sound the move cue. Used by the arrows, the
@@ -1128,9 +1197,7 @@ const lightboxOpen = () => lightbox?.classList.contains("is-open");
 galleryCells.forEach((cell, i) =>
   cell.addEventListener("click", () => openLightbox(i)),
 );
-document
-  .getElementById("lightbox-close")
-  ?.addEventListener("click", closeLightbox);
+lightboxClose?.addEventListener("click", closeLightbox);
 document
   .getElementById("lightbox-prev")
   ?.addEventListener("click", () => stepPhoto(lightboxIndex - 1));
@@ -1171,12 +1238,11 @@ lightbox?.addEventListener(
 );
 
 // ---- contact form ("Say hello") --------------------------------------------
-// Posts {email, message} to CONTACT_ENDPOINT. The backend is yours to wire: a
-// Google Apps Script web app that appends a row to a Sheet and emails a
-// notification is the cheapest path (see design/contact-backend.md). Set its
-// "/exec" URL below. The POST is sent no-cors, so the row is written but the
-// opaque response cannot be read; a completed request is treated as success.
-// Until the URL is set, the form falls back to the visitor's mail client.
+// Posts {email, message} to CONTACT_ENDPOINT, a Google Apps Script web app
+// that appends a row to a Sheet and emails a notification (see
+// design/contact-backend.md). The POST is sent no-cors, so the row is written
+// but the opaque response cannot be read; a completed request is treated as
+// success.
 const CONTACT_ENDPOINT =
   "https://script.google.com/macros/s/AKfycbz_IJTCOBzFU4spy7l4xVIwBDQUUpnMFjOOH8fMjLLjCfkWi5aQAdUOej8oGVL4I2przg/exec";
 const contactForm = document.getElementById("contact-form");
@@ -1202,17 +1268,24 @@ contactForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = contactForm.email.value.trim();
   const message = contactForm.message.value.trim();
+  // Honeypot: a hidden field no person can see or reach. A submission that
+  // filled it is a bot; show the thanks so it moves on, and send nothing.
+  if (contactForm.website.value) {
+    contactForm.reset();
+    showContactThanks();
+    return;
+  }
   if (!email || !message) {
     contactStatus.textContent =
       "A few words and your email, and it is on its way.";
     return;
   }
-  if (!CONTACT_ENDPOINT) {
-    // No backend yet: hand the note to the visitor's own mail client.
-    const body = encodeURIComponent(message + "\n\nFrom " + email);
-    const subject = encodeURIComponent("Hello from yarnitti.org");
-    window.location.href =
-      "mailto:hello@yarnitti.org?subject=" + subject + "&body=" + body;
+  // A light check only, enough to catch a missing @ before the note
+  // disappears into the backend; the form is novalidate so the browser's
+  // own blunter message never shows.
+  if (!/^\S+@\S+\.\S+$/.test(email)) {
+    contactStatus.textContent =
+      "That email does not look quite right. One more look?";
     return;
   }
   const send = contactForm.querySelector(".contact-form__send");
@@ -1259,9 +1332,39 @@ function ensureAudio() {
     masterGain = audioCtx.createGain();
     masterGain.gain.value = 0.85; // overall level; samples are pre-normalised
     masterGain.connect(audioCtx.destination);
+    // Parallel wet path: master -> convolver -> wet gain -> out. The dry
+    // path above stays untouched, so the reverb only ever adds to it. The
+    // impulse response is generated (a noise burst dying away) rather than
+    // shipped as a recording. The wet level tracks the arch height while
+    // the spin soundscape runs (see updateSpinSound).
+    if (audioCtx.createConvolver) {
+      const convolver = audioCtx.createConvolver();
+      convolver.buffer = makeImpulse(audioCtx, 2.2, 3);
+      reverbWet = audioCtx.createGain();
+      reverbWet.gain.value = reverbMix;
+      masterGain.connect(convolver);
+      convolver.connect(reverbWet);
+      reverbWet.connect(audioCtx.destination);
+    }
   }
   if (audioCtx.state === "suspended") audioCtx.resume();
   return audioCtx;
+}
+
+// Build a stereo impulse response for the convolver: white noise fading out
+// over `seconds` with an exponential-feeling `decay` curve. Two independent
+// noise channels give the tail its width.
+function makeImpulse(ctx, seconds, decay) {
+  const rate = ctx.sampleRate;
+  const len = Math.floor(seconds * rate);
+  const buf = ctx.createBuffer(2, len, rate);
+  for (let ch = 0; ch < 2; ch++) {
+    const data = buf.getChannelData(ch);
+    for (let i = 0; i < len; i++) {
+      data[i] = (Math.random() * 2 - 1) * (1 - i / len) ** decay;
+    }
+  }
+  return buf;
 }
 
 // ---- sample playback -------------------------------------------------------
@@ -1269,7 +1372,8 @@ function ensureAudio() {
 // chosen because synthesised tones read as computery. Each file holds one note;
 // other pitches come from re-tuning that note with the buffer's playbackRate.
 const CUE_GAIN = 0.9; // per-voice headroom; the master sets the overall level
-const sampleBuffers = {};
+const sampleBuffers = {}; // decoded buffers, by file
+const sampleLoads = {}; // in-flight (or settled) fetch promises, by file
 let activeVoice = null; // the one note currently sounding, kept for monophony
 
 const NOTE_OFFSET = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
@@ -1278,23 +1382,28 @@ function noteToMidi(name) {
   return 12 * (parseInt(m[3], 10) + 1) + NOTE_OFFSET[m[1]] + (m[2] ? 1 : 0);
 }
 
-// Fetch and decode a sample once, then cache the buffer. Returns null while
-// sound is off or while the file is still loading; the next trigger catches it.
+// Fetch and decode a sample once, then cache the buffer. Returns the decoded
+// buffer, or null while sound is off or the file is still loading. The load's
+// promise is kept in sampleLoads for callers that want to wait for it (the
+// sound-on confirmation cue does).
 function loadSample(file) {
   const ctx = ensureAudio();
   if (!ctx) return null;
-  if (sampleBuffers[file] !== undefined) return sampleBuffers[file];
-  sampleBuffers[file] = null; // mark in-flight so the fetch runs only once
-  fetch("sounds/" + file + ".mp3")
-    .then((r) => r.arrayBuffer())
-    .then((b) => ctx.decodeAudioData(b))
-    .then((buf) => {
-      sampleBuffers[file] = buf;
-    })
-    .catch(() => {
-      delete sampleBuffers[file]; // allow a later retry
-    });
-  return sampleBuffers[file];
+  if (sampleBuffers[file]) return sampleBuffers[file];
+  if (!sampleLoads[file]) {
+    sampleLoads[file] = fetch("sounds/" + file + ".mp3")
+      .then((r) => r.arrayBuffer())
+      .then((b) => ctx.decodeAudioData(b))
+      .then((buf) => {
+        sampleBuffers[file] = buf;
+        return buf;
+      })
+      .catch(() => {
+        delete sampleLoads[file]; // allow a later retry
+        return null;
+      });
+  }
+  return null;
 }
 
 // Play one note. The file's own pitch is `baseNote`; `note` is the pitch to
@@ -1380,7 +1489,8 @@ const sfx = {
 // the landscape, one note at a time (playback is monophonic). Every slider maps
 // onto the music: speed sets the note rate (and the direction of spin both runs
 // the scale up or down and pans the notes across the stereo field), height the
-// register, line count how many octaves the melody roams, jaggedness the timing
+// register and the size of the reverb hall, line count how many octaves the
+// melody roams, jaggedness the timing
 // and pitch scatter, thickness the volume, and ripple a small pitch waver. The
 // arpeggio waits a beat before it starts, and a still spin is silent.
 let spin = null; // the running arpeggio scheduler, or null when not playing
@@ -1413,7 +1523,15 @@ function updateSpinSound() {
   const wob = norm(liveWobAmp, 0.02, 0.24); // ripple -> pitch waver
   const thick = norm(lineWidthMul, 0.3, 2.6); // thickness -> body and volume
   const spd = clamp(Math.abs(vel) / 6, 0, 1); // speed -> note rate
-  const dir = vel >= 0 ? 1 : -1; // direction -> run up or down, and stereo side
+  // The Speed slider stores its value negated (slider right = negative vel =
+  // the pattern drifting right), so flip the sign here: pushing the slider
+  // right runs the scale up and pans the notes right, matching the drift.
+  const dir = vel > 0 ? -1 : 1;
+
+  // Height also opens the hall: a taller arch is a bigger room. The floor
+  // keeps a fair amount of reverb even at the lowest arch.
+  reverbMix = 0.35 + h * 0.5;
+  if (reverbWet) reverbWet.gain.setTargetAtTime(reverbMix, now, 0.1);
 
   const rate = 0.6 + spd * 7; // notes per second
   const interval = 1 / rate;
@@ -1462,7 +1580,14 @@ function setSound(on) {
   });
   if (on) {
     ensureAudio();
-    sfx.on(); // a tiny confirmation that sound is now on
+    // Warm every cue instrument so the first taps around the site are not
+    // swallowed by a decode, and play the confirmation once its own sample is
+    // ready (firing it immediately used to fall on a still-loading buffer).
+    [KALIMBA, CELESTA, VIBE, MUSIC_BOX].forEach(loadSample);
+    loadSample(GLOCK);
+    sampleLoads[GLOCK]?.then(() => {
+      if (soundOn) sfx.on(); // a tiny confirmation that sound is now on
+    });
     if (experiment) startSpinSound();
   } else {
     stopSpinSound();
