@@ -24,14 +24,17 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
+      - uses: actions/checkout@v7
+      - uses: actions/configure-pages@v6
       # Serve the single-page app on every route by copying index.html into a
       # folder per path, so a direct hit on /apricity, /about, etc. (QR codes,
       # refresh, shared links) returns the app with a 200 instead of a 404.
       - name: Fan out SPA routes
         run: |
           cd public
+          # Dev-only files: the local server, sound-audition and gallery-picker pages stay in
+          # the repo but have no business on the live site.
+          rm -f serve.py _sounds.html _curate.html
           # Each route is one folder deep, so inject <base href="../"> into the
           # copy to resolve main.js, style.css and images back to the root.
           # Keep this list in sync with ROUTES in main.js and serve.py.
@@ -48,8 +51,8 @@ jobs:
           # an absolute base to the site root. On the apex domain yarnitti.org
           # the site root is "/".
           sed 's#<head>#<head><base href="/">#' index.html > 404.html
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: public
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
