@@ -1118,6 +1118,12 @@ function showRoute(route) {
   ) {
     navNudge();
   }
+  // Count in-app route changes as page views (GoatCounter only counts the
+  // initial load by itself). Skip the first showRoute: that is the load,
+  // already counted, and count.js may not have arrived yet anyway.
+  if (routeInited && route !== fromRoute && window.goatcounter?.count) {
+    window.goatcounter.count({ path: "/" + route });
+  }
   routeInited = true;
 }
 function navigate(route, push = true) {
