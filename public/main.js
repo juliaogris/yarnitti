@@ -1139,7 +1139,12 @@ function navigate(route, push = true) {
 function exitSpin() {
   navigate(prevRoute || "");
 }
-window.addEventListener("popstate", () => showRoute(routeFromPath()));
+window.addEventListener("popstate", () => {
+  // Back or forward while the viewer is open leaves the gallery; close the
+  // viewer so it does not overlay the arriving subpage.
+  if (lightboxOpen()) closeLightbox();
+  showRoute(routeFromPath());
+});
 document.addEventListener("click", (e) => {
   const a = e.target.closest("a[data-route]");
   if (!a) return;
@@ -1180,6 +1185,7 @@ function openLightbox(i) {
   // it, remembering the thumbnail to hand focus back to on close.
   lightboxReturnFocus = document.activeElement;
   lightboxClose?.focus();
+  syncPhotoHash();
   sfx.galleryOpen();
 }
 function closeLightbox() {
@@ -1190,15 +1196,27 @@ function closeLightbox() {
   // Land back on the thumbnail that opened the viewer, not the top of the page.
   if (lightboxReturnFocus?.isConnected) lightboxReturnFocus.focus();
   lightboxReturnFocus = null;
+  syncPhotoHash();
   sfx.galleryClose();
 }
 // Step to another photo and sound the move cue. Used by the arrows, the
 // keyboard and swipes (openLightbox calls showPhoto directly, with its own cue).
 function stepPhoto(i) {
   showPhoto(i);
+  syncPhotoHash();
   sfx.galleryMove();
 }
 const lightboxOpen = () => lightbox?.classList.contains("is-open");
+
+// While the viewer is open the URL fragment names the photo (/gallery#7), so
+// a copied link reopens the same photo. replaceState swaps the fragment in
+// place: Back still leaves the gallery rather than stepping through every
+// viewed photo.
+function syncPhotoHash() {
+  if (routeFromPath() !== "gallery") return;
+  const hash = lightboxOpen() ? "#" + (lightboxIndex + 1) : "";
+  history.replaceState(history.state, "", BASE + "gallery" + hash);
+}
 
 galleryCells.forEach((cell, i) =>
   cell.addEventListener("click", () => openLightbox(i)),
@@ -1242,6 +1260,13 @@ lightbox?.addEventListener(
   },
   { passive: true },
 );
+// A shared /gallery#N link opens the viewer straight onto photo N.
+{
+  const m = location.hash.match(/^#(\d+)$/);
+  if (m && routeFromPath() === "gallery" && gallerySrcs.length) {
+    openLightbox(Number(m[1]) - 1);
+  }
+}
 
 // ---- contact form ("Say hello") --------------------------------------------
 // Posts {email, message} to CONTACT_ENDPOINT, a Google Apps Script web app
