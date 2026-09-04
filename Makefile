@@ -15,7 +15,13 @@ CSS   := public/style.css
 PY    := public/serve.py design/gallery.py
 HTML  := public/index.html
 
-.PHONY: lint fmt hooks gallery
+OPENSCAD := $(shell command -v openscad || echo /Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD)
+SCAD_DIR := platonic
+SCAD     := $(SCAD_DIR)/platonic.scad
+PARTS    := tip cross test
+STLS     := $(PARTS:%=$(SCAD_DIR)/%.stl)
+
+.PHONY: lint fmt hooks gallery stl
 
 # Block a push on any lint or workflow error.
 lint:
@@ -32,6 +38,12 @@ fmt:
 # Rebuild the gallery images and page from design/gallery.txt.
 gallery:
 	python3 design/gallery.py
+
+# Render the skewer connectors to STL, one file per part in the .scad.
+stl: $(STLS)
+
+$(SCAD_DIR)/%.stl: $(SCAD)
+	$(OPENSCAD) -o $@ -D 'part="$*"' $<
 
 # Point git at the versioned hooks directory (run once per clone).
 hooks:
