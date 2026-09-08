@@ -152,9 +152,14 @@ and season, warm in meaning. Candidates that were considered:
 
 ## 8. Skewer frame prototype
 
-The first star is a wire frame of twelve 4 mm by 27 cm bamboo skewers,
-held by 3D-printed connectors, with the wool to follow. The OpenSCAD
-source is `platonic/platonic.scad`; `make stl` renders one STL per part
-into `platonic/`. Parts: eight three-way tips, six midpoint cross clips,
-and a test bar of bores to size the fit before printing the rest. The
-frame spans about a 19 cm cube, 33 cm point to point.
+The first star is a frame of 4 mm bamboo skewers held by 3D-printed
+connectors, with the wool to follow. The OpenSCAD source is
+`platonic/platonic.scad`; `make stl` renders one STL per part into
+`platonic/`. Parts: eight three-way tips, six flat four-way crosses for
+the midpoints where the two tetrahedra meet, and a test bar of bores to
+size the fit before printing the rest.
+
+The crosses sit in one plane, so each star edge is two skewers, point to
+cross to point, twenty-four skewers in all. Whole 27 cm skewers give an
+edge of about 56 cm and a star about 69 cm point to point. Skewers cut
+in half give a 35 cm star from the same parts.

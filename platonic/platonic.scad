@@ -1,13 +1,16 @@
 // Platonic: connectors for a bamboo-skewer stella octangula.
 //
-// The star is two regular tetrahedra passing through each other. Each
-// tetrahedron edge is one 27 cm skewer, twelve skewers in all. Every edge of
-// one tetrahedron crosses an edge of the other at its midpoint, at a right
-// angle. Two printed parts hold it together:
+// The star is two regular tetrahedra passing through each other. Every edge
+// of one tetrahedron crosses an edge of the other at its midpoint, at a right
+// angle, in one plane. Each edge is therefore two skewers, point to cross to
+// point, twenty-four skewers in all. Two printed parts hold it together:
 //
 //   tip    x8  joins three skewer ends at a star point, 60 degrees apart
-//   cross  x6  clips two crossing skewers at their midpoints
+//   cross  x6  joins four skewer ends in one plane, 90 degrees apart
 //   test   x1  a bar of sample bores, to find the bore that grips your skewers
+//
+// With whole 27 cm skewers the star edge is about 56 cm and the star spans
+// about 69 cm point to point. Cut the skewers in half for a 35 cm star.
 //
 // Render one part at a time:
 //   openscad -o tip.stl   -D 'part="tip"'   platonic.scad
@@ -35,8 +38,8 @@ tip_flat     = 4;    // the point is cut flat here for a print base, mm
 
 // --- cross ----------------------------------------------------------------
 
-cross_size = 16;   // footprint of the clip, mm
-cross_wall = 1.6;  // bamboo-to-bamboo wall between the two channels, mm
+cross_gap = 5;  // distance from the hub centre to the bottom of a bore, mm;
+                // keeps the four bores from running into each other
 
 // --- resolution -----------------------------------------------------------
 
@@ -71,17 +74,20 @@ module tip() {
     }
 }
 
+// Four arms in the xy plane. Printed flat, so the bores run horizontally; the
+// flat face at z = 0 is the print base.
 module cross() {
-    offset_z = (bore_d + cross_wall) / 2;
-    height   = 2 * offset_z + bore_d + 2 * wall;
+    outer_d = bore_d + 2 * wall;
+    reach   = cross_gap + socket_depth;
     difference() {
-        // A rounded block.
-        hull() for (x = [-1, 1], y = [-1, 1])
-            translate([x * (cross_size / 2 - 2), y * (cross_size / 2 - 2), 0])
-                cylinder(r = 2, h = height, center = true);
-        // One channel along x above, one along y below.
-        translate([0, 0,  offset_z]) rotate([0, 90, 0]) cylinder(d = bore_d, h = cross_size + 2, center = true);
-        translate([0, 0, -offset_z]) rotate([90, 0, 0]) cylinder(d = bore_d, h = cross_size + 2, center = true);
+        union() {
+            sphere(d = outer_d);
+            for (a = [0 : 90 : 270]) rotate([0, 90, a]) cylinder(d = outer_d, h = reach);
+        }
+        for (a = [0 : 90 : 270]) rotate([0, 90, a])
+            translate([0, 0, cross_gap]) cylinder(d = bore_d, h = socket_depth + 1);
+        // Flat base for printing.
+        translate([0, 0, -outer_d / 2 - 50 + 0.6]) cube(100, center = true);
     }
 }
 
