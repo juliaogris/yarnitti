@@ -34,7 +34,6 @@ wall     = 2.0;   // wall around a bore, mm
 socket_depth = 15;   // how far a skewer end sits in the tip, mm
 tip_gap      = 5.5;  // distance from the star point to the bottom of a bore,
                      // mm; keeps the three bores from running into each other
-tip_flat     = 4;    // the point is cut flat here for a print base, mm
 
 // --- cross ----------------------------------------------------------------
 
@@ -47,30 +46,37 @@ $fn = 48;
 
 // -------------------------------------------------------------------------
 
-// Edge directions leaving a tetrahedron vertex, with the vertex axis on +z.
-// Each is atan(1/sqrt(2)), about 35.26 degrees, off the axis, 120 degrees
-// apart in azimuth. The angle between any two is 60 degrees.
+// Edge directions leaving a tetrahedron vertex, with the vertex axis on +z and
+// the edges running down and out. Each is atan(1/sqrt(2)), about 35.26
+// degrees, off the axis, 120 degrees apart in azimuth. The angle between any
+// two is 60 degrees.
 tilt = atan(1 / sqrt(2));
 
-function edge_dir(i) = [sin(tilt) * cos(120 * i), sin(tilt) * sin(120 * i), cos(tilt)];
+function edge_dir(i) = [sin(tilt) * cos(120 * i), sin(tilt) * sin(120 * i), -cos(tilt)];
 
 // Rotate a child so its +z axis lies along v.
 module along(v) {
     rotate([0, acos(v[2] / norm(v)), atan2(v[1], v[0])]) children();
 }
 
+// The star point is at the top. The three arms run down and are cut by one
+// horizontal plane, so the part stands on a flat face with the bores opening
+// downward into the bed. Along each bore the socket is socket_depth deep,
+// measured from that face.
 module tip() {
     outer_d = bore_d + 2 * wall;
     reach   = tip_gap + socket_depth;
+    base_z  = -reach * cos(tilt);
+    over    = outer_d;  // run arms and bores past the cut plane
     difference() {
         hull() {
             sphere(d = outer_d);
-            for (i = [0 : 2]) along(edge_dir(i)) cylinder(d = outer_d, h = reach);
+            for (i = [0 : 2]) along(edge_dir(i)) cylinder(d = outer_d, h = reach + over);
         }
         for (i = [0 : 2]) along(edge_dir(i))
-            translate([0, 0, tip_gap]) cylinder(d = bore_d, h = socket_depth + 1);
-        // Flat base at the star point.
-        translate([0, 0, -tip_flat - 50]) cube(100, center = true);
+            translate([0, 0, tip_gap]) cylinder(d = bore_d, h = socket_depth + over);
+        // Flat base through the arm ends.
+        translate([0, 0, base_z - 50]) cube(100, center = true);
     }
 }
 
