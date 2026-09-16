@@ -259,9 +259,8 @@ everywhere except at the hem ring itself. The tree uses the same three numbers.
 
 ## Working notes
 
-Working notes and handoff for the Platonic tree, written on 2026-09-15 and 2026-09-16 at the
-end of a long design session. `platonic.md` has the piece as a whole; this
-file is only the tree.
+Written on 2026-09-15 and 2026-09-16. `platonic.md` has the piece as a whole;
+this file is only the tree.
 
 ### One source of numbers
 
