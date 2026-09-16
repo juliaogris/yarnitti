@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1500 -6560 3835 6620" width="384mm" height="662mm">
+<title>Tree section through the post</title>
+<g fill="none" stroke="#000" stroke-width="2">
+<rect x="0" y="-6500" width="72" height="6500" fill="#ddd" stroke="#888"/>
+<line x1="0" y1="0" x2="2275" y2="0" stroke="#888"/>
+<line x1="72" y1="-4660" x2="350" y2="-4010"/>
+<line x1="48" y1="-4685" x2="98" y2="-4635" stroke="#c00"/>
+<line x1="48" y1="-4635" x2="98" y2="-4685" stroke="#c00"/>
+<line x1="350" y1="-4010" x2="350" y2="-3873"/>
+<rect x="0" y="-4685" width="72" height="50" fill="#000"/>
+<circle cx="350" cy="-4010" r="10" fill="#000"/>
+<line x1="72" y1="-4390" x2="500" y2="-3380"/>
+<line x1="48" y1="-4415" x2="98" y2="-4365" stroke="#c00"/>
+<line x1="48" y1="-4365" x2="98" y2="-4415" stroke="#c00"/>
+<line x1="500" y1="-3380" x2="500" y2="-3223"/>
+<rect x="0" y="-4415" width="72" height="50" fill="#000"/>
+<circle cx="500" cy="-3380" r="10" fill="#000"/>
+<line x1="72" y1="-3950" x2="700" y2="-2700"/>
+<line x1="48" y1="-3975" x2="98" y2="-3925" stroke="#c00"/>
+<line x1="48" y1="-3925" x2="98" y2="-3975" stroke="#c00"/>
+<line x1="700" y1="-2700" x2="700" y2="-2517"/>
+<rect x="0" y="-3975" width="72" height="50" fill="#000"/>
+<circle cx="700" cy="-2700" r="10" fill="#000"/>
+<line x1="72" y1="-3580" x2="975" y2="-1770"/>
+<line x1="48" y1="-3605" x2="98" y2="-3555" stroke="#c00"/>
+<line x1="48" y1="-3555" x2="98" y2="-3605" stroke="#c00"/>
+<line x1="975" y1="-1770" x2="975" y2="-1551"/>
+<rect x="0" y="-3605" width="72" height="50" fill="#000"/>
+<circle cx="975" cy="-1770" r="10" fill="#000"/>
+<line x1="277" y1="-2538" x2="1375" y2="-540"/>
+<line x1="72" y1="-2910" x2="277" y2="-2538" stroke="#888" stroke-dasharray="15 15"/>
+<line x1="252" y1="-2563" x2="302" y2="-2513" stroke="#c00"/>
+<line x1="252" y1="-2513" x2="302" y2="-2563" stroke="#c00"/>
+<line x1="1375" y1="-540" x2="1375" y2="-270"/>
+<rect x="0" y="-2935" width="72" height="50" fill="#000"/>
+<circle cx="1375" cy="-540" r="10" fill="#000"/>
+<rect x="0" y="-4685" width="72" height="50" fill="#000"/>
+<circle cx="0" cy="-4904" r="244" stroke="#c9a400"/>
+<circle cx="0" cy="-4904" r="700" stroke="#c9a400" stroke-dasharray="15 15"/>
+</g>
+<g font-family="sans-serif" font-size="40">
+<text x="112" y="-4608" text-anchor="start">in sight all the way up</text>
+<text x="-30" y="-4646" text-anchor="end">strap at 4.66 m: skirt 1 tied straight to the post</text>
+<text x="380" y="-4020" text-anchor="start">hem 70 cm at 4.01 m, drop 14 cm</text>
+<text x="112" y="-4338" text-anchor="start">in sight all the way up</text>
+<text x="-30" y="-4376" text-anchor="end">strap at 4.39 m: skirt 2 tied straight to the post</text>
+<text x="530" y="-3390" text-anchor="start">hem 100 cm at 3.38 m, drop 16 cm</text>
+<text x="112" y="-3898" text-anchor="start">in sight all the way up</text>
+<text x="-30" y="-3936" text-anchor="end">strap at 3.95 m: skirt 3 tied straight to the post</text>
+<text x="730" y="-2710" text-anchor="start">hem 140 cm at 2.70 m, drop 18 cm</text>
+<text x="112" y="-3528" text-anchor="start">in sight all the way up</text>
+<text x="-30" y="-3566" text-anchor="end">strap at 3.58 m: skirt 4 tied straight to the post</text>
+<text x="1005" y="-1780" text-anchor="start">hem 195 cm at 1.77 m, drop 22 cm</text>
+<text x="317" y="-2486" text-anchor="start">out of sight above 2.54 m</text>
+<text x="-30" y="-2896" text-anchor="end">strap at 2.91 m: skirt 5 tied straight to the post</text>
+<text x="1405" y="-550" text-anchor="start">hem 275 cm at 0.54 m, drop 27 cm</text>
+<text x="-30" y="-4708" text-anchor="end">strap at 4.66 m: star hangs -5 cm above it</text>
+<text x="730" y="-4904" text-anchor="start">star 140 cm across, centre at 4.90 m</text>
+<text x="102" y="-6460" text-anchor="start">post 14.5 cm</text>
+<text x="102" y="-6404" text-anchor="start">dashed fabric is out of sight from 1.0 m eye height at the bottom hem</text>
+</g>
+</svg>

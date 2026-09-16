@@ -1,2 +1,4 @@
 .DS_Store
 design/photos/archive/
+__pycache__/
+platonic/cone.stl
