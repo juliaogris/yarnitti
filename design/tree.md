@@ -22,7 +22,7 @@ The model, with a 1.7 m person beside it for scale. Open
 [platonic/tree.stl](../platonic/tree.stl) to turn it around in the browser;
 GitHub renders it as an interactive 3D view.
 
-## The design as it stands
+## The design
 
 Lamp post: steel, 14.5 cm across (45 cm circumference, from an old note and
 the street view), at least 7 m tall. A 6.5 m post is drawn.
@@ -55,6 +55,19 @@ equiangular spirals, so the cells stay true squares). When a row's squares
 would fall under 8 cm, four merge into one and the count halves. Hem counts
 are even (8, 10, 12, 14, 16) so the merges work. The hem row is centred on
 the hem ring and its lower halves hang below it as the zigzag.
+
+### Granny squares
+
+<img src="photos/granny-squares-uneven.jpg" alt="A granny square blanket in which some squares are four times the size of the others, giving an uneven patchwork" width="340">
+
+Squares are set on point, so the grid runs diagonally and the hem finishes as a
+zigzag. Each row inward is a little smaller than the one below, and when a row
+would fall under 8 cm the script merges four squares into one at twice the
+size and halves the count. The blanket above is the look worth borrowing: not
+every square the same size, but a scatter of big ones among the small, each
+big one standing in for four. The merge is already how the pattern works at
+the top of every skirt. Doing it lower down as well, by choice rather than by
+need, would give the same uneven patchwork.
 
 Proportions: each skirt is 0.71 as wide as the one below. The heights ran
 0.8 as well until skirt 1 was raised to meet the star, and now go 0.64,
@@ -263,62 +276,61 @@ Weight, at 18 g per 15 cm square: fabric about 20 kg dry, 42 kg soaked,
 27 kg after draining; rings 3.3 kg; star, cords, straps 3 kg. Weigh one real
 square and rerun; that one number drives it.
 
-## To do
+## Plan B, if the squares run short
 
-- **Cord count.** One per two hem squares, so 4 / 5 / 6 / 7 / 8. That keeps
-  every square within one square of a cord. `CORD_EVERY` sets it; at 4 the
-  counts halve again and a skirt 5 column between cords would carry about
-  1 kg of wet fabric at the strap, the stretch test load.
-- **Stretch test.** Run it, then set `STRETCH` or drop the idea.
-- **Star span.** `skirts.py` draws a 140 cm span with 50 cm ridge struts, the
-  ideal geometry. `kepler.scad` says 50 cm cut stakes plus the connectors give
-  148 cm, because a stake stops short of a connector's centre. One of the two
-  numbers should move.
-- **Droop amount.** `SAG_DROP` is a guess at 0.45, so skirt 5's fabric falls
-  27 cm below the cone at its lowest. The stretch test will say.
+Crochet toward all five skirts. If by November the count is short, leave skirt
+5 off and bring the whole tree down 1.23 m, so skirt 4's hem lands where skirt
+5's was. The tree still stands on the ground rather than floating with bare
+sleeve beneath it.
 
-Done on 2026-09-15: straight cords on the patterns and in the model, the
-fabric drooping between them in the model with the rings flat, skirts lowered
-so the star sits on the mesh. Done on 2026-09-16: the curve the fabric hangs
-in between the cords.
+|             | five skirts      | four skirts      |
+| ----------- | ---------------- | ---------------- |
+| squares     | 829              | 483              |
+| base        | 275 cm at 0.54 m | 195 cm at 0.54 m |
+| top strap   | 4.66 m           | 3.43 m           |
+| star centre | 4.90 m           | 3.67 m           |
+| mesh sleeve | 5.3 m            | 4.0 m            |
 
-## Open questions
+It costs 42 percent of the crochet, not the 37 percent skirt 5 represents,
+because lowering the tree also raises the viewer's sight line and merges more
+of skirt 4 out of view.
 
-- **Fabric stretch.** The cords (see above) take the ring's weight, so
-  what is left is the fabric stretching between lacing points under its own
-  weight, wet. Untested. The test:
-  1. Crochet a strip of three hem squares of skirt 5 (36 cm) joined on
-     point, the way they hang.
-  2. Measure it relaxed, dry: tip to tip along the strip, and the width of
-     the middle square across its side corners.
-  3. Hang it by the top tip, soak it, hang 1 kg from the bottom tip. 1 kg
-     is about what one column of skirt 5 carries at the strap with no
-     cords, so it is the worst case, not the cord case.
-  4. Measure again after a night, still wet and loaded. Then unload, let it
-     dry and measure once more for what stays.
-     Squares on point do not stretch like a sheet, they shear: the edges keep
-     their length and each square becomes a rhombus, taller and narrower.
-     Five percent taller is about five percent narrower.
-- **`STRETCH` factor, if the test says more than a few percent.** One number
-  in `skirts.py`, hung length over relaxed length, 1.0 for none. In the
-  log-polar grid the cell would become a rhombus, taller by `STRETCH` along
-  the slant and narrower across by `sqrt(2 - STRETCH^2)`, so the hem count
-  goes up a little and the row count down. Squares are still crocheted
-  square. Not implemented until the test gives the number.
-- **Sight line.** With the hem at 54 cm and the viewer's eye at 1.0 m,
-  skirt 5 is out of sight above 2.54 m (red dashed arc on its pattern); the
-  other four are in sight all the way up. The merge there did not change
-  skirt 5's count. Julia may want a merge height set by hand for skirt 5
-  instead. `EYE_R` and `EYE_Z` at the top of `skirts.py` are the viewer.
-- **Skirt 4 stops 10 cm short of the post** because 14 a row merges to 7,
-  which cannot halve. Tie the corners across the gap, or accept.
-- **Scad preview** draws graded squares without the merges. Counts are
-  right (they come from the script); the picture of the top rows is not.
-- **Commit.** None of the tree work is committed yet: `Makefile`,
-  `design/skirts.py`, `design/mesh.py`, `design/gsd.py`, `design/tree/`,
-  `platonic/tree.scad`, `platonic/tree_params.scad`, `platonic/gsd.scad`,
-  `platonic/tree.stl`, plus older untracked files in `platonic/` and
-  `design/photos/`. `design/__pycache__/` should be ignored, not committed.
+Every skirt keeps its own geometry, so the five flat patterns serve both plans
+unchanged. Nothing crocheted is wasted by deciding late. The drawings are
+`section-b.svg` and `mesh-b.svg`, and the model is `platonic/tree-b.stl`.
+
+The cost is the star. It drops to 3.67 m, less striking from across the road
+and within reach of a tall person.
+
+## What is still open
+
+- **How far the fabric stretches.** Acrylic granny fabric hanging wet under its
+  own weight is untested, and it decides whether the patterns need a correction
+  factor. The test: crochet a strip of three 36 cm squares joined on point,
+  measure it relaxed and dry, then hang it by the top tip, soak it, hang 1 kg
+  from the bottom and leave it overnight. Measure again wet and loaded, then
+  dry and unloaded for what stays. Squares on point do not stretch like a
+  sheet, they shear: each square becomes a rhombus, taller and narrower in
+  equal measure, so five percent taller is five percent narrower.
+- **How deep the fabric really hangs.** The droop between cords is a guess at
+  45 percent of the way down to the hem plane, which puts skirt 5's fabric
+  27 cm below the plain cone at its lowest. The stretch test will say whether
+  that is close.
+- **How many cords.** One per two hem squares now, so 4 / 5 / 6 / 7 / 8, which
+  keeps every square within one square of a cord. Halving that would leave a
+  skirt 5 column carrying about 1 kg of wet fabric at the strap, which is the
+  stretch test's load, so the test decides this too.
+- **The star's size.** The drawing uses a 140 cm span with 50 cm ridge struts,
+  which is the ideal geometry. The connector model says 50 cm cut stakes plus
+  the printed hubs give 148 cm, because a stake stops short of a connector's
+  centre. One of the two numbers has to move.
+- **Skirt 4's top row** stops 10 cm short of the post, because 14 squares a row
+  merges to 7 and 7 cannot halve again. Tie the corners across the gap, or
+  accept the gap; it is hidden under skirt 3.
+- **Whether skirt 5 needs a merge line by hand.** From a 1 m eye height at the
+  bottom hem, skirt 5 is out of sight above 2.54 m and the other four are in
+  view all the way up. The merge the script found there did not change skirt
+  5's count, so a hand-set height may be better.
 
 ## Sources
 
