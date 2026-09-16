@@ -16,10 +16,10 @@ over a pole, with a zigzag hem on each tier.
 The post it goes on: steel, 14.5 cm across, with shrubs around the base that
 keep the bottom hem off the ground.
 
-<img src="tree/tree.png" alt="The tree modelled in OpenSCAD, five skirts and a star, with a 1.7 m person beside it for scale" width="260">
+<img src="drawings/tree.png" alt="The tree modelled in OpenSCAD, five skirts and a star, with a 1.7 m person beside it for scale" width="260">
 
 The model, with a 1.7 m person beside it for scale. Open
-[platonic/tree.stl](../platonic/tree.stl) to turn it around in the browser;
+[platonic/tree.stl](tree.stl) to turn it around in the browser;
 GitHub renders it as an interactive 3D view.
 
 ## The design
@@ -47,7 +47,7 @@ Every skirt kept its drop, so the patterns and cords did not change. On
 reaches the star. That one skirt is now 65 cm tall instead of 60 cm; its
 pattern changed, the other four did not.
 
-<img src="tree/section.svg" alt="Section through the post, with every strap, hem and height marked" width="440">
+<img src="drawings/section.svg" alt="Section through the post, with every strap, hem and height marked" width="440">
 
 Total 829 squares. Every row of a skirt holds the same number of squares,
 set on point, each row inward a little smaller (the grid is two families of
@@ -232,15 +232,15 @@ One per skirt, cut as a ring sector. The dotted arc is the hem ring, the inner
 arc is the post, the blue lines are the cords and the legend carries every
 measurement.
 
-<img src="tree/skirt-1.svg" alt="Skirt 1 flat pattern" width="640">
+<img src="drawings/skirt-1.svg" alt="Skirt 1 flat pattern" width="640">
 
-<img src="tree/skirt-2.svg" alt="Skirt 2 flat pattern" width="640">
+<img src="drawings/skirt-2.svg" alt="Skirt 2 flat pattern" width="640">
 
-<img src="tree/skirt-3.svg" alt="Skirt 3 flat pattern" width="640">
+<img src="drawings/skirt-3.svg" alt="Skirt 3 flat pattern" width="640">
 
-<img src="tree/skirt-4.svg" alt="Skirt 4 flat pattern" width="640">
+<img src="drawings/skirt-4.svg" alt="Skirt 4 flat pattern" width="640">
 
-<img src="tree/skirt-5.svg" alt="Skirt 5 flat pattern" width="860">
+<img src="drawings/skirt-5.svg" alt="Skirt 5 flat pattern" width="860">
 
 Star: great stellated dodecahedron, span 140 cm, ridge struts 50 cm, core
 edges 30.9 cm centre to centre, edge up with the post through it. The two
@@ -291,7 +291,7 @@ at 5.2 m is level with the core's top; the hubs tie above and below it.
 Before the skirts were lowered the core ran to 5.59 m and a fourth mesh
 storey would have been needed.
 
-<img src="tree/mesh.svg" alt="The mesh strip flat, the sleeve from above, and the sleeve against the tree" width="520">
+<img src="drawings/mesh.svg" alt="The mesh strip flat, the sleeve from above, and the sleeve against the tree" width="520">
 
 Install plan: rope over the lamp arm with a throw line, padded where it
 crosses the arm; assemble sleeve, skirts and star on the ground; hoist; tighten clamps at 0.2 and 1.7 m from a step ladder or the
@@ -379,24 +379,24 @@ this file is only the tree.
 
 ### One source of numbers
 
-Every number lives in `design/skirts.py`. Running it writes
+Every number lives in `platonic/skirts.py`. Running it writes
 `platonic/tree_params.scad`, which the OpenSCAD model includes, and
-`design/mesh.py` imports from it. Never edit the scad's numbers by hand.
+`platonic/mesh.py` imports from it. Never edit the scad's numbers by hand.
 
     make tree                        # patterns, section, params, STL, mesh sketch
     make tree-b                      # the same for plan B
-    python3 design/skirts.py all     # skirt-1..5.svg + section.svg + params
-    python3 design/skirts.py 5       # one skirt
-    python3 design/skirts.py 5 300   # one skirt with a 30 cm hem square, separate file
-    python3 design/skirts.py b       # plan B section and params
-    python3 design/mesh.py           # mesh.svg
-    python3 design/mesh.py b         # mesh-b.svg
+    python3 platonic/skirts.py all     # skirt-1..5.svg + section.svg + params
+    python3 platonic/skirts.py 5       # one skirt
+    python3 platonic/skirts.py 5 300   # one skirt with a 30 cm hem square, separate file
+    python3 platonic/skirts.py b       # plan B section and params
+    python3 platonic/mesh.py           # mesh.svg
+    python3 platonic/mesh.py b         # mesh-b.svg
 
-Outputs, all in `design/tree/`: `skirt-1.svg` to `skirt-5.svg`, `section.svg`,
+Outputs, all in `platonic/drawings/`: `skirt-1.svg` to `skirt-5.svg`, `section.svg`,
 `mesh.svg`, and `section-b.svg` and `mesh-b.svg` for plan B.
 
 The model of the whole tree is
-[platonic/tree.stl](../platonic/tree.stl), which GitHub renders in the
-browser, and [platonic/tree-b.stl](../platonic/tree-b.stl) is plan B.
-`platonic/tree-body.scad` holds the shape; `tree.scad` and `tree-b.scad` each
+[platonic/tree.stl](tree.stl), which GitHub renders in the
+browser, and [platonic/tree-b.stl](tree-b.stl) is plan B.
+`tree-body.scad` holds the shape; `tree.scad` and `tree-b.scad` each
 include it after their own numbers, so the shape is described once.

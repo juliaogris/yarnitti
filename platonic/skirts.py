@@ -14,21 +14,21 @@ stop short of the post.
 The hem square sets the count: the hem ring divided by the square's diagonal.
 These numbers are the source; the script writes them to
 platonic/tree_params.scad for the model. Run from the repo root:
-    python3 design/skirts.py [skirt number, default 5] [hem square mm]
+    python3 platonic/skirts.py [skirt number, default 5] [hem square mm]
 
-The file is design/tree/skirt-N.svg, or skirt-N-SIZE.svg for a hem square
+The file is platonic/drawings/skirt-N.svg, or skirt-N-SIZE.svg for a hem square
 other than the skirt's default.
 
-    python3 design/skirts.py section
+    python3 platonic/skirts.py section
 
-writes design/tree/section.svg instead: half the tree cut through the post,
+writes platonic/drawings/section.svg instead: half the tree cut through the post,
 with every strap, hem and height marked.
 
-    python3 design/skirts.py all
+    python3 platonic/skirts.py all
 
 writes every skirt and the section.
 
-    python3 design/skirts.py b
+    python3 platonic/skirts.py b
 
 writes the plan B section and params instead: four skirts, the whole tree
 lowered so skirt 4's hem lands where skirt 5's was. The flat patterns are
@@ -89,7 +89,7 @@ FIN = 1
 PLAN_B_SKIRTS = 4
 PLAN_B_DROP = 1230  # mm the tree comes down, HEM_Z[3] - HEM_Z[4]
 
-OUT = Path("design/tree")
+OUT = Path("platonic/drawings")
 SUFFIX = ""  # "-b" on the plan B drawings
 
 FONT = 40  # legend, mm
@@ -582,7 +582,7 @@ def write_params():
         # Where each cord sits round the skirt, in degrees from the seam.
         cord_phase.append([round(a / theta * 360, 1) for a in cord_angles(rows)])
     lines = [
-        "// Written by design/skirts.py. Edit the numbers there, not here.",
+        "// Written by platonic/skirts.py. Edit the numbers there, not here.",
         f"pole_h  = {HOOP_Z[0]};",
         f"post_d  = {POST_D};",
         f"squares = {HEM_SQUARES};",
@@ -631,7 +631,7 @@ def main():
         return
     if len(sys.argv) > 1 and sys.argv[1] == "section":
         write_section()
-        print("wrote design/tree/section.svg")
+        print("wrote platonic/drawings/section.svg")
         return
     i = int(sys.argv[1]) - 1 if len(sys.argv) > 1 else 4
     hem_square = float(sys.argv[2]) if len(sys.argv) > 2 else HEM_SQUARES[i]

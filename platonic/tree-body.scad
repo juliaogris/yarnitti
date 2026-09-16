@@ -22,7 +22,7 @@ function vis_d(i)  = dia_at(i, vis_z(i));
 
 function slant(i)  = norm([hem_d[i] / 2 - hoop_d[i] / 2, hoop_z[i] - hem_z[i]]);
 function vslant(i) = norm([hem_d[i] / 2 - vis_d(i) / 2, vis_z(i) - hem_z[i]]);
-function around(i) = floor(PI * hem_d[i] / diag(i));      // squares on the hem row, as design/skirts.py
+function around(i) = floor(PI * hem_d[i] / diag(i));      // squares on the hem row, as platonic/skirts.py
 
 // Flat pattern of a skirt: a ring sector with inner radius rf1 at the hoop
 // and outer radius rf2 at the hem ring. Every row holds around(i) squares,
@@ -32,7 +32,7 @@ function rf1(i)    = slant(i) * hoop_d[i] / (hem_d[i] - hoop_d[i]);
 function rf2(i)    = rf1(i) + slant(i);
 function half(i)   = PI * (hem_d[i] - hoop_d[i]) / slant(i) / around(i) / 2;
 function rows(i)   = floor(ln(rf2(i) / rf1(i)) / half(i)) + 1;  // top row reaches past the hoop
-function count(i)  = tier_squares[i];  // from design/skirts.py, merges included
+function count(i)  = tier_squares[i];  // from platonic/skirts.py, merges included
 function area(i)   = PI * (vis_d(i) + hem_d[i]) / 2 * vslant(i);
 function total(n = len(hoop_d)) = n == 0 ? 0 : count(n - 1) + total(n - 1);
 function area_total(n = len(hoop_d)) = n == 0 ? 0 : area(n - 1) + area_total(n - 1);

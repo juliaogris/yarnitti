@@ -57,12 +57,12 @@ other.
 
 Candidates from the same family:
 
-| Star | Core | Points | Outer triangles | Look |
-|---|---|---|---|---|
-| Stellated octahedron (stella octangula) | octahedron | 8 | 24 | chunky, cubic, sits well |
-| Small stellated dodecahedron | dodecahedron | 12 | 60 | classic spiky star |
-| Great stellated dodecahedron | icosahedron | 20 | 60 | sharpest, most "Christmas" |
-| Great icosahedron | icosahedron | 20 | 180 | too many faces for wool |
+| Star                                    | Core         | Points | Outer triangles | Look                       |
+| --------------------------------------- | ------------ | ------ | --------------- | -------------------------- |
+| Stellated octahedron (stella octangula) | octahedron   | 8      | 24              | chunky, cubic, sits well   |
+| Small stellated dodecahedron            | dodecahedron | 12     | 60              | classic spiky star         |
+| Great stellated dodecahedron            | icosahedron  | 20     | 60              | sharpest, most "Christmas" |
+| Great icosahedron                       | icosahedron  | 20     | 180             | too many faces for wool    |
 
 The stella octangula is the best first star: 24 identical equilateral
 triangles, one shape to learn, no acute points to keep stiff. The great
@@ -104,13 +104,13 @@ Not decided. Options:
 ## 5. Name
 
 Chosen: **Platonic**. The star object itself can be called a hedron
-(Greek *hedra*, a seat, then a face of a solid) in notes and patterns.
+(Greek _hedra_, a seat, then a face of a solid) in notes and patterns.
 
 Apricity set the pattern: one real, slightly obscure word, tied to place
 and season, warm in meaning. Candidates that were considered:
 
 - **Hedron**: the ending every Platonic solid shares. Cousin of
-  cathedral (*kathedra*, a seat) and Sanhedrin (sitting together).
+  cathedral (_kathedra_, a seat) and Sanhedrin (sitting together).
   Kept for the star object.
 - **Kosmos**, **Timaeus**, **Aether**: Plato's cosmos, the dialogue
   that assigns the solids to the elements, and his fifth element.
@@ -133,7 +133,6 @@ and season, warm in meaning. Candidates that were considered:
   a local to say or spell.
 - **Solstice**: the piece is up over the summer solstice. Plain, but
   loses the star.
-
 
 ## 6. Site
 

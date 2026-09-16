@@ -8,7 +8,7 @@
 // the cone; between them the fabric droops.
 // A great stellated dodecahedron sits on top, around the post.
 //
-// Units are millimetres. Every number comes from design/skirts.py; edit it
+// Units are millimetres. Every number comes from platonic/skirts.py; edit it
 // there and rerun the script. The square counts print on every render.
 //
 //   openscad platonic/tree.scad
@@ -27,7 +27,7 @@ fab_na = 144;
 
 // --- tree ------------------------------------------------------------------
 
-// Tree numbers come from design/skirts.py, which writes tree_params.scad:
+// Tree numbers come from platonic/skirts.py, which writes tree_params.scad:
 // pole_h, post_d, squares, hoop_d, hoop_z, hem_d, hem_z, tier_squares,
 // star_span, star_lift, hem_first, cord_phase, sag_t, sag_drop and fin.
 // Edit them there and run the script.

@@ -1,4 +1,4 @@
-// Written by design/skirts.py. Edit the numbers there, not here.
+// Written by platonic/skirts.py. Edit the numbers there, not here.
 pole_h  = 4660;
 post_d  = 145;
 squares = [180, 220, 250, 300, 360];

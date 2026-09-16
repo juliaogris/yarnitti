@@ -7,10 +7,10 @@ touches the paint. The skirts and the star tie to the mesh instead of to the bar
 post, so the weight goes down the sleeve to the ground rather than up the
 ropes.
 
-Writes design/tree/mesh.svg with three views: the flat strip, the sleeve from
+Writes platonic/drawings/mesh.svg with three views: the flat strip, the sleeve from
 above, and the sleeve from the side against the tree. Run from the repo
 root:
-    python3 design/mesh.py
+    python3 platonic/mesh.py
 """
 
 import math
@@ -35,7 +35,7 @@ CLAMPS = [200, 1700, 3450, 5200]
 CLAMPS_B = [200, 1700, 2900, 3900]
 
 FONT = 40
-OUT = Path("design/tree")
+OUT = Path("platonic/drawings")
 
 
 def main():

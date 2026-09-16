@@ -12,7 +12,7 @@ BIOME := npx --yes @biomejs/biome@2.4.16
 RUFF  := uvx ruff
 JS    := public/main.js
 CSS   := public/style.css
-PY    := public/serve.py design/gallery.py design/skirts.py design/mesh.py design/gsd.py
+PY    := public/serve.py design/gallery.py platonic/skirts.py platonic/mesh.py platonic/gsd.py
 HTML  := public/index.html
 
 OPENSCAD := $(shell command -v openscad || echo /Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD)
@@ -35,7 +35,7 @@ lint:
 fmt:
 	$(BIOME) format --write $(JS) $(CSS)
 	$(RUFF) format $(PY)
-	prettier --write $(HTML) 'design/**/*.md'
+	prettier --write $(HTML) 'design/**/*.md' '$(SCAD_DIR)/*.md'
 
 # Rebuild the gallery images and page from design/gallery.txt.
 gallery:
@@ -59,11 +59,12 @@ hooks:
 
 # The tree sketch renders without the individual squares, which are for the
 # preview only and would take CGAL an age. Its numbers come from
-# design/skirts.py, which also writes the flat patterns and the section.
-$(SCAD_DIR)/tree_params.scad design/tree/section.svg \
-design/tree/skirt-1.svg design/tree/skirt-2.svg design/tree/skirt-3.svg \
-design/tree/skirt-4.svg design/tree/skirt-5.svg &: design/skirts.py
-	python3 design/skirts.py all
+# $(SCAD_DIR)/skirts.py, which also writes the flat patterns and the section.
+# One run writes tree_params.scad, section.svg and skirt-1..5.svg together.
+# Only the params file is named as a target, because the make shipped with
+# macOS predates grouped targets; the drawings come with it.
+$(SCAD_DIR)/tree_params.scad: $(SCAD_DIR)/skirts.py
+	python3 $(SCAD_DIR)/skirts.py all
 
 # Binary STL, and the fabric sampled coarsely: the surface is smooth either
 # way, and this keeps the committed file to a few megabytes.
@@ -71,23 +72,23 @@ $(SCAD_DIR)/tree.stl: $(SCAD_DIR)/tree.scad $(SCAD_DIR)/tree-body.scad $(SCAD_DI
 	$(OPENSCAD) -o $@ --export-format binstl -D 'detail=false' -D 'figure=false' $<
 
 # The mesh sleeve sketch shares the tree's numbers.
-design/tree/mesh.svg: design/mesh.py design/skirts.py
-	python3 design/mesh.py
+$(SCAD_DIR)/drawings/mesh.svg: $(SCAD_DIR)/mesh.py $(SCAD_DIR)/skirts.py
+	python3 $(SCAD_DIR)/mesh.py
 
 # Plan B: four skirts, the whole tree lowered. Shares tree-body.scad, so the
 # shape is described once.
-$(SCAD_DIR)/tree_params-b.scad design/tree/section-b.svg &: design/skirts.py
-	python3 design/skirts.py b
+# Writes tree_params-b.scad and section-b.svg together; see the note above.
+$(SCAD_DIR)/tree_params-b.scad: $(SCAD_DIR)/skirts.py
+	python3 $(SCAD_DIR)/skirts.py b
 
 $(SCAD_DIR)/tree-b.stl: $(SCAD_DIR)/tree-b.scad $(SCAD_DIR)/tree-body.scad $(SCAD_DIR)/tree_params-b.scad $(SCAD_DIR)/gsd.scad
 	$(OPENSCAD) -o $@ --export-format binstl -D 'detail=false' -D 'figure=false' $<
 
-design/tree/mesh-b.svg: design/mesh.py design/skirts.py
-	python3 design/mesh.py b
+$(SCAD_DIR)/drawings/mesh-b.svg: $(SCAD_DIR)/mesh.py $(SCAD_DIR)/skirts.py
+	python3 $(SCAD_DIR)/mesh.py b
 
 .PHONY: tree-b
-tree-b: $(SCAD_DIR)/tree-b.stl design/tree/mesh-b.svg design/tree/section-b.svg
+tree-b: $(SCAD_DIR)/tree-b.stl $(SCAD_DIR)/drawings/mesh-b.svg $(SCAD_DIR)/tree_params-b.scad
 
 .PHONY: tree
-tree: $(SCAD_DIR)/tree.stl design/tree/mesh.svg design/tree/section.svg \
-	design/tree/skirt-1.svg
+tree: $(SCAD_DIR)/tree.stl $(SCAD_DIR)/drawings/mesh.svg $(SCAD_DIR)/tree_params.scad
