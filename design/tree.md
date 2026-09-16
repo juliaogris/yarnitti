@@ -17,8 +17,13 @@ Every number lives in `design/skirts.py`. Running it writes
     python3 design/mesh.py           # mesh.svg
 
 Outputs, all in `design/tree/`: `skirt-1.svg` to `skirt-5.svg`,
-`section.svg`, `mesh.svg`. The STL is `platonic/tree.stl`. Earlier
-variants are in `design/tree/archive/`.
+`section.svg`, `mesh.svg`. Earlier variants are in `design/tree/archive/`.
+
+The model of the whole tree is
+[platonic/tree.stl](../platonic/tree.stl), which GitHub renders in the
+browser. [platonic/cone.scad](../platonic/cone.scad) is the cone study the
+fabric's shape was worked out on; its STL is not committed, run `make cone`
+for it.
 
 ## The design as it stands
 
@@ -43,6 +48,8 @@ Every skirt kept its drop, so the patterns and cords did not change. On
 2026-09-16 skirt 1's strap went up another 5 cm, to 4.66 m, so its peak
 reaches the star. That one skirt is now 65 cm tall instead of 60 cm; its
 pattern changed, the other four did not.
+
+![Section through the post, with every strap, hem and height marked](tree/section.svg)
 
 Total 829 squares. Every row of a skirt holds the same number of squares,
 set on point, each row inward a little smaller (the grid is two families of
@@ -91,6 +98,22 @@ each cord reads as a crease the full height of the skirt.
 sag point sits, how far it falls, and how sharply the fabric folds over a
 cord. The patterns are cut for the plain cone.
 
+### The flat patterns
+
+One per skirt, cut as a ring sector. The dotted arc is the hem ring, the inner
+arc is the post, the blue lines are the cords and the legend carries every
+measurement.
+
+![Skirt 1 flat pattern](tree/skirt-1.svg)
+
+![Skirt 2 flat pattern](tree/skirt-2.svg)
+
+![Skirt 3 flat pattern](tree/skirt-3.svg)
+
+![Skirt 4 flat pattern](tree/skirt-4.svg)
+
+![Skirt 5 flat pattern](tree/skirt-5.svg)
+
 Star: great stellated dodecahedron, span 140 cm, ridge struts 50 cm, core
 edges 30.9 cm centre to centre, edge up with the post through it. The two
 spikes straight up, the two straight down, and the two core struts that
@@ -105,8 +128,13 @@ Mesh sleeve: 50 x 50 mm galvanised welded mesh, 2.5 mm wire, a 60 cm wide
 strip wrapped on the post, three storeys of 180 cm lapped a cell, to 5.30 m,
 standing on the ground. The strip laps 5 cm at the seam, so the wrapped
 circumference is 55 cm and the sleeve is 17.5 cm across on the 14.5 cm post.
-That leaves 15 mm all round. Skirts and star cable-tie to the mesh. The top
-clamp goes on snug before the hoist so the sleeve can slide up.
+That leaves 15 mm all round. Skirts and star cable-tie to the mesh.
+
+Four hose clamps hold the sleeve to the post, at 0.2, 1.7, 3.45 and 5.2 m:
+Kinetic 159-181 mm, 304 stainless, $6.75 each at Bunnings, so about $27. That
+range takes the 17.5 cm sleeve with 16 mm of adjustment still in hand, which
+is what pulls the sleeve tight as the noodle battens compress. The top clamp
+goes on snug before the hoist so the sleeve can slide up.
 
 Cushioning: pool noodles cut lengthwise into battens about 20 mm square, six
 of them up the post, one every 7.6 cm round it. Slit a noodle once and unroll
@@ -135,6 +163,8 @@ at 5.2 m is level with the core's top; the hubs tie above and below it.
 Before the skirts were lowered the core ran to 5.59 m and a fourth mesh
 storey would have been needed.
 
+![The mesh strip flat, the sleeve from above, and the sleeve against the tree](tree/mesh.svg)
+
 Install plan: rope over the lamp arm with a throw line, garden hose over the
 rope where it crosses the arm; assemble sleeve, skirts and star on the
 ground; hoist; tighten clamps at 0.2 and 1.7 m from a step ladder or the
@@ -153,10 +183,6 @@ square and rerun; that one number drives it.
   counts halve again and a skirt 5 column between cords would carry about
   1 kg of wet fabric at the strap, the stretch test load.
 - **Stretch test.** Run it, then set `STRETCH` or drop the idea.
-- **Hose clamp size.** The Kinetic 210-232 mm clamps in the costing are too
-  big for a 17.5 cm sleeve; they will not close that far. Find a clamp whose
-  range covers 175 mm, roughly 162-184 mm, and recost. Four are needed, at
-  0.2, 1.7, 3.45 and 5.2 m.
 - **Star span.** `skirts.py` draws a 140 cm span with 50 cm ridge struts, the
   ideal geometry. `kepler.scad` says 50 cm cut stakes plus the connectors give
   148 cm, because a stake stops short of a connector's centre. One of the two
@@ -209,8 +235,8 @@ surface carried into the tree.
 
 ## Sources
 
-- Hose clamp, too big for the 17.5 cm sleeve, see the open question:
-  https://www.bunnings.com.au/kinetic-210-232mm-304-stainless-steel-hose-clamp_p0110752
+- Hose clamp, Kinetic 159-181 mm:
+  https://www.bunnings.com.au/kinetic-159-181mm-304-stainless-steel-hose-clamp_p0110748
 - Poly pipe 25 mm: https://www.bunnings.com.au/holman-25mm-x-25m-black-poly-pipe_p3120669
 - Poly pipe 13 mm: https://www.bunnings.com.au/holman-13mm-x-25m-black-poly-pipe_p3120621
 - Detachable hula hoop, no longer needed: https://www.kmart.com.au/product/weighted-hula-hoop-43559879/
