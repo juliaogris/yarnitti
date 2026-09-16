@@ -82,8 +82,7 @@ between. The patterns draw them in blue, numbered at the hem. `CORD_EVERY` and `
 About 70 m of 3 mm polyester braid with 30 cm tails at both ends. Nylon
 stretches and wire kinks and chafes the yarn, so neither.
 
-Between two cords the fabric hangs in a curve. The shape was worked out on
-the cone study (see below) and the model uses it unchanged. The fabric is
+Between two cords the fabric hangs in a curve. The fabric is
 sewn to the hem ring, to the strap and to every cord, so the droop is nothing
 on all three. Between them each panel falls through its sag point: midway
 between two cords, a quarter of the way up, having fallen 45 percent of the
@@ -189,8 +188,8 @@ square and rerun; that one number drives it.
 
 Done on 2026-09-15: straight cords on the patterns and in the model, the
 fabric drooping between them in the model with the rings flat, skirts lowered
-so the star sits on the mesh. Done on 2026-09-16: the cone study, and its
-surface carried into the tree.
+so the star sits on the mesh. Done on 2026-09-16: the curve the fabric hangs
+in between the cords.
 
 ## Open questions
 
@@ -236,26 +235,6 @@ surface carried into the tree.
   https://www.bunnings.com.au/kinetic-159-181mm-304-stainless-steel-hose-clamp_p0110748
 - Poly pipe 25 mm: https://www.bunnings.com.au/holman-25mm-x-25m-black-poly-pipe_p3120669
 - Poly pipe 13 mm: https://www.bunnings.com.au/holman-13mm-x-25m-black-poly-pipe_p3120621
-- Detachable hula hoop, no longer needed: https://www.kmart.com.au/product/weighted-hula-hoop-43559879/
-
-## Cone study
-
-`platonic/cone.scad` is one skirt on its own, to work up to the tree a step at
-a time. It has no numbers from `skirts.py`; the parameters sit at the top of
-the file and it builds with `make cone` to `platonic/cone.stl`.
-
-A frustum 100 cm across the base, 12 cm across the cut-off top and 80 cm tall,
-so it leans 28.8 degrees from vertical, the same steepness as the bottom
-skirt. The slant is 91 cm. Eight straight struts run up the surface from the
-hem ring to the top edge, 39 cm apart round the hem.
-
-The fabric is sewn to both rims and to every strut, and between them it hangs
-in a curve through the sag point of its panel, marked by a red sphere. The
-parameters are `sag_t`, how far up the sag point sits, `sag_drop`, how far it
-falls from the cone towards the base plane, and `fin`, how sharply the fabric
-folds over a strut. At 0.25, 0.45 and 1 the sag point ends up 11 cm above the
-base, having fallen 9 cm. The fabric stays clear of the base plane
-everywhere except at the hem ring itself. The tree uses the same three numbers.
 
 ## Working notes
 
@@ -279,6 +258,4 @@ Outputs, all in `design/tree/`: `skirt-1.svg` to `skirt-5.svg`,
 
 The model of the whole tree is
 [platonic/tree.stl](../platonic/tree.stl), which GitHub renders in the
-browser. [platonic/cone.scad](../platonic/cone.scad) is the cone study the
-fabric's shape was worked out on; its STL is not committed, run `make cone`
-for it.
+browser.

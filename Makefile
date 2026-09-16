@@ -74,14 +74,6 @@ $(SCAD_DIR)/tree.stl: $(SCAD_DIR)/tree.scad $(SCAD_DIR)/tree_params.scad $(SCAD_
 design/tree/mesh.svg: design/mesh.py design/skirts.py
 	python3 design/mesh.py
 
-# The cone study: one skirt's shape on its own, with straight struts. The STL
-# is a scratch file, not committed; the scad is the thing worth keeping.
-$(SCAD_DIR)/cone.stl: $(SCAD_DIR)/cone.scad
-	$(OPENSCAD) -o $@ --export-format binstl $<
-
-.PHONY: cone
-cone: $(SCAD_DIR)/cone.stl
-
 .PHONY: tree
 tree: $(SCAD_DIR)/tree.stl design/tree/mesh.svg design/tree/section.svg \
 	design/tree/skirt-1.svg

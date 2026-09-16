@@ -66,8 +66,8 @@ STAR_CORE = 0.4195 * STAR_SPAN / 2 + STAR_LIFT  # centre height above the top st
 CORD_EVERY = 2
 HEM_FIRST = 0.25  # the hem row's first square, in steps from the left seam
 CORD_TAIL = 300  # mm of cord at each end for the knots, on top of the drawn length
-# How the fabric hangs between two cords, from the cone study in
-# platonic/cone.scad. SAG_T is where a panel hangs lowest, 0 at the hem ring
+# How the fabric hangs between two cords. SAG_T is where a panel hangs lowest,
+# 0 at the hem ring
 # and 1 at the strap. SAG_DROP is how far that point falls from the cone
 # towards the hem ring's own plane, so the fabric never hangs below its ring.
 # FIN is how sharply the fabric folds over a cord: 1 a clean fold, less is

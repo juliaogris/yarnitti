@@ -34,7 +34,6 @@ fab_na = 144;
 include <tree_params.scad>
 post_h  = 6500;           // lamp post height to draw, mm
 function diag(i) = squares[i] * sqrt(2);
-hoop_kind = [for (d = hoop_d) d <= post_d ? "collar" : "hula"];
 
 palette = [
   [0.85, 0.20, 0.30], [0.95, 0.60, 0.15], [0.98, 0.85, 0.20],
@@ -70,7 +69,7 @@ function hidden(i) = PI * (hoop_d[i] + vis_d(i)) / 2 * (slant(i) - vslant(i)) / 
 function hidden_total(n = len(hoop_d)) = n == 0 ? 0 : hidden(n - 1) + hidden_total(n - 1);
 
 for (i = [0 : len(hoop_d) - 1])
-  echo(str("tier ", i + 1, ": hoop ", hoop_d[i], " mm ", hoop_kind[i],
+  echo(str("tier ", i + 1, ": strapped to the ", hoop_d[i], " mm post",
            ", hem ", hem_d[i], " mm, visible slant ", round(vslant(i)), " of ", round(slant(i)), " mm, ",
            around(i), " a row, ", rows(i), " rows, ", count(i), " squares"));
 echo(str("total ", total(), " squares, ~", round(area_total() / 1e6 * 0.8), " kg 8-ply on the visible fabric; hidden ~",
@@ -89,20 +88,12 @@ module collar(z, h = 40) {
     difference() { cylinder(h = h, d = post_d + 16, $fn = 32); translate([0, 0, -1]) cylinder(h = h + 2, d = post_d, $fn = 32); }
 }
 
+// Every skirt is strapped straight to the post, so a strap is all there is.
 module hoop(i) {
-  c = hoop_kind[i] == "hula" ? [0.9, 0.1, 0.5] : [0.2, 0.2, 0.2];
   collar(hoop_z[i]);
-  if (hoop_kind[i] != "collar") color(c) translate([0, 0, hoop_z[i]])
-    rotate_extrude($fn = 96) translate([hoop_d[i] / 2, 0]) circle(d = 20, $fn = 12);
-  if (hoop_kind[i] != "collar") for (k = [0 : spokes - 1])
-    color([0.2, 0.2, 0.2]) rotate([0, 0, k * 360 / spokes + 90])
-      translate([post_d / 2, 0, hoop_z[i]]) rotate([0, 90, 0])
-        cylinder(h = hoop_d[i] / 2 - post_d / 2, d = 12, $fn = 8);
 }
 
 // --- fabric and cords -------------------------------------------------------
-//
-// The surface is the one worked out in platonic/cone.scad.
 //
 // t runs from 0 at the hem ring to 1 at the strap. The cords run straight up
 // the cone from the ring to the strap at the angles in cord_phase[i]. The
