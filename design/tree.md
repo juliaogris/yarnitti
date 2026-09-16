@@ -46,7 +46,7 @@ Every skirt kept its drop, so the patterns and cords did not change. On
 reaches the star. That one skirt is now 65 cm tall instead of 60 cm; its
 pattern changed, the other four did not.
 
-<img src="tree/section.svg" alt="Section through the post, with every strap, hem and height marked" width="300">
+<img src="tree/section.svg" alt="Section through the post, with every strap, hem and height marked" width="440">
 
 Total 829 squares. Every row of a skirt holds the same number of squares,
 set on point, each row inward a little smaller (the grid is two families of
@@ -109,7 +109,7 @@ measurement.
 
 <img src="tree/skirt-4.svg" alt="Skirt 4 flat pattern" width="640">
 
-<img src="tree/skirt-5.svg" alt="Skirt 5 flat pattern" width="640">
+<img src="tree/skirt-5.svg" alt="Skirt 5 flat pattern" width="860">
 
 Star: great stellated dodecahedron, span 140 cm, ridge struts 50 cm, core
 edges 30.9 cm centre to centre, edge up with the post through it. The two
