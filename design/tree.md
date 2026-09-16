@@ -1,29 +1,26 @@
 # Tree: the granny-square Christmas tree on the lamp post
 
-Working notes and handoff for the Platonic tree, written on 2026-09-15 and 2026-09-16 at the
-end of a long design session. `platonic.md` has the piece as a whole; this
-file is only the tree.
+A plan for yarn bombing the lamp post on the Edithvale foreshore as a
+Christmas tree: five cone skirts of crocheted granny squares, and a
+crocheted star on top. This file has the granny square sizes and how they
+stitch together, the flat pattern for every skirt, and the plan for mounting
+the whole thing on the post.
 
-## One source of numbers
+![A lamp post in an Italian square dressed as a Christmas tree in crocheted granny squares, with a star on top](photos/xmas-tree-inspiration.jpg)
 
-Every number lives in `design/skirts.py`. Running it writes
-`platonic/tree_params.scad`, which the OpenSCAD model includes, and
-`design/mesh.py` imports from it. Never edit the scad's numbers by hand.
+The piece that started it, somewhere in Italy. Tiered skirts of granny
+squares over a pole, with a zigzag hem on each tier.
 
-    make tree                        # patterns, section, params, STL, mesh sketch
-    python3 design/skirts.py all     # skirt-1..5.svg + section.svg + params
-    python3 design/skirts.py 5       # one skirt
-    python3 design/skirts.py 5 300   # one skirt with a 30 cm hem square, separate file
-    python3 design/mesh.py           # mesh.svg
+![Street view of the lamp post on the Edithvale foreshore, with shrubs around its base](photos/lamp-post-streetview.jpg)
 
-Outputs, all in `design/tree/`: `skirt-1.svg` to `skirt-5.svg`,
-`section.svg`, `mesh.svg`. Earlier variants are in `design/tree/archive/`.
+The post it goes on: steel, 14.5 cm across, with shrubs around the base that
+keep the bottom hem off the ground.
 
-The model of the whole tree is
-[platonic/tree.stl](../platonic/tree.stl), which GitHub renders in the
-browser. [platonic/cone.scad](../platonic/cone.scad) is the cone study the
-fabric's shape was worked out on; its STL is not committed, run `make cone`
-for it.
+![The tree modelled in OpenSCAD, five skirts and a star, with a 1.7 m person beside it for scale](tree/tree.png)
+
+The model, with a 1.7 m person beside it for scale. Open
+[platonic/tree.stl](../platonic/tree.stl) to turn it around in the browser;
+GitHub renders it as an interactive 3D view.
 
 ## The design as it stands
 
@@ -195,7 +192,7 @@ fabric drooping between them in the model with the rings flat, skirts lowered
 so the star sits on the mesh. Done on 2026-09-16: the cone study, and its
 surface carried into the tree.
 
-## Open questions from the last exchange
+## Open questions
 
 - **Fabric stretch.** The cords (see above) take the ring's weight, so
   what is left is the fabric stretching between lacing points under its own
@@ -259,3 +256,30 @@ falls from the cone towards the base plane, and `fin`, how sharply the fabric
 folds over a strut. At 0.25, 0.45 and 1 the sag point ends up 11 cm above the
 base, having fallen 9 cm. The fabric stays clear of the base plane
 everywhere except at the hem ring itself. The tree uses the same three numbers.
+
+## Working notes
+
+Working notes and handoff for the Platonic tree, written on 2026-09-15 and 2026-09-16 at the
+end of a long design session. `platonic.md` has the piece as a whole; this
+file is only the tree.
+
+### One source of numbers
+
+Every number lives in `design/skirts.py`. Running it writes
+`platonic/tree_params.scad`, which the OpenSCAD model includes, and
+`design/mesh.py` imports from it. Never edit the scad's numbers by hand.
+
+    make tree                        # patterns, section, params, STL, mesh sketch
+    python3 design/skirts.py all     # skirt-1..5.svg + section.svg + params
+    python3 design/skirts.py 5       # one skirt
+    python3 design/skirts.py 5 300   # one skirt with a 30 cm hem square, separate file
+    python3 design/mesh.py           # mesh.svg
+
+Outputs, all in `design/tree/`: `skirt-1.svg` to `skirt-5.svg`,
+`section.svg`, `mesh.svg`. Earlier variants are in `design/tree/archive/`.
+
+The model of the whole tree is
+[platonic/tree.stl](../platonic/tree.stl), which GitHub renders in the
+browser. [platonic/cone.scad](../platonic/cone.scad) is the cone study the
+fabric's shape was worked out on; its STL is not committed, run `make cone`
+for it.
