@@ -1,7 +1,7 @@
 // Platonic: sketch of the granny-square Christmas tree.
 //
 // Five cone skirts of crocheted squares set on point hang round a lamp post,
-// each tied straight to the post at a strap and carrying a poly pipe ring in
+// each tied straight to the post at a strap and carrying a fibreglass ring in
 // its scalloped hem. Each strap sits a little way up the skirt above, so the
 // skirts overlap like shingles; the overlapped top of a skirt is drawn grey.
 // Low-stretch cords run straight from every hem ring to its strap and hold
@@ -142,8 +142,9 @@ module cord(i, k, d = 10) {
   color([0.1, 0.3, 0.7]) hull() { translate(p0) sphere(d = d, $fn = 8); translate(p1) sphere(d = d, $fn = 8); }
 }
 
-// The hem ring of poly pipe, flat.
-module ring(i, d = 25) {
+// The hem ring, a fibreglass rod on the big skirts and a metal craft hoop on
+// the two small ones, flat either way.
+module ring(i, d = 12) {
   color([0.15, 0.15, 0.15]) translate([0, 0, hem_z[i]])
     rotate_extrude($fn = 96) translate([hem_d[i] / 2, 0]) circle(d = d, $fn = 12);
 }

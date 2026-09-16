@@ -28,7 +28,8 @@ Lamp post: steel, 14.5 cm across (45 cm circumference, from an old note and
 the street view), at least 7 m tall. A 6.5 m post is drawn.
 
 Five cone skirts of granny squares, every skirt's fabric running to the post,
-no inner hoops. Hem rings of poly pipe. Bottom hem 54 cm off the ground
+no inner hoops. Hem rings of fibreglass rod and metal craft hoops, see below.
+Bottom hem 54 cm off the ground
 because of the shrubs round the post.
 
 | skirt | strap on post | hem ring | hem height | hem square | squares |
@@ -93,6 +94,44 @@ each cord reads as a crease the full height of the skirt.
 `SAG_T`, `SAG_DROP` and `FIN` in `skirts.py` are the three numbers: where the
 sag point sits, how far it falls, and how sharply the fabric folds over a
 cord. The patterns are cut for the plain cone.
+
+### Hem rings
+
+The rings hold the hem out to its circle. They carry little load, because the
+flat pattern is cut so the fabric's hem already matches the ring and the cords
+take the weight. What they have to do is stay round.
+
+Poly pipe will not. It rests as a coil about a metre across and fights you at
+any other diameter, so it pulls the ring into a lobed shape wherever the
+crochet lets it. Fibreglass rod has no such memory: bent into a closed loop it
+has the same curvature all the way round, and a true circle is the shape it
+settles into. It is also about seven times stiffer in bending than 25 mm poly
+pipe at a third of the bulk, so it resists being pulled oval.
+
+| skirt | hem ring | ring                        |
+| ----- | -------- | --------------------------- |
+| 1     | 70 cm    | ready-made metal craft hoop |
+| 2     | 100 cm   | ready-made metal craft hoop |
+| 3     | 140 cm   | 8.5 mm fibreglass tent pole |
+| 4     | 195 cm   | 9.5 mm fibreglass tent pole |
+| 5     | 275 cm   | 11 mm fibreglass tent pole  |
+
+Rod thickness scales with ring size, because the bending stress in a rod bent
+to a circle goes as rod diameter over ring radius. At the sizes above each rod
+runs at roughly a quarter of its bending strength.
+
+The two small rings are the awkward ones. The thinnest tent pole sold is
+7.9 mm, and bending that to a 35 cm radius for skirt 1 takes it to about half
+its strength, which is tighter than is comfortable. Buy those two as
+ready-made metal craft hoops instead: they come perfectly round, need no join,
+and 70 cm and 100 cm are both stock sizes. Sources at the end.
+
+Thread the rod or hoop through a channel crocheted into the hem. The hem row
+is a fixed number of stitches, so the crochet sets the circumference and the
+ring only holds it open. Join a fibreglass loop with a ferrule, a short alloy
+or vinyl sleeve over butted ends, and sit the join at a cord point where the
+crochet is anchored. About 19 m of rod covers skirts 3 to 5, and the five
+rings together come to roughly 2 kg.
 
 ### The flat patterns
 
@@ -161,15 +200,14 @@ storey would have been needed.
 
 <img src="tree/mesh.svg" alt="The mesh strip flat, the sleeve from above, and the sleeve against the tree" width="520">
 
-Install plan: rope over the lamp arm with a throw line, garden hose over the
-rope where it crosses the arm; assemble sleeve, skirts and star on the
-ground; hoist; tighten clamps at 0.2 and 1.7 m from a step ladder or the
+Install plan: rope over the lamp arm with a throw line, padded where it
+crosses the arm; assemble sleeve, skirts and star on the ground; hoist; tighten clamps at 0.2 and 1.7 m from a step ladder or the
 ground. The rope is a hoist and a backstop, never a personal anchor. Nothing
 pegged within a metre of the post base (buried cable); the bottom ring is
 tied down to stakes at the shrub line or to the shrubs.
 
 Weight, at 18 g per 15 cm square: fabric about 20 kg dry, 42 kg soaked,
-27 kg after draining; rings 4 kg; star, strings, straps 3 kg. Weigh one real
+27 kg after draining; rings about 2 kg; star, cords, straps 3 kg. Weigh one real
 square and rerun; that one number drives it.
 
 ## To do
@@ -233,8 +271,14 @@ in between the cords.
 
 - Hose clamp, Kinetic 159-181 mm:
   https://www.bunnings.com.au/kinetic-159-181mm-304-stainless-steel-hose-clamp_p0110748
-- Poly pipe 25 mm: https://www.bunnings.com.au/holman-25mm-x-25m-black-poly-pipe_p3120669
-- Poly pipe 13 mm: https://www.bunnings.com.au/holman-13mm-x-25m-black-poly-pipe_p3120621
+- OZtrail fibreglass tent pole kits, 7.9 to 12.5 mm, at BCF:
+  https://www.bcf.com.au/p/oztrail-fibreglass-tent-pole-kit-9.5mm/311328.html
+- OZtrail direct, with click and collect:
+  https://www.oztrail.com.au/products/fibreglass-tent-pole-kit-9-5-mm
+- Metal craft hoops to 50 cm, Discount Craft:
+  https://discountcraft.com.au/collections/metal-rings
+- Metal craft hoops to 110 cm, Etsy Australia:
+  https://www.etsy.com/au/listing/1045824995/110cm43-100cm39-large-giant-white-coated
 
 ## Working notes
 
