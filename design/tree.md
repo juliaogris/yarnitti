@@ -99,7 +99,18 @@ cord. The patterns are cut for the plain cone.
 
 The rings hold the hem out to its circle. They carry little load, because the
 flat pattern is cut so the fabric's hem already matches the ring and the cords
-take the weight. What they have to do is stay round.
+take the weight. What they have to do is stay round and go on around the post.
+
+No ring can be lifted over the lamp post. There is a lamp arm at the top and
+the mesh sleeve stands on the ground, so nothing threads on from either end.
+Every ring has to be closed in place, around the post, by one person standing
+on the ground.
+
+That is easier than it sounds, because the ring is not a hoop you lift.
+Crochet a channel into the hem, stand the skirt around the post, feed the rod
+through the channel all the way round, and join the two ends where they meet.
+The rod travels as a straight length or a loose coil and only becomes a ring
+at the last step, so nothing is sprung open or forced shut.
 
 Poly pipe will not. It rests as a coil about a metre across and fights you at
 any other diameter, so it pulls the ring into a lobed shape wherever the
@@ -108,30 +119,38 @@ has the same curvature all the way round, and a true circle is the shape it
 settles into. It is also about seven times stiffer in bending than 25 mm poly
 pipe at a third of the bulk, so it resists being pulled oval.
 
-| skirt | hem ring | ring                        |
-| ----- | -------- | --------------------------- |
-| 1     | 70 cm    | ready-made metal craft hoop |
-| 2     | 100 cm   | ready-made metal craft hoop |
-| 3     | 140 cm   | 8.5 mm fibreglass tent pole |
-| 4     | 195 cm   | 9.5 mm fibreglass tent pole |
-| 5     | 275 cm   | 11 mm fibreglass tent pole  |
+| skirt | hem ring | rod    | length |
+| ----- | -------- | ------ | ------ |
+| 1     | 70 cm    | 5 mm   | 2.2 m  |
+| 2     | 100 cm   | 6 mm   | 3.1 m  |
+| 3     | 140 cm   | 8.5 mm | 4.4 m  |
+| 4     | 195 cm   | 9.5 mm | 6.1 m  |
+| 5     | 275 cm   | 11 mm  | 8.6 m  |
 
 Rod thickness scales with ring size, because the bending stress in a rod bent
 to a circle goes as rod diameter over ring radius. At the sizes above each rod
 runs at roughly a quarter of its bending strength.
 
-The two small rings are the awkward ones. The thinnest tent pole sold is
-7.9 mm, and bending that to a 35 cm radius for skirt 1 takes it to about half
-its strength, which is tighter than is comfortable. Buy those two as
-ready-made metal craft hoops instead: they come perfectly round, need no join,
-and 70 cm and 100 cm are both stock sizes. Sources at the end.
+Ready-made craft and lampshade hoops are the obvious shortcut for the two
+small rings, and the same constraint rules them out: they come welded shut, so
+each would have to be cut and sleeved anyway. Rod for all five.
 
-Thread the rod or hoop through a channel crocheted into the hem. The hem row
-is a fixed number of stitches, so the crochet sets the circumference and the
-ring only holds it open. Join a fibreglass loop with a ferrule, a short alloy
-or vinyl sleeve over butted ends, and sit the join at a cord point where the
-crochet is anchored. About 19 m of rod covers skirts 3 to 5, and the five
-rings together come to roughly 2 kg.
+The two small rings need a thinner rod than tent poles are sold in. The
+thinnest tent pole is 7.9 mm, and bending that to skirt 1's 35 cm radius takes
+it to about half its strength. Kite spar or hobby fibreglass rod covers 4 to
+6 mm.
+
+Aluminium tube is worth weighing against fibreglass. It takes a set rather
+than springing, so it holds its circle with no stored energy, it comes
+straight in 3 m lengths with no coil memory, and it joins the same way. It is
+the easier material to handle and about the same weight. Fibreglass is stiffer
+for its diameter and will not kink if mishandled. Not settled.
+
+The hem row is a fixed number of stitches, so the crochet sets the
+circumference and the ring only holds it open. Join the ends with a ferrule, a
+short alloy or vinyl sleeve over butted ends, and sit the join at a cord point
+where the crochet is anchored. The five rings come to about 25 m of rod and
+roughly 3 kg.
 
 ### The flat patterns
 
@@ -207,7 +226,7 @@ pegged within a metre of the post base (buried cable); the bottom ring is
 tied down to stakes at the shrub line or to the shrubs.
 
 Weight, at 18 g per 15 cm square: fabric about 20 kg dry, 42 kg soaked,
-27 kg after draining; rings about 2 kg; star, cords, straps 3 kg. Weigh one real
+27 kg after draining; rings about 3 kg; star, cords, straps 3 kg. Weigh one real
 square and rerun; that one number drives it.
 
 ## To do
