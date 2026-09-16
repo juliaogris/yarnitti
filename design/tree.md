@@ -8,8 +8,8 @@ the whole thing on the post.
 
 <img src="photos/xmas-tree-inspiration.jpg" alt="A lamp post in an Italian square dressed as a Christmas tree in crocheted granny squares, with a star on top" width="340">
 
-The piece that started it, somewhere in Italy. Tiered skirts of granny
-squares over a pole, with a zigzag hem on each tier.
+The inspiration photo, somewhere in Italy. Tiered skirts of granny squares
+over a pole, with a zigzag hem on each tier.
 
 <img src="photos/lamp-post-streetview.jpg" alt="Street view of the lamp post on the Edithvale foreshore, with shrubs around its base" width="340">
 
