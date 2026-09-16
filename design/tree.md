@@ -102,11 +102,32 @@ inside the star and no bare post shows between them. That is `STAR_LIFT` in
 strut length.
 
 Mesh sleeve: 50 x 50 mm galvanised welded mesh, 2.5 mm wire, a 60 cm wide
-strip wrapped tight on the post over split pool noodles, three storeys of
-180 cm lapped a cell, to 5.30 m, standing on the ground. Four hose clamps
-at 0.2, 1.7, 3.45 and 5.2 m: Kinetic 210-232 mm, $8.26 each at Bunnings,
-so about $33. Skirts and star cable-tie to the mesh. The top clamp goes on
-snug before the hoist so the sleeve can slide up.
+strip wrapped on the post, three storeys of 180 cm lapped a cell, to 5.30 m,
+standing on the ground. The strip laps 5 cm at the seam, so the wrapped
+circumference is 55 cm and the sleeve is 17.5 cm across on the 14.5 cm post.
+That leaves 15 mm all round. Skirts and star cable-tie to the mesh. The top
+clamp goes on snug before the hoist so the sleeve can slide up.
+
+Cushioning: pool noodles cut lengthwise into battens about 20 mm square, six
+of them up the post, one every 7.6 cm round it. Slit a noodle once and unroll
+it flat, then cut the battens off the slab; that yields far more length than
+splitting it into halves. Each batten compresses from 20 mm into the 15 mm
+gap, so the sleeve grips rather than rattles and the mesh never touches the
+paint.
+
+Cutting: three 60 cm strips come out of each 1.8 m length. Cut beside a wire,
+not through one, snipping the crossing wires right next to the wire on the cut
+line. That wire stays whole on one piece and the other piece gets a bare edge,
+which is what a lap wants: bare edge under, wired edge over. The three pieces
+end up with slightly different wire spans, and the difference is taken up at
+the seam.
+
+Tying: galvanised tie wire, 1.2 to 1.6 mm, twisted with pliers. The horizontal
+joins between storeys carry the weight, about 35 kg wet at the lowest one, so
+tie those at every cell across the lap; that is about 3 kg a tie. The vertical
+seam only stops the sleeve springing open and the clamps already do most of
+that, so every third cell is enough there. Cable ties would hold the load but
+creep under steady tension and perish in UV.
 
 The star's core, 4.61 to 5.20 m, sits fully on the sleeve with 10 cm to
 spare, so its lower and upper hubs both cable-tie to the mesh. The top clamp
@@ -132,12 +153,10 @@ square and rerun; that one number drives it.
   counts halve again and a skirt 5 column between cords would carry about
   1 kg of wet fabric at the strap, the stretch test load.
 - **Stretch test.** Run it, then set `STRETCH` or drop the idea.
-- **Mesh sleeve diameter.** `mesh.py` sets the sleeve to 16 cm, a finger's
-  clearance on the 14.5 cm post, and the 60 cm strip width follows from that.
-  The notes here say the mesh goes over split pool noodles and the clamps are
-  Kinetic 210-232 mm, which cannot close onto a 16 cm sleeve. Either `TUBE_D`
-  grows to about 21.5 cm, and the strip to about 75 cm wide, or the noodles
-  and the clamp choice are wrong. Unresolved.
+- **Hose clamp size.** The Kinetic 210-232 mm clamps in the costing are too
+  big for a 17.5 cm sleeve; they will not close that far. Find a clamp whose
+  range covers 175 mm, roughly 162-184 mm, and recost. Four are needed, at
+  0.2, 1.7, 3.45 and 5.2 m.
 - **Star span.** `skirts.py` draws a 140 cm span with 50 cm ridge struts, the
   ideal geometry. `kepler.scad` says 50 cm cut stakes plus the connectors give
   148 cm, because a stake stops short of a connector's centre. One of the two
@@ -190,7 +209,8 @@ surface carried into the tree.
 
 ## Sources
 
-- Hose clamp: https://www.bunnings.com.au/kinetic-210-232mm-304-stainless-steel-hose-clamp_p0110752
+- Hose clamp, too big for the 17.5 cm sleeve, see the open question:
+  https://www.bunnings.com.au/kinetic-210-232mm-304-stainless-steel-hose-clamp_p0110752
 - Poly pipe 25 mm: https://www.bunnings.com.au/holman-25mm-x-25m-black-poly-pipe_p3120669
 - Poly pipe 13 mm: https://www.bunnings.com.au/holman-13mm-x-25m-black-poly-pipe_p3120621
 - Detachable hula hoop, no longer needed: https://www.kmart.com.au/product/weighted-hula-hoop-43559879/

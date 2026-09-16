@@ -2,7 +2,8 @@
 
 Strips of 50 x 50 mm galvanised welded mesh are wrapped tight round the lamp
 post as a sleeve, one storey on top of the next with a cell of lap, and stood
-on the ground. The skirts and the star tie to the mesh instead of to the bare
+on the ground. Pool noodle battens run up the post under it so the mesh never
+touches the paint. The skirts and the star tie to the mesh instead of to the bare
 post, so the weight goes down the sleeve to the ground rather than up the
 ropes.
 
@@ -17,7 +18,11 @@ from pathlib import Path
 
 from skirts import HOOP_Z, POST_D, POST_H, STAR_LIFT, STAR_SPAN
 
-TUBE_D = POST_D + 15  # mm, sleeve inside diameter, a finger's clearance on the post
+# Sleeve inside diameter, mm. The 15 mm all round is what the pool noodle
+# battens compress into: a noodle wall is about 20 mm, so each batten squashes
+# by a quarter and the sleeve grips instead of rattling. At this diameter the
+# wrapped circumference is 55 cm, so the strip comes out at exactly 60 cm.
+TUBE_D = POST_D + 30
 CELL = 50  # mm, mesh pitch
 OVERLAP = 50  # mm, one cell of lap where the strip's ends meet
 TIER_H = 3 * 1800 - 2 * 50  # mm, three full storeys lapped by a cell
