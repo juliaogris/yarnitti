@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1500 -6560 3435 6620" width="344mm" height="662mm">
+<title>Tree section through the post</title>
+<g fill="none" stroke="#000" stroke-width="2">
+<rect x="0" y="-6500" width="72" height="6500" fill="#ddd" stroke="#888"/>
+<line x1="0" y1="0" x2="1875" y2="0" stroke="#888"/>
+<line x1="72" y1="-3430" x2="350" y2="-2780"/>
+<line x1="48" y1="-3455" x2="98" y2="-3405" stroke="#c00"/>
+<line x1="48" y1="-3405" x2="98" y2="-3455" stroke="#c00"/>
+<line x1="350" y1="-2780" x2="350" y2="-2643"/>
+<rect x="0" y="-3455" width="72" height="50" fill="#000"/>
+<circle cx="350" cy="-2780" r="10" fill="#000"/>
+<line x1="72" y1="-3160" x2="500" y2="-2150"/>
+<line x1="48" y1="-3185" x2="98" y2="-3135" stroke="#c00"/>
+<line x1="48" y1="-3135" x2="98" y2="-3185" stroke="#c00"/>
+<line x1="500" y1="-2150" x2="500" y2="-1993"/>
+<rect x="0" y="-3185" width="72" height="50" fill="#000"/>
+<circle cx="500" cy="-2150" r="10" fill="#000"/>
+<line x1="72" y1="-2720" x2="700" y2="-1470"/>
+<line x1="48" y1="-2745" x2="98" y2="-2695" stroke="#c00"/>
+<line x1="48" y1="-2695" x2="98" y2="-2745" stroke="#c00"/>
+<line x1="700" y1="-1470" x2="700" y2="-1287"/>
+<rect x="0" y="-2745" width="72" height="50" fill="#000"/>
+<circle cx="700" cy="-1470" r="10" fill="#000"/>
+<line x1="381" y1="-1730" x2="975" y2="-540"/>
+<line x1="72" y1="-2350" x2="381" y2="-1730" stroke="#888" stroke-dasharray="15 15"/>
+<line x1="356" y1="-1755" x2="406" y2="-1705" stroke="#c00"/>
+<line x1="356" y1="-1705" x2="406" y2="-1755" stroke="#c00"/>
+<line x1="975" y1="-540" x2="975" y2="-321"/>
+<rect x="0" y="-2375" width="72" height="50" fill="#000"/>
+<circle cx="975" cy="-540" r="10" fill="#000"/>
+<rect x="0" y="-3455" width="72" height="50" fill="#000"/>
+<circle cx="0" cy="-3674" r="244" stroke="#c9a400"/>
+<circle cx="0" cy="-3674" r="700" stroke="#c9a400" stroke-dasharray="15 15"/>
+</g>
+<g font-family="sans-serif" font-size="40">
+<text x="112" y="-3378" text-anchor="start">in sight all the way up</text>
+<text x="-30" y="-3416" text-anchor="end">strap at 3.43 m: skirt 1 tied straight to the post</text>
+<text x="380" y="-2790" text-anchor="start">hem 70 cm at 2.78 m, drop 14 cm</text>
+<text x="112" y="-3108" text-anchor="start">in sight all the way up</text>
+<text x="-30" y="-3146" text-anchor="end">strap at 3.16 m: skirt 2 tied straight to the post</text>
+<text x="530" y="-2160" text-anchor="start">hem 100 cm at 2.15 m, drop 16 cm</text>
+<text x="112" y="-2668" text-anchor="start">in sight all the way up</text>
+<text x="-30" y="-2706" text-anchor="end">strap at 2.72 m: skirt 3 tied straight to the post</text>
+<text x="730" y="-1480" text-anchor="start">hem 140 cm at 1.47 m, drop 18 cm</text>
+<text x="421" y="-1678" text-anchor="start">out of sight above 1.73 m</text>
+<text x="-30" y="-2336" text-anchor="end">strap at 2.35 m: skirt 4 tied straight to the post</text>
+<text x="1005" y="-550" text-anchor="start">hem 195 cm at 0.54 m, drop 22 cm</text>
+<text x="-30" y="-3478" text-anchor="end">strap at 3.43 m: star hangs -5 cm above it</text>
+<text x="730" y="-3674" text-anchor="start">star 140 cm across, centre at 3.67 m</text>
+<text x="102" y="-6460" text-anchor="start">post 14.5 cm</text>
+<text x="102" y="-6404" text-anchor="start">dashed fabric is out of sight from 1.0 m eye height at the bottom hem</text>
+</g>
+</svg>

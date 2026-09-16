@@ -26,7 +26,13 @@ with every strap, hem and height marked.
 
     python3 design/skirts.py all
 
-writes every skirt and the section. Every run also writes
+writes every skirt and the section.
+
+    python3 design/skirts.py b
+
+writes the plan B section and params instead: four skirts, the whole tree
+lowered so skirt 4's hem lands where skirt 5's was. The flat patterns are
+unchanged, because every skirt keeps its own geometry. Every run also writes
 platonic/tree_params.scad, which the OpenSCAD model includes, so the model,
 the patterns and the section share one set of numbers.
 """
@@ -77,11 +83,31 @@ SAG_T = 0.25
 SAG_DROP = 0.45
 FIN = 1
 
+# Plan B: if the squares run short, leave skirt 5 off and bring the whole tree
+# down so skirt 4's hem lands where skirt 5's was. Every remaining skirt keeps
+# its own geometry, so the flat patterns for skirts 1 to 4 serve both plans.
+PLAN_B_SKIRTS = 4
+PLAN_B_DROP = 1230  # mm the tree comes down, HEM_Z[3] - HEM_Z[4]
+
 OUT = Path("design/tree")
+SUFFIX = ""  # "-b" on the plan B drawings
 
 FONT = 40  # legend, mm
 LABEL_FONT = 28  # radius labels, mm
 MARGIN = 60  # page margin, mm
+
+
+def plan_b():
+    """Switch the module to plan B: four skirts, the whole tree lowered."""
+    global HEM_SQUARES, HOOP_D, HOOP_Z, HEM_D, HEM_Z, EYE_R, SUFFIX
+    n = PLAN_B_SKIRTS
+    HEM_SQUARES = HEM_SQUARES[:n]
+    HOOP_D = HOOP_D[:n]
+    HEM_D = HEM_D[:n]
+    HOOP_Z = [z - PLAN_B_DROP for z in HOOP_Z[:n]]
+    HEM_Z = [z - PLAN_B_DROP for z in HEM_Z[:n]]
+    EYE_R = HEM_D[-1] / 2 + 300
+    SUFFIX = "-b"
 
 
 def skirt(i):
@@ -539,7 +565,7 @@ def write_section():
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{-left} {-top - MARGIN:.0f} {w:.0f} {h:.0f}" '
         f'width="{w / 10:.0f}mm" height="{h / 10:.0f}mm">'
     )
-    (OUT / "section.svg").write_text("\n".join(out) + "\n")
+    (OUT / f"section{SUFFIX}.svg").write_text("\n".join(out) + "\n")
 
 
 def write_params():
@@ -573,7 +599,7 @@ def write_params():
         f"sag_drop = {SAG_DROP};",
         f"fin = {FIN};",
     ]
-    Path("platonic/tree_params.scad").write_text("\n".join(lines) + "\n")
+    Path(f"platonic/tree_params{SUFFIX}.scad").write_text("\n".join(lines) + "\n")
     return counts
 
 
@@ -591,6 +617,16 @@ def main():
         write_section()
         print(
             f"total {total} squares; wrote skirt-1..5.svg, section.svg, tree_params.scad"
+        )
+        return
+    if len(sys.argv) > 1 and sys.argv[1] == "b":
+        plan_b()
+        write_params()
+        write_section()
+        print(
+            f"plan B: {PLAN_B_SKIRTS} skirts, tree down {PLAN_B_DROP / 1000:.2f} m, "
+            f"hem at {HEM_Z[-1] / 1000:.2f} m, top strap at {HOOP_Z[0] / 1000:.2f} m; "
+            "wrote section-b.svg and tree_params-b.scad"
         )
         return
     if len(sys.argv) > 1 and sys.argv[1] == "section":

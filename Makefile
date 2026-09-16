@@ -67,12 +67,26 @@ design/tree/skirt-4.svg design/tree/skirt-5.svg &: design/skirts.py
 
 # Binary STL, and the fabric sampled coarsely: the surface is smooth either
 # way, and this keeps the committed file to a few megabytes.
-$(SCAD_DIR)/tree.stl: $(SCAD_DIR)/tree.scad $(SCAD_DIR)/tree_params.scad $(SCAD_DIR)/gsd.scad
+$(SCAD_DIR)/tree.stl: $(SCAD_DIR)/tree.scad $(SCAD_DIR)/tree-body.scad $(SCAD_DIR)/tree_params.scad $(SCAD_DIR)/gsd.scad
 	$(OPENSCAD) -o $@ --export-format binstl -D 'detail=false' -D 'figure=false' $<
 
 # The mesh sleeve sketch shares the tree's numbers.
 design/tree/mesh.svg: design/mesh.py design/skirts.py
 	python3 design/mesh.py
+
+# Plan B: four skirts, the whole tree lowered. Shares tree-body.scad, so the
+# shape is described once.
+$(SCAD_DIR)/tree_params-b.scad design/tree/section-b.svg &: design/skirts.py
+	python3 design/skirts.py b
+
+$(SCAD_DIR)/tree-b.stl: $(SCAD_DIR)/tree-b.scad $(SCAD_DIR)/tree-body.scad $(SCAD_DIR)/tree_params-b.scad $(SCAD_DIR)/gsd.scad
+	$(OPENSCAD) -o $@ --export-format binstl -D 'detail=false' -D 'figure=false' $<
+
+design/tree/mesh-b.svg: design/mesh.py design/skirts.py
+	python3 design/mesh.py b
+
+.PHONY: tree-b
+tree-b: $(SCAD_DIR)/tree-b.stl design/tree/mesh-b.svg design/tree/section-b.svg
 
 .PHONY: tree
 tree: $(SCAD_DIR)/tree.stl design/tree/mesh.svg design/tree/section.svg \
