@@ -6,17 +6,17 @@ crocheted star on top. This file has the granny square sizes and how they
 stitch together, the flat pattern for every skirt, and the plan for mounting
 the whole thing on the post.
 
-![A lamp post in an Italian square dressed as a Christmas tree in crocheted granny squares, with a star on top](photos/xmas-tree-inspiration.jpg)
+<img src="photos/xmas-tree-inspiration.jpg" alt="A lamp post in an Italian square dressed as a Christmas tree in crocheted granny squares, with a star on top" width="340">
 
 The piece that started it, somewhere in Italy. Tiered skirts of granny
 squares over a pole, with a zigzag hem on each tier.
 
-![Street view of the lamp post on the Edithvale foreshore, with shrubs around its base](photos/lamp-post-streetview.jpg)
+<img src="photos/lamp-post-streetview.jpg" alt="Street view of the lamp post on the Edithvale foreshore, with shrubs around its base" width="340">
 
 The post it goes on: steel, 14.5 cm across, with shrubs around the base that
 keep the bottom hem off the ground.
 
-![The tree modelled in OpenSCAD, five skirts and a star, with a 1.7 m person beside it for scale](tree/tree.png)
+<img src="tree/tree.png" alt="The tree modelled in OpenSCAD, five skirts and a star, with a 1.7 m person beside it for scale" width="260">
 
 The model, with a 1.7 m person beside it for scale. Open
 [platonic/tree.stl](../platonic/tree.stl) to turn it around in the browser;
@@ -46,7 +46,7 @@ Every skirt kept its drop, so the patterns and cords did not change. On
 reaches the star. That one skirt is now 65 cm tall instead of 60 cm; its
 pattern changed, the other four did not.
 
-![Section through the post, with every strap, hem and height marked](tree/section.svg)
+<img src="tree/section.svg" alt="Section through the post, with every strap, hem and height marked" width="300">
 
 Total 829 squares. Every row of a skirt holds the same number of squares,
 set on point, each row inward a little smaller (the grid is two families of
@@ -101,15 +101,15 @@ One per skirt, cut as a ring sector. The dotted arc is the hem ring, the inner
 arc is the post, the blue lines are the cords and the legend carries every
 measurement.
 
-![Skirt 1 flat pattern](tree/skirt-1.svg)
+<img src="tree/skirt-1.svg" alt="Skirt 1 flat pattern" width="460">
 
-![Skirt 2 flat pattern](tree/skirt-2.svg)
+<img src="tree/skirt-2.svg" alt="Skirt 2 flat pattern" width="460">
 
-![Skirt 3 flat pattern](tree/skirt-3.svg)
+<img src="tree/skirt-3.svg" alt="Skirt 3 flat pattern" width="460">
 
-![Skirt 4 flat pattern](tree/skirt-4.svg)
+<img src="tree/skirt-4.svg" alt="Skirt 4 flat pattern" width="460">
 
-![Skirt 5 flat pattern](tree/skirt-5.svg)
+<img src="tree/skirt-5.svg" alt="Skirt 5 flat pattern" width="460">
 
 Star: great stellated dodecahedron, span 140 cm, ridge struts 50 cm, core
 edges 30.9 cm centre to centre, edge up with the post through it. The two
@@ -160,7 +160,7 @@ at 5.2 m is level with the core's top; the hubs tie above and below it.
 Before the skirts were lowered the core ran to 5.59 m and a fourth mesh
 storey would have been needed.
 
-![The mesh strip flat, the sleeve from above, and the sleeve against the tree](tree/mesh.svg)
+<img src="tree/mesh.svg" alt="The mesh strip flat, the sleeve from above, and the sleeve against the tree" width="520">
 
 Install plan: rope over the lamp arm with a throw line, garden hose over the
 rope where it crosses the arm; assemble sleeve, skirts and star on the
