@@ -101,15 +101,15 @@ One per skirt, cut as a ring sector. The dotted arc is the hem ring, the inner
 arc is the post, the blue lines are the cords and the legend carries every
 measurement.
 
-<img src="tree/skirt-1.svg" alt="Skirt 1 flat pattern" width="460">
+<img src="tree/skirt-1.svg" alt="Skirt 1 flat pattern" width="640">
 
-<img src="tree/skirt-2.svg" alt="Skirt 2 flat pattern" width="460">
+<img src="tree/skirt-2.svg" alt="Skirt 2 flat pattern" width="640">
 
-<img src="tree/skirt-3.svg" alt="Skirt 3 flat pattern" width="460">
+<img src="tree/skirt-3.svg" alt="Skirt 3 flat pattern" width="640">
 
-<img src="tree/skirt-4.svg" alt="Skirt 4 flat pattern" width="460">
+<img src="tree/skirt-4.svg" alt="Skirt 4 flat pattern" width="640">
 
-<img src="tree/skirt-5.svg" alt="Skirt 5 flat pattern" width="460">
+<img src="tree/skirt-5.svg" alt="Skirt 5 flat pattern" width="640">
 
 Star: great stellated dodecahedron, span 140 cm, ridge struts 50 cm, core
 edges 30.9 cm centre to centre, edge up with the post through it. The two
