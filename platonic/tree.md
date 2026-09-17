@@ -141,17 +141,20 @@ centimetres either way disappears into the stitches.
 | item                                                  | quantity | cost |
 | ----------------------------------------------------- | -------- | ---- |
 | Fibreglass pole kit, two 4.9 m poles of nine segments | 2 packs  | $66  |
-| Tent pole repair kit, 11 mm                           | 1        | $20  |
-| 8 mm hardwood dowel for the ferrules                  | 1 m      | $3   |
+| Fibreglass pole kit, spare                            | 1 pack   | $33  |
+| 38 mm polyester webbing for the hem sleeves           | 15 m     | $30  |
 
-About $89 and 2.6 kg for all five rings. Thirty-five of the thirty-six pole
-segments are used, so there is one spare. One pack is not enough: two poles is
-9.8 m against the 19.2 m the three big rings need.
+About $130 and 2.6 kg for all five rings. One pack is not enough on its own:
+two poles is 9.8 m against the 19.2 m the three big rings need.
 
-The repair kit is insurance rather than a part. It carries spare ferrules for
-the three ring closures, three metres of shock cord and a threading needle for
-breaking the poles down into 8, 11 and 16 segment lengths, and spare sections
-if one splits. Buy it in 11 mm to match.
+Two packs cover it with one segment spare out of thirty-six, which is thin
+enough that one damaged in transit leaves a ring that will not close. The third
+pack is cheap insurance and a spare pole is useful anyway.
+
+No separate ferrules are needed. Every tent pole segment carries one bonded to
+one end, with a bare end at the other, so a chain of them finishes with a socket
+at one extreme and a spigot at the other and the ring closes on itself whatever
+the count.
 
 #### Why those materials
 
@@ -199,9 +202,11 @@ Three things to check on arrival.
   lists only the poles, where other sellers of the same pole spell the cord out.
   A ring does not need it, since the loops hold the segments in line, but it
   makes threading easier and the repair kit supplies it if not.
-- **Whether a segment has a spigot at one end and a socket at the other.** If it
-  does, each ring closes on itself and the dowel is spare. If both ends match,
-  every ring needs a joiner from the repair kit.
+- **The outside diameter, with calipers, before cutting or threading anything.**
+  The listing gives 8 mm as the bore and the stated weight agrees, which puts
+  the outside at about 11 mm. If 8 mm turns out to be the outside instead, the
+  rod is two and a half times less stiff, skirt 5 wants two stacked in its
+  sleeve, and that is two more packs.
 
 The end segments also carry moulded ground spikes. Harmless, but put them at a
 join or leave them in the spares.
@@ -221,22 +226,32 @@ rest, because hoop tubing is around 19 mm against the pole's 11 mm. Measure the
 hoops before crocheting those two. The loops can be added to finished squares,
 so none of this has to be settled before the crochet starts.
 
-A strip of 25 mm polyester webbing, folded and sewn into a sleeve and stitched
-along the hem line, is the stronger alternative where a child pulls. More sewing.
+Loops are not enough on the two skirts within reach. A loop puts a child's
+whole pull into one square junction, where a sewn sleeve spreads it along the
+ring and stops the rod chafing the yarn. So: sleeves on skirts 4 and 5, loops on
+the top three where nothing touches them.
+
+Use 38 mm polyester webbing, the seatbelt kind, folded and machine-sewn into a
+tube and stitched along the hem line. It does not rot or hold water, which rules
+out canvas, denim and cotton tape over a wet month. It is the strongest thing
+per gram that will go under a domestic machine, and it does not fray. Folded it
+gives about a 17 mm channel, which clears the 11 mm rod and the ferrules
+bulging past it; 25 mm would be too tight. Avoid ripstop nylon, which tears
+along a stitch line exactly where a child pulls.
+
+Sew the sleeve a touch shorter than the crochet hem, so the webbing takes the
+load rather than the stitches.
 
 #### Joining
 
-Nothing needs bending now. The hoops are already their circle and the
-fibreglass arcs as you thread it.
+Nothing needs bending and nothing needs a separate connector. The hoops are
+already their circle and close on their own push-button joint. The fibreglass
+arcs as you thread it and closes on the ferrule the last segment already
+carries.
 
-The hoops close on their own push-button joint, which is what they were built
-for. Put it at a cord point where the crochet is anchored.
-
-The fibreglass closes on an 8 mm dowel pushed into the bore, or on a ferrule
-from the repair kit if the segments turn out not to have a spigot at one end.
-Cut the dowel long, at least ten diameters, so the join cannot hinge and pull
-the ring out of round. Gaffer tape over it. Never a screw into fibreglass: it
-splits along the fibres, and that is the one way these rods fail.
+Put both joins at a cord point, where the crochet is anchored. Gaffer tape over
+the fibreglass one. Never a screw into fibreglass: it splits along the fibres,
+and that is the one way these rods fail.
 
 ### The flat patterns
 
