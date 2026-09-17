@@ -138,14 +138,21 @@ The pole segments add 54.4 cm each, so no ring comes out exact. It does not
 matter. The crochet sets the circle and the rod only fills it; a few
 centimetres either way disappears into the stitches.
 
-| item                                                          | quantity  | cost |
-| ------------------------------------------------------------- | --------- | ---- |
-| GLOGLOW fibreglass pole set, two 4.9 m poles of nine segments | 2 packs   | $69  |
-| Metal Mate 10 x 1 mm aluminium tube, 3 m                      | 2 lengths | $30  |
-| 8 mm hardwood dowel for the ferrules                          | 1 m       | $3   |
+| item                                                  | quantity  | cost |
+| ----------------------------------------------------- | --------- | ---- |
+| Fibreglass pole kit, two 4.9 m poles of nine segments | 2 packs   | $66  |
+| Metal Mate 10 x 1 mm aluminium tube, 3 m              | 2 lengths | $30  |
+| Tent pole repair kit, 11 mm                           | 1         | $20  |
+| 8 mm hardwood dowel for the ferrules                  | 1 m       | $3   |
 
-About $102 and 2.5 kg for all five rings. Thirty-five of the thirty-six pole
-segments are used, so there is one spare.
+About $119 and 2.5 kg for all five rings. Thirty-five of the thirty-six pole
+segments are used, so there is one spare. One pack is not enough: two poles is
+9.8 m against the 19.2 m the three big rings need.
+
+The repair kit is insurance rather than a part. It carries spare ferrules for
+the three ring closures, three metres of shock cord and a threading needle for
+breaking the poles down into 8, 11 and 16 segment lengths, and spare sections
+if one splits. Buy it in 11 mm to match.
 
 #### Why those materials
 
@@ -179,10 +186,21 @@ tube diameter, so there is no kink risk.
 Ready-made craft and lampshade hoops look like a shortcut for the small rings.
 They come welded shut, so each would have to be cut and sleeved anyway.
 
-Two things to check on arrival. The pole listing contradicts itself on whether
-a pack holds one 4.9 m pole or two; the stated weight of 808 g only works for
-two, but confirm it. And the end segments carry moulded ground spikes, which
-are harmless but belong at a join or in the spares.
+Three things to check on arrival.
+
+- **How many poles a pack holds.** The listing contradicts itself on whether
+  4.9 m is the pack or the pole. The stated weight of about 810 g only works for
+  two poles, but confirm it, because one pack would then be half what is needed.
+- **Whether the segments carry a shock cord.** The listing says foldable and
+  lists only the poles, where other sellers of the same pole spell the cord out.
+  A ring does not need it, since the loops hold the segments in line, but it
+  makes threading easier and the repair kit supplies it if not.
+- **Whether a segment has a spigot at one end and a socket at the other.** If it
+  does, each ring closes on itself and the dowel is spare. If both ends match,
+  every ring needs a joiner from the repair kit.
+
+The end segments also carry moulded ground spikes. Harmless, but put them at a
+join or leave them in the spares.
 
 #### The loops
 
@@ -363,9 +381,11 @@ and within reach of a tall person.
 
 - Hose clamp, Kinetic 159-181 mm:
   https://www.bunnings.com.au/kinetic-159-181mm-304-stainless-steel-hose-clamp_p0110748
-- GLOGLOW fibreglass tent pole set, two 4.9 m poles of nine 57.7 cm segments,
-  about 11 mm outside on an 8 mm bore, $34.52 at Amazon Australia:
-  https://www.amazon.com.au/dp/B0CXDDYJYV
+- Fibreglass tent pole kit, two 4.9 m poles of nine 57.7 cm segments, about
+  11 mm outside on an 8 mm bore, $32.87 at Amazon Australia. The same pole is
+  sold under several brand names at slightly different prices; buy whichever is
+  cheaper on the day:
+  https://www.amazon.com.au/dp/B0F85P5QBZ
 - OZtrail fibreglass pole kits, 7.9 to 12.5 mm but only 2.4 m a kit, at BCF:
   https://www.bcf.com.au/p/oztrail-fibreglass-tent-pole-kit-9.5mm/311328.html
 - Metal Mate 10 x 1 mm aluminium round tube, $3.55 a metre, and 12 x 1 mm in
