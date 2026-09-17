@@ -142,9 +142,10 @@ centimetres either way disappears into the stitches.
 | ----------------------------------------------------- | -------- | ---- |
 | Fibreglass pole kit, two 4.9 m poles of nine segments | 2 packs  | $66  |
 | Fibreglass pole kit, spare                            | 1 pack   | $33  |
-| 38 mm polyester webbing for the hem sleeves           | 15 m     | $30  |
+| 38 mm polyester webbing for the hem sleeves           | 21 m     | $42  |
+| 3 mm shock cord                                       | 25 m     | $35  |
 
-About $130 and 2.6 kg for all five rings. One pack is not enough on its own:
+About $176 and 2.6 kg for all five rings. One pack is not enough on its own:
 two poles is 9.8 m against the 19.2 m the three big rings need.
 
 Two packs cover it with one segment spare out of thirty-six, which is thin
@@ -211,36 +212,81 @@ Three things to check on arrival.
 The end segments also carry moulded ground spikes. Harmless, but put them at a
 join or leave them in the spares.
 
-#### The loops
+#### Holding the ring to the hem
 
 The hem row sits on point, so there is no plain edge to fold into a casing. The
 ring line runs through the side corners where squares meet, with the lower
 halves hanging below as the zigzag.
 
-Crochet a short chain loop at each of those junctions, like a belt loop, and
-thread the rod through. Feeding a jointed rod through discrete loops is far
-easier than through a continuous tube, where every ferrule catches. Skirt 5 has
-16 hem squares, so 16 loops at 54 cm apart; two per square if that feels sparse,
-which also spreads a child's pull. Skirts 1 and 2 want wider loops than the
-rest, because hoop tubing is around 19 mm against the pole's 11 mm. Measure the
-hoops before crocheting those two. The loops can be added to finished squares,
-so none of this has to be settled before the crochet starts.
+**Skirts 3, 4 and 5 get a sewn sleeve.** A crocheted loop puts a pull into one
+square junction; a sleeve spreads it along the whole ring and stops the rod
+chafing the yarn. Skirt 5's hem is at 54 cm and skirt 4's at 1.77 m, both within
+reach on a public foreshore, and skirt 3 takes one too for the extra support.
 
-Loops are not enough on the two skirts within reach. A loop puts a child's
-whole pull into one square junction, where a sewn sleeve spreads it along the
-ring and stops the rod chafing the yarn. So: sleeves on skirts 4 and 5, loops on
-the top three where nothing touches them.
+Use 38 mm polyester webbing, the seatbelt kind, folded lengthwise and
+machine-sewn into a tube. It does not rot or hold water, which rules out canvas,
+denim and cotton tape over a wet month. It is the strongest thing per gram that
+will go under a domestic machine, and it does not fray. Folded it gives about a
+17 mm channel, which clears the 11 mm rod and the ferrules bulging past it;
+25 mm would be too tight. Avoid ripstop nylon, which tears along a stitch line
+exactly where a child pulls. About 21 m covers the three rings with overlaps.
 
-Use 38 mm polyester webbing, the seatbelt kind, folded and machine-sewn into a
-tube and stitched along the hem line. It does not rot or hold water, which rules
-out canvas, denim and cotton tape over a wet month. It is the strongest thing
-per gram that will go under a domestic machine, and it does not fray. Folded it
-gives about a 17 mm channel, which clears the 11 mm rod and the ferrules
-bulging past it; 25 mm would be too tight. Avoid ripstop nylon, which tears
-along a stitch line exactly where a child pulls.
+A straight tube is right; no shaping and no curved cutting. Bending a 17 mm tube
+into a ring means the outside travels further than the inside by the tube
+diameter over the ring radius, which is 2.4 percent on skirt 3, 1.7 on skirt 4
+and 1.2 on skirt 5. Webbing has more give than that in its weave. It would only
+start to ruck below about a 40 cm radius, or on a much fatter sleeve. The one
+mistake to avoid is laying the webbing flat in the plane of the ring, width
+pointing outward, which would need a curved strip. The width wraps around the
+rod; the length runs around the ring.
 
-Sew the sleeve a touch shorter than the crochet hem, so the webbing takes the
-load rather than the stitches.
+Order of work. Sew the long seam into an open-ended tube, stitch that to the
+crochet hem, then feed the rod through and close the rod ring last. Sewing the
+webbing into a closed loop first means wrestling metres of jointed rod through a
+blind tube with every ferrule catching. Leave a 10 cm gap in the webbing where
+the rod's join lands so you can reach it; the crochet spans it and nobody sees.
+
+Take the length from the crochet, not from the arithmetic: finish the hem row,
+lay it flat, measure it, and cut the webbing a centimetre or two shorter so the
+webbing carries the load rather than the stitches. Mark the webbing every 50 cm
+before sewing, because polyester creeps under machine feed tension. Pin at
+quarters, then eighths, then sew between, so any discrepancy spreads evenly
+instead of arriving as a bunched-up remainder. Sew it in manageable lengths and
+join rather than feeding 8.6 m through in one pass.
+
+To check a finished ring, lay it flat and measure across it at four angles. A
+circle reads the same every time; more than a couple of centimetres out means
+the rod is caught on something, usually a ferrule against a seam.
+
+**Skirts 1 and 2 keep crocheted loops.** They are hula hoops, already rigid and
+already their own circle, and they sit at 4.01 m and 3.38 m where no hand
+reaches. Crochet a short chain loop at each square junction and thread the hoop
+through. Make them wider than you would for a pole, because hoop tubing is
+around 19 mm against the pole's 11 mm, so measure the hoops first. Loops can be
+added to finished squares, so none of this has to be settled before the crochet
+starts.
+
+#### Keeping the segments together
+
+Tent pole segments push into their ferrules and can pull back out, which is what
+a child hanging on a hem would do. Shock cord is what stops that, and it is what
+the cord does in a tent: thread one length through all the segments of a ring,
+pull it tight and tie it into a loop, and every joint is held home for good.
+
+About 20 m of 3 mm cord covers the three pole rings, a few dollars a metre from
+Bunnings or Clark Rubber, or marine grade from a specialist. Buy 25 m. Three
+millimetre is the size: it passes the 8 mm bore easily, thinner will not hold
+the joints home and thicker fights the ferrules. If the poles arrive already
+corded there is 19.6 m in the packs and the job is re-threading it into three
+ring-length loops instead of buying any.
+
+Tape the joints as well if you want the belt with the braces. Self-amalgamating
+silicone tape is the one to use: it fuses to itself with no adhesive, so nothing
+goes gooey in the heat, nothing leaves residue in the yarn, and it unwraps
+cleanly in January. Gaffer tape second. Duct tape holds mechanically because you
+are wrapping rather than sticking, and it lives inside the sleeve out of the
+sun, but its adhesive will still go soft. Thirty-odd joints on skirt 5 makes
+taping tedious, which is the argument for doing the cord first.
 
 #### Joining
 
