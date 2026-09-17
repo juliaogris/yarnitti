@@ -28,7 +28,7 @@ Lamp post: steel, 14.5 cm across (45 cm circumference, from an old note and
 the street view), at least 7 m tall. A 6.5 m post is drawn.
 
 Five cone skirts of granny squares, every skirt's fabric running to the post,
-no inner hoops. Hem rings of fibreglass rod and aluminium tube, see below.
+no inner hoops. Hem rings of fibreglass tent pole and hula hoop, see below.
 Bottom hem 54 cm off the ground
 because of the shrubs round the post.
 
@@ -126,26 +126,25 @@ forced shut.
 
 #### What goes in each ring
 
-| skirt | diameter | radius   | circumference | ring                 | segments | fit           |
-| ----- | -------- | -------- | ------------- | -------------------- | -------- | ------------- |
-| 1     | 70 cm    | 35 cm    | 2.20 m        | 10 mm aluminium tube |          | cut to length |
-| 2     | 100 cm   | 50 cm    | 3.14 m        | 10 mm aluminium tube |          | cut to length |
-| 3     | 140 cm   | 70 cm    | 4.40 m        | fibreglass tent pole | 8        | 4 cm short    |
-| 4     | 195 cm   | 97.5 cm  | 6.13 m        | fibreglass tent pole | 11       | 14 cm short   |
-| 5     | 275 cm   | 137.5 cm | 8.64 m        | fibreglass tent pole | 16       | 6 cm over     |
+| skirt | diameter | radius   | circumference | ring                     | segments | fit         |
+| ----- | -------- | -------- | ------------- | ------------------------ | -------- | ----------- |
+| 1     | 70 cm    | 35 cm    | 2.20 m        | hula hoop, already owned |          | exact       |
+| 2     | 100 cm   | 50 cm    | 3.14 m        | hula hoop, already owned |          | exact       |
+| 3     | 140 cm   | 70 cm    | 4.40 m        | fibreglass tent pole     | 8        | 4 cm short  |
+| 4     | 195 cm   | 97.5 cm  | 6.13 m        | fibreglass tent pole     | 11       | 14 cm short |
+| 5     | 275 cm   | 137.5 cm | 8.64 m        | fibreglass tent pole     | 16       | 6 cm over   |
 
 The pole segments add 54.4 cm each, so no ring comes out exact. It does not
 matter. The crochet sets the circle and the rod only fills it; a few
 centimetres either way disappears into the stitches.
 
-| item                                                  | quantity  | cost |
-| ----------------------------------------------------- | --------- | ---- |
-| Fibreglass pole kit, two 4.9 m poles of nine segments | 2 packs   | $66  |
-| Metal Mate 10 x 1 mm aluminium tube, 3 m              | 2 lengths | $30  |
-| Tent pole repair kit, 11 mm                           | 1         | $20  |
-| 8 mm hardwood dowel for the ferrules                  | 1 m       | $3   |
+| item                                                  | quantity | cost |
+| ----------------------------------------------------- | -------- | ---- |
+| Fibreglass pole kit, two 4.9 m poles of nine segments | 2 packs  | $66  |
+| Tent pole repair kit, 11 mm                           | 1        | $20  |
+| 8 mm hardwood dowel for the ferrules                  | 1 m      | $3   |
 
-About $119 and 2.5 kg for all five rings. Thirty-five of the thirty-six pole
+About $89 and 2.6 kg for all five rings. Thirty-five of the thirty-six pole
 segments are used, so there is one spare. One pack is not enough: two poles is
 9.8 m against the 19.2 m the three big rings need.
 
@@ -174,17 +173,22 @@ the material earns its keep in bending: that tube is about two and a half times
 stiffer than a solid 8 mm rod and lighter per metre. It is stiff enough that
 skirt 5 needs one ring rather than two stacked rods.
 
-**Aluminium on the two small rings, because they are a different problem.**
-They sit at 4.01 m and 3.38 m where no hand reaches, and they are the least
-flexed of the five: four cords on a 2.2 m ring gives 55 cm spans against skirt
-5's 108 cm, and bending moment goes with span squared. Aluminium also takes a
-screw, a rivet or a cable tie without splitting, which fibreglass does not, and
-10 mm tube is on the shelf at Bunnings while no tent pole is sold thin enough
-for a 35 cm radius. Bending 10 mm tube to that radius is thirty-five times the
-tube diameter, so there is no kink risk.
+**Hula hoops on the two small rings**, 70 cm and 100 cm, which Julia already
+owns and which happen to be exactly the two diameters wanted. They come
+factory-round, so nothing is bent and nothing fights its own memory, and the
+connectable ones part at a push-button joint, which is the openable closure the
+post demands. Free, and no bending job.
 
-Ready-made craft and lampshade hoops look like a shortcut for the small rings.
-They come welded shut, so each would have to be cut and sleeved anyway.
+They are the right place to spend the least. Skirts 1 and 2 sit at 4.01 m and
+3.38 m where no hand reaches, and they are the least flexed of the five: four
+cords on a 2.2 m ring gives 55 cm spans against skirt 5's 108 cm, and bending
+moment goes with span squared. Hoop tubing is roughly a fifth as stiff as the
+aluminium tube it replaces, which does not matter on a ring already the shape
+it wants to be and carrying almost nothing.
+
+Ready-made craft and lampshade hoops were the other candidate and fail the
+constraint the hula hoops meet: they come welded shut, so each would have to be
+cut and sleeved.
 
 Three things to check on arrival.
 
@@ -212,37 +216,27 @@ Crochet a short chain loop at each of those junctions, like a belt loop, and
 thread the rod through. Feeding a jointed rod through discrete loops is far
 easier than through a continuous tube, where every ferrule catches. Skirt 5 has
 16 hem squares, so 16 loops at 54 cm apart; two per square if that feels sparse,
-which also spreads a child's pull. The loops can be added to finished squares,
+which also spreads a child's pull. Skirts 1 and 2 want wider loops than the
+rest, because hoop tubing is around 19 mm against the pole's 11 mm. Measure the
+hoops before crocheting those two. The loops can be added to finished squares,
 so none of this has to be settled before the crochet starts.
 
 A strip of 25 mm polyester webbing, folded and sewn into a sleeve and stitched
 along the hem line, is the stronger alternative where a child pulls. More sewing.
 
-#### Bending and joining
+#### Joining
 
-The aluminium bends by hand, no tools. Skirt 1 is the tightest at 35 cm radius
-and the outside of the bend stretches about 1.4 percent, against the eight or
-more this alloy takes before it cracks. No filler, no heat.
+Nothing needs bending now. The hoops are already their circle and the
+fibreglass arcs as you thread it.
 
-Chalk the circle on the driveway first, with a nail and a string. Bend to the
-line and check as you go; without a line you will make an egg. Walk your hands
-along the tube, putting a small bend in every few centimetres rather than a big
-one in one place, because a kink comes from concentrating the bend. Over-bend
-slightly and let it spring back onto the line. A bin or a pot gets you close
-before the fine-tuning. If a tube feels brittle or fights you, stop: that means
-a harder temper than assumed, and it is worth knowing before buying the lot.
+The hoops close on their own push-button joint, which is what they were built
+for. Put it at a cord point where the crochet is anchored.
 
-The fibreglass needs no bending. It arcs as you thread it.
-
-Both kinds of join take the same 8 mm dowel as an internal ferrule, because the
-aluminium tube and the tent pole share an 8 mm bore. Cut it long, at least ten
-diameters, so the join cannot hinge and pull the ring out of round. Put it at a
-cord point where the crochet is anchored.
-
-Two stainless self-tappers hold the aluminium, drilled at home rather than up a
-ladder, stainless so they do not seize after a wet month. Never a screw into
-fibreglass: it splits along the fibres, and that is the one way these rods fail.
-Gaffer tape over the fibreglass join instead.
+The fibreglass closes on an 8 mm dowel pushed into the bore, or on a ferrule
+from the repair kit if the segments turn out not to have a spigot at one end.
+Cut the dowel long, at least ten diameters, so the join cannot hinge and pull
+the ring out of round. Gaffer tape over it. Never a screw into fibreglass: it
+splits along the fibres, and that is the one way these rods fail.
 
 ### The flat patterns
 
@@ -388,8 +382,8 @@ and within reach of a tall person.
   https://www.amazon.com.au/dp/B0F85P5QBZ
 - OZtrail fibreglass pole kits, 7.9 to 12.5 mm but only 2.4 m a kit, at BCF:
   https://www.bcf.com.au/p/oztrail-fibreglass-tent-pole-kit-9.5mm/311328.html
-- Metal Mate 10 x 1 mm aluminium round tube, $3.55 a metre, and 12 x 1 mm in
-  3 m at $14.84, both at Bunnings:
+- Metal Mate aluminium round tube at Bunnings, the fallback if a hoop turns out
+  not to suit, 10 mm at $3.55 a metre:
   https://www.bunnings.com.au/products/building-hardware/steel-aluminium-sections/aluminium-extrusions-mouldings/aluminium-tubes
 
 ## Working notes
