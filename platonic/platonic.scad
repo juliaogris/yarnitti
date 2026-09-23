@@ -6,6 +6,8 @@
 // point, twenty-four skewers in all. Two printed parts hold it together:
 //
 //   tip    x8  joins three skewer ends at a star point, 60 degrees apart
+//   tip5   x8  the same point for 5 mm round stakes that run the whole edge
+//   tip4   x8  the 5 mm point again, bored for 4 mm stakes
 //   cross  x6  joins four skewer ends in one plane, 90 degrees apart
 //   cross8 x6  the cross with four more arms, for the inner octahedron
 //   test   x1  a bar of sample bores, to find the bore that grips your skewers
@@ -15,6 +17,8 @@
 //
 // Render one part at a time:
 //   openscad -o tip.stl    -D 'part="tip"'    platonic.scad
+//   openscad -o tip5.stl   -D 'part="tip5"'   platonic.scad
+//   openscad -o tip4.stl   -D 'part="tip4"'   platonic.scad
 //   openscad -o cross.stl  -D 'part="cross"'  platonic.scad
 //   openscad -o cross8.stl -D 'part="cross8"' platonic.scad
 //   openscad -o test.stl   -D 'part="test"'   platonic.scad
@@ -23,7 +27,7 @@
 // first, find the bore a skewer pushes into with firm finger pressure, and set
 // bore_d to that before printing the tips and crosses.
 
-part = "tip"; // [tip, tipmin, cross, cross8, crossthru, test]
+part = "tip"; // [tip, tipmin, tip5, tip4, cross, cross8, crossthru, test]
 
 // --- skewer and fit -------------------------------------------------------
 
@@ -47,6 +51,21 @@ min_bore_d    = 3.1;   // bore diameter at the mouth, mm
 min_wall      = 1.6;   // wall around a bore, mm
 min_socket    = 14;    // socket depth, mm
 min_tip_gap   = 3;     // apex to bottom of a bore, mm
+
+// --- round-stake tips -----------------------------------------------------
+// For a small star of round bamboo stakes, tip5 for 5 mm and tip4 for 4 mm.
+// One stake runs a whole tetrahedron edge, passes through the crossing at its
+// midpoint and is tied there, so only the eight points are printed. The arms
+// are plain tubes on a small sphere, as on the great stellated dodecahedron
+// tip, and the point is the sphere rather than a filled cone.
+
+tip5_bore_d  = 5.1;   // socket bore for a 5 mm stake, mm
+tip5_wall    = 1.6;   // wall around a bore, mm
+tip4_bore_d  = 4.1;   // socket bore for a 4 mm stake, mm
+tip4_wall    = 1.5;   // wall around a bore, mm
+stake_web    = 1.0;   // material between two neighbouring bores, mm
+stake_socket = 10;    // how far a stake end sits in the tip, mm
+stake_len    = 100;   // length of one stake, mm
 
 // --- cross ----------------------------------------------------------------
 
@@ -113,6 +132,24 @@ module along(v) {
     rotate([0, acos(v[2] / norm(v)), atan2(v[1], v[0])]) children();
 }
 
+// Two neighbouring bores in a round-stake tip are 60 degrees apart, so each
+// one leans 30 degrees off the line between them. Their walls clear each
+// other only this far out from the star point, and a stake end stops there.
+function stake_gap(bore_d) = (bore_d + stake_web) / (2 * sin(30));
+
+// A stake stops one gap short of the star point at each end, so the edge is
+// the stake plus two gaps. The eight star points are the corners of a cube,
+// and two opposite points are the ends of a cube diagonal, which is sqrt(1.5)
+// edges. The spheres add one outer diameter to the span. With 100 mm stakes
+// the star is 145 mm across on 5 mm stakes and 142 mm on 4 mm, and takes
+// twelve stakes either way.
+function stake_edge(bore_d) = stake_len + 2 * stake_gap(bore_d);
+function star_span(bore_d, wall) = sqrt(1.5) * stake_edge(bore_d) + bore_d + 2 * wall;
+
+echo(stake_len = stake_len,
+     tip5_edge = stake_edge(tip5_bore_d), tip5_span = star_span(tip5_bore_d, tip5_wall),
+     tip4_edge = stake_edge(tip4_bore_d), tip4_span = star_span(tip4_bore_d, tip4_wall));
+
 // The star point is at the top. The three arms run down and are cut by one
 // horizontal plane, so the part stands on a flat face with the bores opening
 // downward into the bed. Along each bore the socket is socket_depth deep,
@@ -152,6 +189,26 @@ module tip_min() {
         for (i = [0 : 2]) along(edge_dir(i))
             translate([0, 0, min_tip_gap + min_socket - 0.01])
                 cylinder(d = min_bore_d, h = over + 1);
+        translate([0, 0, base_z - 50]) cube(100, center = true);
+    }
+}
+
+// A star point for round stakes. Three tubes on a sphere, no hull, in the
+// same orientation and with the same flat base as tip(). The part stands on
+// the three arm ends with every bore opening into the bed.
+module stake_tip(bore_d, wall) {
+    outer_d = bore_d + 2 * wall;
+    gap     = stake_gap(bore_d);
+    reach   = gap + stake_socket;
+    base_z  = -reach * cos(tilt);
+    over    = outer_d;  // run arms and bores past the cut plane
+    difference() {
+        union() {
+            sphere(d = outer_d);
+            for (i = [0 : 2]) along(edge_dir(i)) cylinder(d = outer_d, h = reach + over);
+        }
+        for (i = [0 : 2]) along(edge_dir(i))
+            translate([0, 0, gap]) cylinder(d = bore_d, h = stake_socket + over);
         translate([0, 0, base_z - 50]) cube(100, center = true);
     }
 }
@@ -257,6 +314,8 @@ module test() {
 
 if (part == "tip") tip();
 if (part == "tipmin") tip_min();
+if (part == "tip5") stake_tip(tip5_bore_d, tip5_wall);
+if (part == "tip4") stake_tip(tip4_bore_d, tip4_wall);
 if (part == "cross") cross();
 if (part == "cross8") cross8();
 if (part == "crossthru") cross_thru();

@@ -29,8 +29,8 @@
 <rect x="0" y="-2375" width="72" height="50" fill="#000"/>
 <circle cx="975" cy="-540" r="10" fill="#000"/>
 <rect x="0" y="-3455" width="72" height="50" fill="#000"/>
-<circle cx="0" cy="-3674" r="244" stroke="#c9a400"/>
-<circle cx="0" cy="-3674" r="700" stroke="#c9a400" stroke-dasharray="15 15"/>
+<circle cx="0" cy="-3685" r="255" stroke="#c9a400"/>
+<circle cx="0" cy="-3685" r="728" stroke="#c9a400" stroke-dasharray="15 15"/>
 </g>
 <g font-family="sans-serif" font-size="40">
 <text x="112" y="-3378" text-anchor="start">in sight all the way up</text>
@@ -46,7 +46,7 @@
 <text x="-30" y="-2336" text-anchor="end">strap at 2.35 m: skirt 4 tied straight to the post</text>
 <text x="1005" y="-550" text-anchor="start">hem 195 cm at 0.54 m, drop 22 cm</text>
 <text x="-30" y="-3478" text-anchor="end">strap at 3.43 m: star hangs -5 cm above it</text>
-<text x="730" y="-3674" text-anchor="start">star 140 cm across, centre at 3.67 m</text>
+<text x="758" y="-3685" text-anchor="start">star 146 cm across, centre at 3.69 m</text>
 <text x="102" y="-6460" text-anchor="start">post 14.5 cm</text>
 <text x="102" y="-6404" text-anchor="start">dashed fabric is out of sight from 1.0 m eye height at the bottom hem</text>
 </g>

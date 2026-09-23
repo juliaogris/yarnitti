@@ -315,15 +315,40 @@ measurement.
 
 <img src="drawings/skirt-5.svg" alt="Skirt 5 flat pattern" width="860">
 
-Star: great stellated dodecahedron, span 140 cm, ridge struts 50 cm, core
-edges 30.9 cm centre to centre, edge up with the post through it. The two
-spikes straight up, the two straight down, and the two core struts that
-would cross the post are left off. The core runs from 4.61 to 5.20 m, centred
-at 4.90 m. It reaches 5 cm below the top strap, so skirt 1's peak stands
-inside the star and no bare post shows between them. That is `STAR_LIFT` in
-`skirts.py`, now minus 50 mm. `platonic/kepler.scad` says the core stakes cut to
-306 mm for 500 mm ridges with the printed hubs and tips, which fit any
-strut length.
+### Star
+
+A great stellated dodecahedron, 145.5 cm across, edge up with the post through
+it. The two spikes straight up, the two straight down, and the two core struts
+that would cross the post are left off. The core runs from 4.61 to 5.20 m,
+centred at 4.90 m. It reaches 5 cm below the top strap, so skirt 1's peak
+stands inside the star and no bare post shows between them. That is
+`STAR_LIFT` in `skirts.py`, now minus 50 mm.
+
+The frame is 5 mm dowel in printed hubs and tips, which have a 5.1 mm bore.
+`platonic/kepler.scad` is the model and prints the core length for any ridge
+length.
+
+|              | cut    | full star | tree's star |
+| ------------ | ------ | --------- | ----------- |
+| ridge stakes | 490 mm | 60        | 48          |
+| core stakes  | 300 mm | 30        | 28          |
+| printed tips |        | 20        | 16          |
+| printed hubs |        | 12        | 12          |
+
+The cut lengths are not themselves in the golden ratio. The ratio holds centre
+to centre, and a stake stops 18.8 mm short of a tip's centre but only 10.6 mm
+short of a hub's centre. A ridge has one of each and a core edge has two hubs,
+so the ridge measures 519.4 mm centre to centre and the core 321.1 mm, which is
+1.618. The cut pieces come out at 1.63.
+
+Julia has 5 mm dowel precut at 500 mm and 300 mm. The 300 mm are core stakes
+untouched; the 500 mm want 10 mm off each. That is all the cutting.
+
+Leaving spikes and struts off leaves about sixteen unused arms on the hubs,
+twelve where the spikes are missing and four where the core struts are. Leave
+them empty. They are 25 mm stubs on a 145 cm star, the hub's strength is in the
+arms that are used, and printing reduced variants would turn one part into
+four or five at nearly three hours each.
 
 Mesh sleeve: 50 x 50 mm galvanised welded mesh, 2.5 mm wire, a 60 cm wide
 strip wrapped on the post, three storeys of 180 cm lapped a cell, to 5.30 m,
@@ -420,10 +445,9 @@ and within reach of a tall person.
   keeps every square within one square of a cord. Halving that would leave a
   skirt 5 column carrying about 1 kg of wet fabric at the strap, which is the
   stretch test's load, so the test decides this too.
-- **The star's size.** The drawing uses a 140 cm span with 50 cm ridge struts,
-  which is the ideal geometry. The connector model says 50 cm cut stakes plus
-  the printed hubs give 148 cm, because a stake stops short of a connector's
-  centre. One of the two numbers has to move.
+- **How the star hangs on the mesh sleeve.** Its hubs sit 305 mm out from the
+  centre and the sleeve is only 87.5 mm in radius, so nothing reaches. It needs
+  a spoke, a strap or a collar, and none is drawn.
 - **Skirt 4's top row** stops 10 cm short of the post, because 14 squares a row
   merges to 7 and 7 cannot halve again. Tie the corners across the gap, or
   accept the gap; it is hidden under skirt 3.

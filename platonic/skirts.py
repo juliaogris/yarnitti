@@ -59,7 +59,8 @@ POST_H = 6500  # lamp post height drawn in the section, mm
 # skirt's fabric is out of view.
 EYE_R = HEM_D[-1] / 2 + 300
 EYE_Z = 1000
-STAR_SPAN = 1400  # star, point to opposite point, mm; ridge struts are 0.357 of this
+STAR_SPAN = 1455  # star, point to opposite point, mm; 490 mm ridge stakes in
+# the printed hubs and tips, see platonic/kepler.scad
 # Gap between the top strap and the bottom of the star's core, mm. Negative
 # means the core reaches down past the strap, so the top skirt's peak stands
 # inside the star instead of leaving bare post between them.

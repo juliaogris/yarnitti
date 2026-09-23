@@ -18,10 +18,16 @@ HTML  := public/index.html
 OPENSCAD := $(shell command -v openscad || echo /Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD)
 SCAD_DIR := platonic
 SCAD     := $(SCAD_DIR)/platonic.scad
-PARTS    := tip tipmin cross cross8 crossthru test
+PARTS    := tip tipmin tip5 tip4 cross cross8 crossthru test
 KEPLER   := $(SCAD_DIR)/kepler.scad
 GSD      := gsd_tip gsd_hub
-STLS     := $(PARTS:%=$(SCAD_DIR)/%.stl) $(GSD:%=$(SCAD_DIR)/%.stl) $(SCAD_DIR)/tree.stl
+DODECA   := $(SCAD_DIR)/dodeca.scad
+DODECA_P := dodeca_vertex
+SSD      := $(SCAD_DIR)/ssd.scad
+SSD_P    := ssd_tip ssd_hub
+STLS     := $(PARTS:%=$(SCAD_DIR)/%.stl) $(GSD:%=$(SCAD_DIR)/%.stl) \
+            $(DODECA_P:%=$(SCAD_DIR)/%.stl) $(SSD_P:%=$(SCAD_DIR)/%.stl) \
+            $(SCAD_DIR)/tree.stl
 
 .PHONY: lint fmt hooks gallery stl
 
@@ -50,6 +56,14 @@ $(SCAD_DIR)/%.stl: $(SCAD)
 # The great stellated dodecahedron parts come from their own .scad. This
 # static pattern rule takes precedence over the pattern rule above.
 $(GSD:%=$(SCAD_DIR)/%.stl): $(SCAD_DIR)/%.stl: $(KEPLER)
+	$(OPENSCAD) -o $@ -D 'part="$*"' $<
+
+# The dodecahedron vertex likewise comes from its own .scad.
+$(DODECA_P:%=$(SCAD_DIR)/%.stl): $(SCAD_DIR)/%.stl: $(DODECA)
+	$(OPENSCAD) -o $@ -D 'part="$*"' $<
+
+# So does the small stellated dodecahedron.
+$(SSD_P:%=$(SCAD_DIR)/%.stl): $(SCAD_DIR)/%.stl: $(SSD)
 	$(OPENSCAD) -o $@ -D 'part="$*"' $<
 
 # Point git at the versioned hooks directory (run once per clone).

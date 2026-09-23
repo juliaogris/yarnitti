@@ -201,6 +201,31 @@ sits 10.15 mm nearer the centre than the crossing. The octahedron edge
 is therefore 586 mm, not 600 mm, and the 4 mm inner struts are cut to
 576 mm. Print the crossings in PETG, because PLA softens in summer sun.
 
+### A small star with tied crossings
+
+`tip5` and `tip4` are the star point for a hand-sized octangula of round
+bamboo stakes, 5 mm and 4 mm. One stake runs a whole tetrahedron edge
+and is tied to the stake it crosses at its midpoint, so nothing is
+printed for a crossing and the star needs eight parts and twelve stakes.
+The two tetrahedra then sit a stake thickness apart at each crossing,
+the same offset `crossthru` holds with a printed part.
+
+The point is a sphere with three tubes on it, as on the great stellated
+dodecahedron tip, not the filled cone of `tip`. A stake end stops short
+of the point by the distance at which two bores 60 degrees apart clear
+each other, 6.1 mm on `tip5` and 5.1 mm on `tip4`. Both sockets are
+10 mm deep. The bores are 5.1 mm and 4.1 mm, for dowels cut square, not
+for the tapered end of a skewer. The wall is 1.6 mm and 1.5 mm.
+
+With 100 mm stakes the star is 145 mm across on 5 mm stakes and 142 mm
+on 4 mm. Four 300 mm flower stakes cut into thirds give the twelve. The
+.scad prints the edge and the span for any stake length.
+
+PLA at 0.15 mm with a 15 mm brim, on one plate of eight: `tip5` is
+17.6 g and 3 h 05 min, `tip4` is 13.4 g and 2 h 30 min. A single tip is
+2.5 g and 28 min, or 2.0 g and 24 min. Eight on the plate also keep each
+layer long enough to cool, which a lone tip does not.
+
 ## 9. Great stellated dodecahedron prototype
 
 The second star is a great stellated dodecahedron: an icosahedron with a
@@ -251,3 +276,81 @@ hubs. The .scad prints it for any ridge length.
   56 min. The full set is about 304 g and 52 hours.
 
 Print one hub and one tip first and check the fit with a stake.
+
+## 10. Dodecahedron frame
+
+The third frame is a plain dodecahedron, no stellation: twelve pentagons,
+thirty edges and twenty vertices. Every edge is its own dowel, and the
+frame needs one printed part, twenty `dodeca_vertex`. The OpenSCAD source
+is `platonic/dodeca.scad`.
+
+Three edges meet at a vertex, 108 degrees apart, which is the interior
+angle of the pentagon they bound. Put the outward direction on +z and all
+three arms lean 20.9 degrees below the horizontal, so the part is a wide,
+flat Y rather than a tripod. A dowel end stops 3.2 mm short of the
+vertex, where two bores 108 degrees apart clear each other, and the
+socket is 14 mm deep. The bore is 4.1 mm for 4 mm dowels.
+
+With 300 mm dowels the edge is 306.3 mm and the frame is 866 mm across.
+The .scad prints both for any dowel length.
+
+### Printing
+
+That shallow lean is the whole problem with the part. An arm rises
+0.39 mm for every 0.15 mm layer, which no perimeter can bridge, so each
+arm gets a 2 mm gusset filling the wedge between its underside and the
+bed, the same fix the great stellated dodecahedron hub uses. A 1.2 mm
+triangle on the bed joins the three gusset feet. The arm ends keep their
+square cut, and one shallow cut puts a flat on the three that touch the
+bed.
+
+PLA at 0.15 mm with a 15 mm brim: a vertex is 3.0 g and 32 min, ten on
+one plate are 27 g and 4 h 53 min. The set of twenty is about 60 g and
+10 hours, which is a fifth of what the great stellated dodecahedron
+costs.
+
+## 11. Small stellated dodecahedron
+
+The star passed over in section 9 is built after all. It is a dodecahedron
+with a pentagonal pyramid on each of its twelve faces. The OpenSCAD source
+is `platonic/ssd.scad`.
+
+Every edge is its own stake, as in the great stellated dodecahedron, and
+no stake passes through a connector.
+
+- `ssd_tip`, twelve of them, joins five ridge stakes at a star point.
+- `ssd_hub`, twenty of them, joins three core stakes and three ridge
+  stakes at a dodecahedron vertex.
+
+A ridge is phi times a core edge, the same ratio the great star has. The
+frame takes sixty ridge stakes and thirty core stakes, ninety in all.
+
+At a dodecahedron vertex a ridge carries straight on from the core edge it
+meets, so the hub is three straight lines crossing at a point rather than
+six separate arms. The two stakes of a line butt inside the hub. That is
+what lets one part hold six stake ends: every bore stops 4.3 mm short of
+the centre, so no two bores meet. The pass-through build in
+`archive/kepler-experiments.scad` uses the same fact the other way, running
+one skewer the whole length of an edge.
+
+With 4 mm stakes:
+
+| ridge stake | core stake | star across |
+| ----------- | ---------- | ----------- |
+| 280 mm      | 172.2 mm   | 900 mm      |
+| 140 mm      | 85.6 mm    | 470 mm      |
+| 93 mm       | 56.6 mm    | 325 mm      |
+
+### Printing
+
+Every arm of the hub leans only 20.9 degrees off the horizontal, below on
+the core side and above on the ridge side, so each one gets a 2 mm gusset
+down to the bed and a 1.2 mm hexagon joins the six feet. The gusset is cut
+off at the end face of its arm, because the shadow of an arm that shallow
+reaches further out than the arm does and would otherwise close over the
+socket.
+
+PLA at 0.15 mm with a 15 mm brim: a tip is 4.4 g and 48 min, a hub is
+5.9 g and 1 h 05. The full set is about 170 g and 31 hours.
+
+Print one of each first and check the fit with a stake.

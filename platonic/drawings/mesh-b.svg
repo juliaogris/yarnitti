@@ -130,8 +130,8 @@
 <rect x="2892" y="85" width="191" height="30" fill="#444"/>
 <text x="2860" y="114" text-anchor="end">hose clamp at 3.9 m</text>
 <line x1="2088" y1="4000" x2="3888" y2="4000" stroke="#888"/>
-<rect x="2880" y="33" width="215" height="587" fill="#f9d933" fill-opacity="0.5" stroke="none"/>
-<text x="3115" y="340">star core round the sleeve, 3.38 to 3.97 m, cable tied to the mesh</text>
+<rect x="2880" y="10" width="215" height="610" fill="#f9d933" fill-opacity="0.5" stroke="none"/>
+<text x="3115" y="329">star core round the sleeve, 3.38 to 3.99 m, cable tied to the mesh</text>
 <line x1="2900" y1="570" x2="3075" y2="570" stroke="#c00" stroke-width="4"/>
 <text x="3115" y="584" fill="#c00">skirt 1 ties to the mesh at 3.43 m</text>
 <text x="3105" y="584">skirt 1 strap on the post at 3.43 m</text>
