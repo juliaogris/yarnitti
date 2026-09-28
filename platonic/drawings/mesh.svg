@@ -120,12 +120,10 @@
 <line x1="0" y1="5250" x2="600" y2="5250" stroke="#bbb" stroke-width="1"/>
 <rect x="550" y="0" width="50" height="5300" fill="#ddd" fill-opacity="0.6" stroke="none"/>
 <text x="0" y="-40">the strip, flat: 60 cm wide x 530 cm long, 12 x 106 cells, cut along the roll on the wires</text>
-<line x1="-40" y1="3550" x2="640" y2="3550" stroke="#c00" stroke-width="3"/>
-<rect x="0" y="3500" width="600" height="50" fill="#f6c6c6" fill-opacity="0.7" stroke="none"/>
-<line x1="-40" y1="1800" x2="640" y2="1800" stroke="#c00" stroke-width="3"/>
-<rect x="0" y="1750" width="600" height="50" fill="#f6c6c6" fill-opacity="0.7" stroke="none"/>
+<line x1="-40" y1="2650" x2="640" y2="2650" stroke="#c00" stroke-width="3"/>
+<rect x="0" y="2600" width="600" height="50" fill="#f6c6c6" fill-opacity="0.7" stroke="none"/>
 <text x="0" y="5348.0">shaded 5 cm laps under the other edge, cable tie every 3rd cell</text>
-<text x="0" y="5404.0">3 storeys: 180 + 180 + 180 cm, red lines are the joins, one cell of lap each</text>
+<text x="0" y="5404.0">2 storeys: 270 + 265 cm, red lines are the joins, one cell of lap each</text>
 <circle cx="1500" cy="600" r="72.5" fill="#ddd"/>
 <circle cx="1500" cy="600" r="87.5"/>
 <circle cx="1588" cy="600" r="3" fill="#000"/>
@@ -143,16 +141,14 @@
 <text x="1500" y="747.5" text-anchor="middle">grey band is the lap</text>
 <rect x="2915" y="-1200" width="145" height="6500" fill="#ddd" stroke="#888"/>
 <rect x="2900" y="0" width="175" height="5300"/>
-<line x1="2892" y1="3550" x2="3083" y2="3550" stroke="#c00" stroke-width="3"/>
-<text x="2860" y="3564" text-anchor="end" fill="#c00">storey join at 1.75 m</text>
-<line x1="2892" y1="1800" x2="3083" y2="1800" stroke="#c00" stroke-width="3"/>
-<text x="2860" y="1814" text-anchor="end" fill="#c00">storey join at 3.50 m</text>
+<line x1="2892" y1="2650" x2="3083" y2="2650" stroke="#c00" stroke-width="3"/>
+<text x="2860" y="2664" text-anchor="end" fill="#c00">storey join at 2.65 m</text>
 <rect x="2892" y="5085" width="191" height="30" fill="#444"/>
 <text x="2860" y="5114" text-anchor="end">hose clamp at 0.2 m</text>
-<rect x="2892" y="3585" width="191" height="30" fill="#444"/>
-<text x="2860" y="3614" text-anchor="end">hose clamp at 1.7 m</text>
-<rect x="2892" y="1835" width="191" height="30" fill="#444"/>
-<text x="2860" y="1864" text-anchor="end">hose clamp at 3.5 m</text>
+<rect x="2892" y="3885" width="191" height="30" fill="#444"/>
+<text x="2860" y="3914" text-anchor="end">hose clamp at 1.4 m</text>
+<rect x="2892" y="2585" width="191" height="30" fill="#444"/>
+<text x="2860" y="2614" text-anchor="end">hose clamp at 2.7 m</text>
 <rect x="2892" y="85" width="191" height="30" fill="#444"/>
 <text x="2860" y="114" text-anchor="end">hose clamp at 5.2 m</text>
 <line x1="2088" y1="5300" x2="3888" y2="5300" stroke="#888"/>
@@ -173,6 +169,6 @@
 <line x1="2900" y1="2390" x2="3075" y2="2390" stroke="#c00" stroke-width="4"/>
 <text x="3115" y="2404" fill="#c00">skirt 5 ties to the mesh at 2.91 m</text>
 <text x="3105" y="2404">skirt 5 strap on the post at 2.91 m</text>
-<text x="2988" y="-1240" text-anchor="middle">from the side: sleeve to 5.30 m in 3 storeys, standing on the ground, post to 6.5 m</text>
+<text x="2988" y="-1240" text-anchor="middle">from the side: sleeve to 5.30 m in 2 storeys, standing on the ground, post to 6.5 m</text>
 </g>
 </svg>

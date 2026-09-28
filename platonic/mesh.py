@@ -1,6 +1,6 @@
 """Sketch the mesh tube that carries the skirts' weight to the ground.
 
-Strips of 50 x 50 mm galvanised welded mesh are wrapped tight round the lamp
+Strips of 50 x 25 mm galvanised welded mesh, 2 mm wire, are wrapped round the lamp
 post as a sleeve, one storey on top of the next with a cell of lap, and stood
 on the ground. Pool noodle battens run up the post under it so the mesh never
 touches the paint. The skirts and the star tie to the mesh instead of to the bare
@@ -26,12 +26,12 @@ import skirts
 TUBE_D = skirts.POST_D + 30
 CELL = 50  # mm, mesh pitch
 OVERLAP = 50  # mm, one cell of lap where the strip's ends meet
-TIER_H = 3 * 1800 - 2 * 50  # mm, three full storeys lapped by a cell
+TIER_H = 5300  # mm, sleeve height: two cut lengths lapped by a cell
 TIER_H_B = 4000  # mm, plan B: enough to carry the star at its lower height
-STOREY = 1800  # mm, the longest piece the mesh comes in; the sleeve stacks these
+STOREY = 2700  # mm, one cut length; the roll is 8 m so this is a free choice
 JOIN = 50  # mm, one cell of lap between storeys
 # Hose clamps over the mesh, mm above ground, one near each join.
-CLAMPS = [200, 1700, 3450, 5200]
+CLAMPS = [200, 1400, 2700, 5200]
 CLAMPS_B = [200, 1700, 2900, 3900]
 
 FONT = 40

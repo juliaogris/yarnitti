@@ -350,9 +350,9 @@ them empty. They are 25 mm stubs on a 145 cm star, the hub's strength is in the
 arms that are used, and printing reduced variants would turn one part into
 four or five at nearly three hours each.
 
-Mesh sleeve: 50 x 50 mm galvanised welded mesh, 2.5 mm wire, a 60 cm wide
-strip wrapped on the post, three storeys of 180 cm lapped a cell, to 5.30 m,
-standing on the ground. The strip laps 5 cm at the seam, so the wrapped
+Mesh sleeve: 50 x 25 mm galvanised welded mesh, 2 mm wire, a 60 cm wide strip
+wrapped on the post, two cut lengths of 2.70 and 2.65 m lapped a cell, to
+5.30 m, standing on the ground. The strip laps 5 cm at the seam, so the wrapped
 circumference is 55 cm and the sleeve is 17.5 cm across on the 14.5 cm post.
 That leaves 15 mm all round. Skirts and star cable-tie to the mesh.
 
@@ -458,6 +458,12 @@ and within reach of a tall person.
 
 ## Sources
 
+- Jack 60 cm x 8 m cage mesh, 50 x 25 mm, 2 mm galvanised, $84.98 at Bunnings.
+  The 60 cm is exactly the strip width, so nothing is slit lengthwise:
+  https://www.bunnings.com.au/jack-60cm-x-8m-50-x-25mm-heavy-duty-cage-mesh_p3040240
+- Jack 30 cm x 5 mm bamboo flower stakes, 50 pack, $3.65 at Bunnings. The core
+  stakes, at the right length already:
+  https://www.bunnings.com.au/jack-30cm-x-5mm-bamboo-flower-stakes-50-pack_p0188977
 - Hose clamp, Kinetic 159-181 mm:
   https://www.bunnings.com.au/kinetic-159-181mm-304-stainless-steel-hose-clamp_p0110748
 - Fibreglass tent pole kit, two 4.9 m poles of nine 57.7 cm segments, about
