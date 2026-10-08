@@ -354,3 +354,157 @@ PLA at 0.15 mm with a 15 mm brim: a tip is 4.4 g and 48 min, a hub is
 5.9 g and 1 h 05. The full set is about 170 g and 31 hours.
 
 Print one of each first and check the fit with a stake.
+
+## 12. Icosahedron frame
+
+The plain icosahedron, the core of the great stellated dodecahedron with no
+points on it: twenty triangles, thirty edges and twelve vertices. Every edge
+is its own dowel, and the frame needs one printed part, twelve
+`icosa_vertex`. The OpenSCAD source is `platonic/icosa.scad`.
+
+Five edges meet at a vertex, 60 degrees apart. With the outward direction
+on +z all five arms lean 31.7 degrees below the horizontal, the same as the
+core arms of the great stellated dodecahedron hub. A dowel end stops 5.1 mm
+short of the vertex and the socket is 14 mm deep. The bore is 4.1 mm for
+4 mm dowels.
+
+With 300 mm dowels the edge is 310.2 mm and the frame is 597 mm across. The
+.scad prints both for any dowel length.
+
+The part prints the way the dodecahedron vertex does: standing on its five
+arm ends, a 2 mm gusset under each arm and a 1.2 mm pentagon on the bed
+joining the five feet.
+
+## 13. Great dodecahedron
+
+The fourth Kepler solid, after the two stellated dodecahedra. It is twelve
+pentagons passing through each other, and what the eye sees is an
+icosahedron with a triangular dimple pressed into each of its twenty faces.
+The frame builds that visible surface, so the crochet has sixty triangles to
+cover, the same count as the two stars. The OpenSCAD source is
+`platonic/gd.scad`.
+
+- `gd_hub`, twelve of them, joins five ridge stakes and five valley stakes
+  at an icosahedron vertex.
+- `dodeca_vertex`, twenty of them, joins three valley stakes at the bottom
+  of a dimple.
+
+The ridges are the thirty edges of the icosahedron. A valley runs from a
+vertex down to the bottom of a dimple, and a ridge is phi times a valley.
+The twenty dimple bottoms are the vertices of a dodecahedron, and the three
+valleys leave each one 108 degrees apart and 20.9 degrees off its tangent
+plane. That is exactly the dodecahedron vertex, rising outward instead of
+falling, so the part from section 10 serves unchanged. Its gussets and
+triangle then face out of the dimple, under the crochet.
+
+With 4 mm stakes and 300 mm ridges the valleys are cut to 184.2 mm and the
+frame is 609 mm across. The frame takes thirty ridge stakes and sixty valley
+stakes.
+
+All ten arms of the hub run down. The valleys are the steepest, 58.3 degrees
+below the horizontal, so the part stands on their ends with every valley
+bore opening into the bed, as on the star tips. The ridges end higher up and
+each gets a 2 mm gusset down to the bed, inside the solid where the crochet
+does not reach. A 1.2 mm decagon joins the ten feet.
+
+Print one hub first and check the fit with a stake.
+
+## 14. Great icosahedron
+
+The last Kepler solid: twenty large triangles passing through each other.
+What the eye sees is twelve fluted points, 180 small triangles meeting at 92
+corners along 270 creases, which is why section 2 called it too many faces
+for wool. The frame builds that visible surface anyway. `platonic/gi.py`
+works the surface out and writes `gi_geom.scad`, and `platonic/gi.scad`
+prints the parts and a model of the whole, `gi_model`.
+
+- `gi_tip`, twelve of them, joins ten stakes at a point.
+- `gi_hub`, twenty of them, joins twelve stakes where three points meet.
+- `gi_corner`, sixty of them, joins three stakes at the bottom of a flute.
+
+There are four stake lengths. With 4 mm stakes and the longest at 300 mm:
+
+| stakes | cut      | joins         |
+| ------ | -------- | ------------- |
+| 60     | 300 mm   | tip to corner |
+| 60     | 285.1 mm | tip to hub    |
+| 30     | 171.8 mm | hub to hub    |
+| 120    | 107.6 mm | hub to corner |
+
+The frame is 979 mm across. The first two lengths are only 15 mm apart, so
+mark them before building.
+
+Ten stakes leave a tip as close as 15.5 degrees apart, so a stake end stops
+18.9 mm short of the point. The tip stands on its ten arm ends like the star
+tips. The hub stands on its six steep arms, and its six shallow arms each get
+a gusset into the solid. The corner prints upside down on its three arms.
+
+Not printed yet. Print one of each first and check the fit with a stake.
+
+## 15. 5 mm parts
+
+Every connector file takes `-D bore_d=5.1 -D wall=1.8` for 5 mm stakes, the
+fit the great stellated dodecahedron parts use. The gaps grow with the bore,
+so the echo gives slightly different stake lengths.
+
+## 16. Yarn holes and open bases
+
+The icosahedron vertex, the great dodecahedron hub and the great icosahedron
+hub stand on gussets, and their bases were filled plates. A plate only has to
+tie the feet together on the bed, so each one is now a 2.4 mm outline, a
+pentagon on the icosahedron vertex and a ring on the two hubs, and the middle
+is open. Every gusset also has a yarn hole just under its arm, so the
+crochet can be tied round the arm next to the corner. The hole is a triangle
+3 mm tall with its point up, so its upper sides lean 60 degrees and print
+without bridging, where a round hole would sag at the top. On the
+icosahedron vertex the hole sits as close to the centre as the gusset
+allows. On the two hubs the steep arms crowd the centre beside each gusset,
+so their holes sit halfway out along the gussets. The shared code
+is `platonic/yarn.scad`.
+
+The other hubs keep their plates for now. The dodecahedron vertex has
+gussets too short for a hole. The small stellated dodecahedron hub has room
+for one under each of its three upward arms, and the great stellated
+dodecahedron hub under each of its five, but neither has them yet.
+
+## 17. Octahedron and cube frames
+
+The last two Platonic solids, each a frame of twelve 4 mm dowels and one
+printed vertex. Both use `platonic/vertex.scad`, which is the icosahedron
+vertex with the number of arms and their lean left open, so they carry the
+same outline base and yarn holes.
+
+- `octa_vertex`, six of them, from `platonic/octa.scad`. Four arms 45 degrees
+  below the horizontal. With 300 mm dowels the edge is 310.2 mm and the frame
+  is 446 mm across.
+- `cube_vertex`, eight of them, from `platonic/cube.scad`. Three arms 35.3
+  degrees below the horizontal, 90 degrees apart. With 300 mm dowels the edge
+  is 307.2 mm and the frame is 539 mm corner to corner. Its gussets are
+  short, so the yarn holes keep 1.0 mm of material either side, not 1.2.
+
+The outline corners sit 11 and 12 mm out. Further out they land inside the
+socket mouths and the bore cuts them off the gussets.
+
+PLA at 0.15 mm with a 15 mm brim: all six octahedron vertices are 20.5 g and
+4 h 05 min on one plate, all eight cube vertices 20.7 g and 3 h 54 min.
+
+For 6 mm dowels both take `-D bore_d=6.1 -D wall=2.0`. The gussets do not
+grow with the bore, so the yarn holes need less material round them: the
+octahedron adds `-D rim=1.0`, and the cube `-D yarn_d=2.5 -D rim=0.8`. With
+300 mm dowels the octahedron is 454 mm across and the cube 547 mm. Each set
+is one plate: 34.4 g and 6 h 31 min for the octahedron, 34.4 g and 6 h 29 min
+for the cube.
+
+The octahedron and cube vertices later moved to the star-tip style, from
+`tip_vertex` in `vertex.scad`: the arms run down past one cut through their
+end centres and every bore opens into the bed. Nothing holds the centre up
+but the arms, as on the star tips. The octahedron's arms lean 45 degrees and
+the cube's 35.3, the shallowest so far.
+
+## 18. Tetrahedron
+
+`tetra_vertex`, four of them, from `platonic/tetra.scad`, printed the same
+way. Three arms leave each vertex 54.7 degrees below the horizontal, 60
+degrees apart. For 6 mm dowels it takes `-D bore_d=6.1 -D wall=2.0`, and with
+300 mm dowels the edge is 314.2 mm and the frame stands 267 mm tall. All four
+are one plate: 16.6 g and 3 h 16 min.

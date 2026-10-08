@@ -1,21 +1,23 @@
-// Dodeca: the vertex connector for a dowel dodecahedron.
+// Icosa: the vertex connector for a dowel icosahedron.
 //
-// A dodecahedron has twenty vertices and thirty edges. Three edges meet at
-// every vertex, 108 degrees apart, the interior angle of the pentagon they
+// An icosahedron has twelve vertices and thirty edges. Five edges meet at
+// every vertex, 60 degrees apart, the corner angle of the triangles they
 // bound. Every edge is its own dowel, and no dowel passes through a
 // connector, so the frame is one printed part:
 //
-//   dodeca_vertex  x20  joins three dowel ends at a vertex
+//   icosa_vertex  x12  joins five dowel ends at a vertex
 //
-// With 300 mm dowels the edge is 306.3 mm and the frame is 866 mm across.
+// With 300 mm dowels the edge is 310.2 mm and the frame is 597 mm across.
 // The echo below the constants prints both for any dowel_len.
 //
 // Render:
-//   openscad -o dodeca_vertex.stl -D 'part="dodeca_vertex"' dodeca.scad
+//   openscad -o icosa_vertex.stl -D 'part="icosa_vertex"' icosa.scad
 //
 // For 5 mm stakes add -D bore_d=5.1 -D wall=1.8.
 
-part = "dodeca_vertex"; // [dodeca_vertex]
+use <yarn.scad>
+
+part = "icosa_vertex"; // [icosa_vertex]
 
 // --- dowel and fit --------------------------------------------------------
 
@@ -28,8 +30,10 @@ dowel_len = 300;   // length of one dowel, mm
 // --- gusset and base ------------------------------------------------------
 
 fin_t  = 2.0;   // thickness of the gusset under an arm, mm
-tri_r  = 14;    // corner radius of the triangle joining the gusset feet, mm
-tri_t  = 1.2;   // thickness of that triangle, mm
+pent_r = 17;    // corner radius of the pentagon joining the gusset feet, mm
+pent_t = 1.2;   // thickness of that pentagon, mm
+band   = 2.4;   // width of the pentagon outline, mm
+yarn_d = 3.0;   // yarn hole through each gusset, mm
 
 // --- resolution -----------------------------------------------------------
 
@@ -40,33 +44,35 @@ $fn = 48;
 phi   = (1 + sqrt(5)) / 2;
 outer = bore_d + 2 * wall;
 
-// The three arms leave the vertex atan(1/phi^2) below the horizontal, 120
-// degrees apart in azimuth, which puts 108 degrees between any two of them.
-lean = atan(1 / (phi * phi));
-dirs = [for (i = [0 : 2]) let(a = 120 * i)
+// The five arms leave the vertex atan(1/phi) below the horizontal, 72 degrees
+// apart in azimuth, which puts 60 degrees between neighbouring arms.
+lean = atan(1 / phi);
+dirs = [for (i = [0 : 4]) let(a = 72 * i)
           [cos(lean) * cos(a), cos(lean) * sin(a), -sin(lean)]];
 
-// Two neighbouring bores are 108 degrees apart, so each one leans 54 degrees
+// Two neighbouring bores are 60 degrees apart, so each one leans 30 degrees
 // off the line between them. Their walls clear each other only this far out
 // from the vertex, and a dowel end stops there.
-gap  = (bore_d + web) / (2 * sin(54));
+gap  = (bore_d + web) / (2 * sin(30));
 edge = dowel_len + 2 * gap;
-echo(dowel_len = dowel_len, edge = edge, span = sqrt(3) * phi * edge + outer);
+
+// Opposite vertices of an icosahedron are sqrt(phi + 2) edges apart.
+echo(dowel_len = dowel_len, edge = edge, span = sqrt(phi + 2) * edge + outer);
 
 // Rotate a child so its +z axis lies along v.
 module along(v) {
     rotate([0, acos(v[2] / norm(v)), atan2(v[1], v[0])]) children();
 }
 
-// A vertex, with the outward direction from the frame centre on +z. Three
+// A vertex, with the outward direction from the frame centre on +z. Five
 // arms run down and out, and the part stands on their ends.
 //
-// The arms lean only 21 degrees below the horizontal, so a cut through their
-// end centres would slice them lengthwise. Each arm keeps a square end
-// instead, and one shallow cut puts a small flat on the three that touch the
-// bed. At that lean an arm also rises 0.39 mm for every 0.15 mm layer, which
-// no perimeter can bridge, so each one gets a gusset.
-module dodeca_vertex() {
+// The arms lean 32 degrees below the horizontal, so a cut through their end
+// centres would slice them lengthwise. Each arm keeps a square end instead,
+// and one shallow cut puts a small flat on the five that touch the bed. Each
+// arm also gets a gusset, as on the dodecahedron vertex, so its underside
+// does not print into air.
+module icosa_vertex() {
     reach = gap + socket;
     low   = -reach * sin(lean) - outer / 2 * cos(lean);
     difference() {
@@ -74,15 +80,9 @@ module dodeca_vertex() {
             sphere(d = outer);
             for (d = dirs) along(d) cylinder(d = outer, h = reach);
             // A gusset under each arm, running the full length of the arm and
-            // flat on the bed. It fills the wedge between the underside of
-            // the arm and the bed, which is where the arm would otherwise
-            // print into air.
-            //
-            // The shadow of an arm this shallow reaches further out than the
-            // arm does, so the hull below closes over the end face and the
-            // socket with it. The third solid cuts the gusset off at that
-            // face and leaves the mouth clear.
-            for (i = [0 : 2]) let(a = 120 * i)
+            // flat on the bed. The third solid cuts it off at the end face of
+            // the arm, so the gusset does not close over the socket.
+            for (i = [0 : 4]) let(a = 72 * i)
                 intersection() {
                     hull() {
                         along(dirs[i]) cylinder(d = outer, h = reach);
@@ -96,15 +96,17 @@ module dodeca_vertex() {
                     along(dirs[i]) translate([0, 0, -2 * reach])
                         cylinder(d = 4 * reach, h = 3 * reach);
                 }
-            // A thin triangle on the bed joining the three gusset feet, so no
-            // foot stands alone. Its corners are on the gussets, and tri_r
-            // keeps it inside the socket mouths, clear of the dowels.
-            translate([0, 0, low + 0.6]) cylinder(r = tri_r, h = tri_t, $fn = 3);
+            // A thin pentagon outline on the bed joining the five gusset
+            // feet, so no foot stands alone. Its corners are on the gussets,
+            // and pent_r keeps it inside the socket mouths, clear of the
+            // dowels. The middle stays open for the yarn.
+            translate([0, 0, low + 0.6]) outline(pent_r, band, pent_t, 5);
         }
         for (d = dirs) along(d)
             translate([0, 0, gap]) cylinder(d = bore_d, h = socket + 1);
+        for (d = dirs) yarn_hole(d, low + 0.6, outer, fin_t, yarn_d);
         translate([0, 0, low + 0.6 - 50]) cube(100, center = true);
     }
 }
 
-if (part == "dodeca_vertex") dodeca_vertex();
+if (part == "icosa_vertex") icosa_vertex();
