@@ -113,7 +113,7 @@ def main():
         f'<path d="M {cx + TUBE_D / 2 + 12:.0f} {cy:.0f} A {TUBE_D / 2 + 12} {TUBE_D / 2 + 12} 0 0 1 {cx + (TUBE_D / 2 + 12) * math.cos(lap):.0f} {cy + (TUBE_D / 2 + 12) * math.sin(lap):.0f}" stroke="#888" stroke-width="6"/>'
     )
     out.append(
-        f'<text x="{cx}" y="{cy - TUBE_D / 2 - FONT}" text-anchor="middle">from above: sleeve {TUBE_D / 10:.0f} cm across on the {skirts.POST_D / 10:.1f} cm post</text>'
+        f'<text x="{cx}" y="{cy - TUBE_D / 2 - FONT}" text-anchor="middle">from above: sleeve {TUBE_D / 10:.1f} cm across on the {skirts.POST_D / 10:.1f} cm post</text>'
     )
     out.append(
         f'<text x="{cx}" y="{cy + TUBE_D / 2 + FONT * 1.5}" text-anchor="middle">grey band is the lap</text>'
@@ -151,7 +151,7 @@ def main():
         f'<line x1="{sx - 900:.0f}" y1="{ground}" x2="{sx + 900:.0f}" y2="{ground}" stroke="#888"/>'
     )
     # The star's core sits round the sleeve above the top strap and ties to the mesh.
-    core = 0.4195 * skirts.STAR_SPAN / 2
+    core = skirts.STAR_R
     z0, z1 = (
         skirts.HOOP_Z[0] + skirts.STAR_LIFT,
         skirts.HOOP_Z[0] + skirts.STAR_LIFT + 2 * core,
@@ -187,7 +187,7 @@ def main():
     )
     (OUT / f"mesh{suffix}.svg").write_text(svg + "\n".join(out) + "\n")
     print(
-        f"sleeve {TUBE_D / 10:.0f} cm across, {width / 10:.0f} cm wide strip, {cells_w} cells round, {tier_h / 10:.0f} cm tall"
+        f"sleeve {TUBE_D / 10:.1f} cm across, {width / 10:.0f} cm wide strip, {cells_w} cells round, {tier_h / 10:.0f} cm tall"
     )
     print(
         f"storeys: {' + '.join(f'{p / 10:.0f}' for p in storeys)} cm, joins at {', '.join(f'{z / 1000:.2f}' for z in joins)} m"

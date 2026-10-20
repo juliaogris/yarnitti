@@ -111,7 +111,7 @@
 <circle cx="1527" cy="517" r="3" fill="#000"/>
 <circle cx="1571" cy="549" r="3" fill="#000"/>
 <path d="M 1600 600 A 99.5 99.5 0 0 1 1584 654" stroke="#888" stroke-width="6"/>
-<text x="1500" y="472.5" text-anchor="middle">from above: sleeve 18 cm across on the 14.5 cm post</text>
+<text x="1500" y="472.5" text-anchor="middle">from above: sleeve 17.5 cm across on the 14.5 cm post</text>
 <text x="1500" y="747.5" text-anchor="middle">grey band is the lap</text>
 <rect x="2915" y="-2500" width="145" height="6500" fill="#ddd" stroke="#888"/>
 <rect x="2900" y="0" width="175" height="4000"/>

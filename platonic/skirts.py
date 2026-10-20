@@ -65,7 +65,8 @@ STAR_SPAN = 1455  # star, point to opposite point, mm; 490 mm ridge stakes in
 # means the core reaches down past the strap, so the top skirt's peak stands
 # inside the star instead of leaving bare post between them.
 STAR_LIFT = -50
-STAR_CORE = 0.4195 * STAR_SPAN / 2 + STAR_LIFT  # centre height above the top strap
+STAR_R = 0.4195 * STAR_SPAN / 2  # radius of the star's core, mm
+STAR_CORE = STAR_R + STAR_LIFT  # centre height above the top strap
 # Low-stretch cords, straight up the slant from the hem ring to the strap,
 # laced through the squares on the way. One cord per CORD_EVERY hem squares,
 # so 4 / 5 / 6 / 7 / 8 cords for skirts 1 to 5. Hem counts are even, so the
@@ -526,11 +527,13 @@ def write_section():
         (
             -30,
             -HOOP_Z[0] - FONT * 1.2,
-            f"strap at {HOOP_Z[0] / 1000:.2f} m: star hangs {STAR_LIFT / 10:.0f} cm above it",
+            f"strap at {HOOP_Z[0] / 1000:.2f} m: star's core reaches {-STAR_LIFT / 10:.0f} cm below it"
+            if STAR_LIFT < 0
+            else f"strap at {HOOP_Z[0] / 1000:.2f} m: star's core starts {STAR_LIFT / 10:.0f} cm above it",
             "end",
         )
     )
-    out.append(f'<circle cx="0" cy="{-zc:.0f}" r="{STAR_CORE:.0f}" stroke="#c9a400"/>')
+    out.append(f'<circle cx="0" cy="{-zc:.0f}" r="{STAR_R:.0f}" stroke="#c9a400"/>')
     out.append(
         f'<circle cx="0" cy="{-zc:.0f}" r="{STAR_SPAN / 2:.0f}" stroke="#c9a400" stroke-dasharray="15 15"/>'
     )

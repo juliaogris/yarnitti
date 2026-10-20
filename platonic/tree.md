@@ -3,8 +3,9 @@
 A plan for yarn bombing the lamp post on the Edithvale foreshore as a
 Christmas tree: five cone skirts of crocheted granny squares, and a
 crocheted star on top. This file has the granny square sizes and how they
-stitch together, the flat pattern for every skirt, and the plan for mounting
-the whole thing on the post.
+stitch together, the flat pattern for every skirt, the star and the mesh
+sleeve it stands on, the plan for mounting the whole thing on the post, and
+plan B if the squares run short.
 
 <img src="photos/xmas-tree-inspiration.jpg" alt="A lamp post in an Italian square dressed as a Christmas tree in crocheted granny squares, with a star on top" width="340">
 
@@ -27,10 +28,10 @@ GitHub renders it as an interactive 3D view.
 Lamp post: steel, 14.5 cm across (45 cm circumference, from an old note and
 the street view), at least 7 m tall. A 6.5 m post is drawn.
 
-Five cone skirts of granny squares, every skirt's fabric running to the post,
-no inner hoops. Hem rings of fibreglass tent pole and hula hoop, see below.
-Bottom hem 54 cm off the ground
-because of the shrubs round the post.
+Five cone skirts of granny squares, every skirt's fabric running to the
+mesh sleeve on the post, no inner hoops. Hem rings of fibreglass tent pole
+and hula hoop, see below. Bottom hem 54 cm off the ground because of the
+shrubs round the post.
 
 | skirt | strap on post | hem ring | hem height | hem square | squares |
 | ----- | ------------- | -------- | ---------- | ---------- | ------- |
@@ -134,19 +135,25 @@ forced shut.
 | 4     | 195 cm   | 97.5 cm  | 6.13 m        | fibreglass tent pole     | 11       | 14 cm short |
 | 5     | 275 cm   | 137.5 cm | 8.64 m        | fibreglass tent pole     | 16       | 6 cm over   |
 
-The pole segments add 54.4 cm each, so no ring comes out exact. It does not
-matter. The crochet sets the circle and the rod only fills it; a few
-centimetres either way disappears into the stitches.
+A segment is 57.7 cm long and adds 54.4 cm to a chain, because each one sits
+3.3 cm inside its neighbour's ferrule. No ring comes out exact at 54.4 cm a
+step. It does not matter. The crochet sets the circle and the rod only fills
+it, and a few centimetres either way disappears into the stitches. Skirt 4's
+ring is the 14 cm short one, and it is at 1.77 m, the hem most within reach,
+so a twelfth segment there is an option, at the cost of putting that ring
+40 cm over.
 
-| item                                                  | quantity | cost |
-| ----------------------------------------------------- | -------- | ---- |
-| Fibreglass pole kit, two 4.9 m poles of nine segments | 2 packs  | $66  |
-| Fibreglass pole kit, spare                            | 1 pack   | $33  |
-| 38 mm polyester webbing for the hem sleeves           | 21 m     | $42  |
-| 3 mm shock cord                                       | 25 m     | $35  |
+| item                                                  | quantity | cost     |
+| ----------------------------------------------------- | -------- | -------- |
+| Fibreglass pole kit, two 4.9 m poles of nine segments | 2 packs  | $66      |
+| Fibreglass pole kit, spare                            | 1 pack   | $33      |
+| 50 mm polyester webbing for the hem sleeves           | 21 m     | to price |
+| 3 mm shock cord                                       | 25 m     | $35      |
 
-About $176 and 2.6 kg for all five rings. One pack is not enough on its own:
-two poles is 9.8 m against the 19.2 m the three big rings need.
+About $134 for the poles and the cord, and 2.6 kg for all five rings. The
+webbing went from 38 mm to 50 mm and is not priced yet. One pack of poles is
+not enough on its own: two poles is 9.8 m against the 19.2 m the three big
+rings need.
 
 Two packs cover it with one segment spare out of thirty-six, which is thin
 enough that one damaged in transit leaves a ring that will not close. The third
@@ -187,8 +194,8 @@ They are the right place to spend the least. Skirts 1 and 2 sit at 4.01 m and
 3.38 m where no hand reaches, and they are the least flexed of the five: four
 cords on a 2.2 m ring gives 55 cm spans against skirt 5's 108 cm, and bending
 moment goes with span squared. Hoop tubing is roughly a fifth as stiff as the
-aluminium tube it replaces, which does not matter on a ring already the shape
-it wants to be and carrying almost nothing.
+10 mm aluminium tube that was the alternative, which does not matter on a
+ring already the shape it wants to be and holding almost nothing.
 
 Ready-made craft and lampshade hoops were the other candidate and fail the
 constraint the hula hoops meet: they come welded shut, so each would have to be
@@ -219,26 +226,31 @@ ring line runs through the side corners where squares meet, with the lower
 halves hanging below as the zigzag.
 
 **Skirts 3, 4 and 5 get a sewn sleeve.** A crocheted loop puts a pull into one
-square junction; a sleeve spreads it along the whole ring and stops the rod
-chafing the yarn. Skirt 5's hem is at 54 cm and skirt 4's at 1.77 m, both within
-reach on a public foreshore, and skirt 3 takes one too for the extra support.
+square junction. A sleeve spreads it along the whole ring and stops the rod
+chafing the yarn. Skirts 4 and 5 are the two hems within reach, and skirt 3
+takes one too for the extra support.
 
-Use 38 mm polyester webbing, the seatbelt kind, folded lengthwise and
+Use 50 mm polyester webbing, the seatbelt kind, folded lengthwise and
 machine-sewn into a tube. It does not rot or hold water, which rules out canvas,
 denim and cotton tape over a wet month. It is the strongest thing per gram that
-will go under a domestic machine, and it does not fray. Folded it gives about a
-17 mm channel, which clears the 11 mm rod and the ferrules bulging past it;
-25 mm would be too tight. Avoid ripstop nylon, which tears along a stitch line
-exactly where a child pulls. About 21 m covers the three rings with overlaps.
+will go under a domestic machine, and it does not fray.
 
-A straight tube is right; no shaping and no curved cutting. Bending a 17 mm tube
-into a ring means the outside travels further than the inside by the tube
-diameter over the ring radius, which is 2.4 percent on skirt 3, 1.7 on skirt 4
-and 1.2 on skirt 5. Webbing has more give than that in its weave. It would only
-start to ruck below about a 40 cm radius, or on a much fatter sleeve. The one
-mistake to avoid is laying the webbing flat in the plane of the ring, width
-pointing outward, which would need a curved strip. The width wraps around the
-rod; the length runs around the ring.
+Fifty is the width. 38 mm was the first answer and it was wrong. A folded
+tube passes a rod of twice its flat width over pi, not a rod as fat as the
+flat width itself. Folded 38 mm gives about 17 mm flat, which is a 10.8 mm
+bore, under the 11 mm rod and well under the ferrules bulging past it.
+Folded 50 mm gives about 23 mm flat, a 14.6 mm bore, which clears both.
+Avoid ripstop nylon, which tears along a stitch line exactly where a child
+pulls. About 21 m covers the three rings with overlaps.
+
+A straight tube is right, with no shaping and no curved cutting. Bending a
+23 mm tube into a ring means the outside travels further than the inside by
+the tube diameter over the ring radius, which is 3.3 percent on skirt 3, 2.4
+on skirt 4 and 1.7 on skirt 5. Webbing has more give than that in its weave.
+It would only start to ruck below about a 40 cm radius. The one mistake to
+avoid is laying the webbing flat in the plane of the ring, width pointing
+outward, which would need a curved strip. The width wraps around the rod,
+and the length runs around the ring.
 
 Order of work. Sew the long seam into an open-ended tube, stitch that to the
 crochet hem, then feed the rod through and close the rod ring last. Sewing the
@@ -273,8 +285,8 @@ a child hanging on a hem would do. Shock cord is what stops that, and it is what
 the cord does in a tent: thread one length through all the segments of a ring,
 pull it tight and tie it into a loop, and every joint is held home for good.
 
-About 20 m of 3 mm cord covers the three pole rings, a few dollars a metre from
-Bunnings or Clark Rubber, or marine grade from a specialist. Buy 25 m. Three
+About 20 m of 3 mm cord covers the three pole rings, around $1.40 a metre
+from Bunnings or Clark Rubber, or marine grade from a specialist. Buy 25 m. Three
 millimetre is the size: it passes the 8 mm bore easily, thinner will not hold
 the joints home and thicker fights the ferrules. If the poles arrive already
 corded there is 19.6 m in the packs and the job is re-threading it into three
@@ -285,8 +297,9 @@ silicone tape is the one to use: it fuses to itself with no adhesive, so nothing
 goes gooey in the heat, nothing leaves residue in the yarn, and it unwraps
 cleanly in January. Gaffer tape second. Duct tape holds mechanically because you
 are wrapping rather than sticking, and it lives inside the sleeve out of the
-sun, but its adhesive will still go soft. Thirty-odd joints on skirt 5 makes
-taping tedious, which is the argument for doing the cord first.
+sun, but its adhesive will still go soft. Sixteen joints on skirt 5 and
+thirty-five across the three rings make taping tedious, which is the
+argument for doing the cord first.
 
 #### Joining
 
@@ -319,14 +332,15 @@ measurement.
 
 A great stellated dodecahedron, 145.5 cm across, edge up with the post through
 it. The two spikes straight up, the two straight down, and the two core struts
-that would cross the post are left off. The core runs from 4.61 to 5.20 m,
-centred at 4.90 m. It reaches 5 cm below the top strap, so skirt 1's peak
+that would cross the post are left off. The core runs from 4.61 to 5.22 m,
+centred at 4.92 m. It reaches 5 cm below the top strap, so skirt 1's peak
 stands inside the star and no bare post shows between them. That is
 `STAR_LIFT` in `skirts.py`, now minus 50 mm.
 
 The frame is 5 mm dowel in printed hubs and tips, which have a 5.1 mm bore.
 `platonic/kepler.scad` is the model and prints the core length for any ridge
-length.
+length. The crochet ties to the frame through the yarn holes in the hubs and
+tips, so the star is covered rather than bare.
 
 |              | cut    | full star | tree's star |
 | ------------ | ------ | --------- | ----------- |
@@ -338,13 +352,14 @@ length.
 The cut lengths are not themselves in the golden ratio. The ratio holds centre
 to centre, and a stake stops 18.8 mm short of a tip's centre but only 10.6 mm
 short of a hub's centre. A ridge has one of each and a core edge has two hubs,
-so the ridge measures 519.4 mm centre to centre and the core 321.1 mm, which is
+so the ridge measures 519.4 mm centre to centre and the core 321.0 mm, which is
 1.618. The cut pieces come out at 1.63.
 
-Julia has 5 mm dowel precut at 500 mm and 300 mm. The 300 mm are core stakes
-untouched; the 500 mm want 10 mm off each. That is all the cutting.
+Julia has 5 mm dowel precut at 500 mm and 300 mm. The frame takes 48 of the
+500 mm and 28 of the 300 mm. The 300 mm are core stakes untouched, and the
+500 mm want 10 mm off each. That is all the cutting.
 
-Leaving spikes and struts off leaves about sixteen unused arms on the hubs,
+Leaving spikes and struts off leaves sixteen unused arms on the hubs,
 twelve where the spikes are missing and four where the core struts are. Leave
 them empty. They are 25 mm stubs on a 145 cm star, the hub's strength is in the
 arms that are used, and printing reduced variants would turn one part into
@@ -354,52 +369,85 @@ Mesh sleeve: 50 x 25 mm galvanised welded mesh, 2 mm wire, a 60 cm wide strip
 wrapped on the post, two cut lengths of 2.70 and 2.65 m lapped a cell, to
 5.30 m, standing on the ground. The strip laps 5 cm at the seam, so the wrapped
 circumference is 55 cm and the sleeve is 17.5 cm across on the 14.5 cm post.
-That leaves 15 mm all round. Skirts and star cable-tie to the mesh.
+That leaves 15 mm all round. Skirts and star cable-tie to the mesh. The
+sleeve stands on a paver or an offcut of board, not straight on the soil,
+because fifty kilograms on twelve 2 mm wire ends sinks into sand.
 
-Four hose clamps hold the sleeve to the post, at 0.2, 1.7, 3.45 and 5.2 m:
+Four hose clamps hold the sleeve to the post, at 0.2, 1.4, 2.7 and 5.2 m:
 Kinetic 159-181 mm, 304 stainless, $6.75 each at Bunnings, so about $27. That
 range takes the 17.5 cm sleeve with 16 mm of adjustment still in hand, which
-is what pulls the sleeve tight as the noodle battens compress. The top clamp
-goes on snug before the hoist so the sleeve can slide up.
+is what pulls the sleeve tight as the noodle battens compress. The clamp at
+5.2 m goes on before the sleeve is drawn up to its full height, because
+nothing reaches it afterwards.
 
 Cushioning: pool noodles cut lengthwise into battens about 20 mm square, six
-of them up the post, one every 7.6 cm round it. Slit a noodle once and unroll
-it flat, then cut the battens off the slab; that yields far more length than
-splitting it into halves. Each batten compresses from 20 mm into the 15 mm
-gap, so the sleeve grips rather than rattles and the mesh never touches the
-paint.
+of them up the post, one every 7.6 cm round the post's own circumference.
+Slit a noodle once and unroll it flat, then cut the battens off the slab.
+That yields far more length than splitting it into halves. Each batten
+compresses from 20 mm into the 15 mm gap, so the sleeve grips rather than
+rattles and the mesh never touches the paint.
 
-Cutting: three 60 cm strips come out of each 1.8 m length. Cut beside a wire,
-not through one, snipping the crossing wires right next to the wire on the cut
-line. That wire stays whole on one piece and the other piece gets a bare edge,
-which is what a lap wants: bare edge under, wired edge over. The three pieces
-end up with slightly different wire spans, and the difference is taken up at
-the seam.
+Cutting: the roll is already 60 cm wide, so the two pieces come off its
+length and nothing is slit. Both long edges stay as they come, which is why
+the vertical seam only needs its 5 cm lap. Cut beside a wire, not through
+one, snipping the crossing wires right next to the wire on the cut line.
+That wire stays whole on one piece and the other piece gets a bare edge,
+which is what the storey lap wants: bare edge under, wired edge over.
 
-Tying: galvanised tie wire, 1.2 to 1.6 mm, twisted with pliers. The horizontal
-joins between storeys carry the weight, about 35 kg wet at the lowest one, so
-tie those at every cell across the lap; that is about 3 kg a tie. The vertical
-seam only stops the sleeve springing open and the clamps already do most of
-that, so every third cell is enough there. Cable ties would hold the load but
-creep under steady tension and perish in UV.
+Tying: galvanised tie wire, 1.2 to 1.6 mm, twisted with pliers. The
+horizontal join between the two storeys takes the whole weight, about 50 kg
+wet, so tie it at every cell across the lap. Twelve cells go round the
+sleeve, so that is about 4 kg a tie, against the 30-odd kg that breaks a
+1.2 mm strand. The vertical seam only stops the sleeve springing open and the
+clamps already do most of that, so every third cell is enough there. Cable
+ties would hold the load but creep under steady tension and perish in UV.
 
-The star's core, 4.61 to 5.20 m, sits fully on the sleeve with 10 cm to
+The star's core, 4.61 to 5.22 m, sits fully on the sleeve with 8 cm to
 spare, so its lower and upper hubs both cable-tie to the mesh. The top clamp
-at 5.2 m is level with the core's top; the hubs tie above and below it.
-Before the skirts were lowered the core ran to 5.59 m and a fourth mesh
+at 5.2 m sits 2 cm under the core's top, and the hubs tie above and below
+it. Before the skirts were lowered the core ran to 5.59 m and a third mesh
 storey would have been needed.
 
 <img src="drawings/mesh.svg" alt="The mesh strip flat, the sleeve from above, and the sleeve against the tree" width="520">
 
 Install plan: rope over the lamp arm with a throw line, padded where it
-crosses the arm; assemble sleeve, skirts and star on the ground; hoist; tighten clamps at 0.2 and 1.7 m from a step ladder or the
-ground. The rope is a hoist and a backstop, never a personal anchor. Nothing
-pegged within a metre of the post base (buried cable); the bottom ring is
-tied down to stakes at the shrub line or to the shrubs.
+crosses the arm. Assemble sleeve, skirts and star round the post on the
+ground, hoist, then tighten the clamps at 0.2 and 1.4 m from the ground or a
+step ladder. The rope is a hoist and a backstop, never a personal anchor.
+Nothing pegged within a metre of the post base, because of the buried cable,
+and the bottom ring is tied down to stakes at the shrub line or to the
+shrubs. Coming down in January is the same list backwards, and the tie wire
+is the slow part, so bring side cutters and a bag for the offcuts.
 
-Weight, at 18 g per 15 cm square: fabric about 20 kg dry, 42 kg soaked,
-27 kg after draining; rings 2.5 kg; star, cords, straps 3 kg. Weigh one real
-square and rerun; that one number drives it.
+Weight, at 0.8 kg a square metre of fabric, which is 18 g for a 15 cm
+square: fabric about 20 kg dry, 42 kg soaked and 27 kg after draining. Mesh
+sleeve 4.8 kg, rings 2.6 kg, star and cords and straps 3 kg. That is about
+50 kg wet on the sleeve's foot. Weigh one real square and recompute, because
+that one number drives all of it.
+
+### Wind
+
+Wind is the biggest load on the structure, and nothing is sized for it. The
+five skirts and the star present about 7 m² side on. Dynamic pressure is 0.6
+times the square of the wind speed, so 10 m/s gives 60 Pa and 20 m/s gives
+240 Pa. Granny fabric is full of holes, and wet acrylic mats and closes up,
+so the drag coefficient is somewhere between 0.4 and 0.9. That is a sideways
+load of 20 to 40 kg at 10 m/s and 70 to 160 kg at 20 m/s. Edithvale faces
+the bay, so 20 m/s is an ordinary winter front and not a rare one.
+
+An attachment fails before the post does. The wind works on the cable ties
+at the straps, the friction of the four clamps on compressed foam, and the
+star where it meets the sleeve. The sleeve can also turn on the post,
+because clamp friction is the only thing that stops it.
+
+This is accepted rather than solved. The heaviest part is the mesh sleeve at
+4.8 kg, and it is clamped to the post rather than hanging off it. Everything
+that could come away is fabric, fibreglass, bamboo or foam, so a failure
+drops something light. If a piece comes loose, the tree comes down for the
+season.
+
+The star is the one part worth a second thought, because it is 4.9 m up over
+a path and 490 mm bamboo stakes are stiff enough to hurt.
 
 ## Plan B, if the squares run short
 
@@ -413,18 +461,24 @@ sleeve beneath it.
 | squares     | 829              | 483              |
 | base        | 275 cm at 0.54 m | 195 cm at 0.54 m |
 | top strap   | 4.66 m           | 3.43 m           |
-| star centre | 4.90 m           | 3.67 m           |
+| star centre | 4.92 m           | 3.69 m           |
 | mesh sleeve | 5.3 m            | 4.0 m            |
 
 It costs 42 percent of the crochet, not the 37 percent skirt 5 represents,
 because lowering the tree also raises the viewer's sight line and merges more
 of skirt 4 out of view.
 
-Every skirt keeps its own geometry, so the five flat patterns serve both plans
-unchanged. Nothing crocheted is wasted by deciding late. The drawings are
-`section-b.svg` and `mesh-b.svg`, and the model is `platonic/tree-b.stl`.
+Every skirt keeps its cone, so the patterns for skirts 1, 2 and 3 serve both
+plans unchanged. Skirt 4 is the one that differs. Lowered, more of it is out
+of sight, so the merge to 7 a row comes four rows earlier. It runs 14 a row
+for 10 rows and then 7 for 5, instead of 14 for 14 and then 7 for 3, and the
+count drops from 217 to 175. That is where 483 comes from rather than 525.
+Crocheting the five-skirt pattern and merging late by hand keeps both plans
+open, and nothing crocheted is wasted by deciding in November. The drawings
+are `section-b.svg` and `mesh-b.svg`, and the model is
+`platonic/tree-b.stl`.
 
-The cost is the star. It drops to 3.67 m, less striking from across the road
+The cost is the star. It drops to 3.69 m, less striking from across the road
 and within reach of a tall person.
 
 ## What is still open
@@ -442,9 +496,10 @@ and within reach of a tall person.
   27 cm below the plain cone at its lowest. The stretch test will say whether
   that is close.
 - **How many cords.** One per two hem squares now, so 4 / 5 / 6 / 7 / 8, which
-  keeps every square within one square of a cord. Halving that would leave a
-  skirt 5 column carrying about 1 kg of wet fabric at the strap, which is the
-  stretch test's load, so the test decides this too.
+  keeps every square within one square of a cord. Skirt 5 is 12.3 m² and about
+  20 kg wet, so one of its sixteen columns of squares is about 1 kg at the
+  strap, which is the stretch test's load. Halving the cords puts four
+  columns on each one instead of two.
 - **How the star hangs on the mesh sleeve.** Its hubs sit 305 mm out from the
   centre and the sleeve is only 87.5 mm in radius, so nothing reaches. It needs
   a spoke, a strap or a collar, and none is drawn.
@@ -455,6 +510,22 @@ and within reach of a tall person.
   bottom hem, skirt 5 is out of sight above 2.54 m and the other four are in
   view all the way up. The merge the script found there did not change skirt
   5's count, so a hand-set height may be better.
+- **The skirts are cut for the post, not for the sleeve.** `HOOP_D` is 145 mm
+  everywhere, so every flat pattern's inner arc is the 14.5 cm post. The
+  straps go round the 17.5 cm sleeve, which is 9.4 cm more circumference.
+  Either set `HOOP_D` to 175 and regenerate, which changes the counts, or
+  take up the 9.4 cm in the slack of the top row.
+- **How the two upper clamps are fitted.** Nothing reaches 2.7 m or 5.2 m
+  from the ground. A step ladder gets to the first and a socket on an
+  extension pole might get to the second, and neither is tried.
+- **Whether the straps should use tie wire rather than cable ties.** Cable
+  ties are rejected for the mesh joins because they creep and perish in UV,
+  and the same month of sun falls on the straps.
+- **Whether the stakes need glue in the hubs.** A 5 mm stake in a 5.1 mm bore
+  is a slip fit, and only the crochet holds it in.
+- **Council permission, and the pole itself.** The post is a council light
+  pole, so there is a question of consent, and a second one about clamping a
+  5.3 m steel sleeve to it where a child can touch the sleeve at 54 cm.
 
 ## Sources
 
@@ -479,17 +550,19 @@ and within reach of a tall person.
 
 ## Working notes
 
-Written on 2026-09-15 and 2026-09-16. `platonic.md` has the piece as a whole;
-this file is only the tree.
+Written in September 2026 and checked against the scripts on 2026-10-21.
+`platonic.md` has the piece as a whole, and this file is only the tree.
 
 ### One source of numbers
 
-Every number lives in `platonic/skirts.py`. Running it writes
+Every skirt and star number is in `platonic/skirts.py`. Running it writes
 `platonic/tree_params.scad`, which the OpenSCAD model includes, and
 `platonic/mesh.py` imports from it. Never edit the scad's numbers by hand.
+The sleeve's own numbers, its height, the storeys and the clamp heights, are
+in `platonic/mesh.py`. The weights and the costs are in this file alone.
 
     make tree                        # patterns, section, params, STL, mesh sketch
-    make tree-b                      # the same for plan B
+    make tree-b                      # section, params, STL, mesh sketch for plan B
     python3 platonic/skirts.py all     # skirt-1..5.svg + section.svg + params
     python3 platonic/skirts.py 5       # one skirt
     python3 platonic/skirts.py 5 300   # one skirt with a 30 cm hem square, separate file
